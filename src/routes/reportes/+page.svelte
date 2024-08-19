@@ -20,17 +20,37 @@
   });
 
 
+  
+  async function deleteItem(item) {
+    try {
+      const { error } = await supabase.from('nuevos').delete().eq('id', item.id);
+      if (error) throw error;
+      nuevos = nuevos.filter(nuevo => nuevo.id !== item.id);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  }
+
+  async function deletePlanilla(item) {
+    try {
+      const { error } = await supabase.from('planilla').delete().eq('id', item.id);
+      if (error) throw error;
+      planilla = planilla.filter(planillaItem => planillaItem.id !== item.id);
+    } catch (error) {
+      console.error('Error deleting item from planilla:', error);
+    }
+  }
 
 </script>
 
 <div class="text-center bg-dark">
-  <p class="text-white fs-1 mt-5">Reportes Grupos Biblicos</p>
+  <p class="text-white fs-1 pt-5">Reportes Grupos Biblicos</p>
   </div>
 
-<div class="container p-4">
-  <div class="row" >
+<div class="container ">
+  <div class="card row" >
     {#each planilla as item}
-      <div class="card d-flex justify-content-center m-4 p-2" style="background: #333333;" >
+      <div class="card d-flex justify-content-center mb-4" style="background: #333333;" >
         <div class="d-flex justify-content-center m-2" style="background: #333333;">
           <img src="/logo.png" style="width: 50px;" alt="logo" class="logo-form" />
           <h2 class="d-flex justify-content-center m-2 text-white">REPORTES DE GRUPOS BÍBLICOS</h2>
@@ -104,6 +124,7 @@
             <div class="form-group col-md-2">
               <p class="text-white">Asistencia de Niños: {item.Asistencia_de_Ninos}</p>
             </div>
+            <button type="button" on:click={() => deletePlanilla(item)} class="btn btn-danger">Eliminar</button>
           </form>
         </div>
       </div>
@@ -115,9 +136,9 @@
 <p class="text-white fs-1">Nuevos Amigos</p>
 </div>
 <div class="container p-4">
-  <div class="row" >
+  <div class="card row" >
     {#each nuevos as item}
-      <div class="card d-flex justify-content-center m-4 p-2" style="background: #333333;" >
+      <div class="card d-flex justify-content-center p-2 mb-4" style="background: #333333;" >
         <div class="d-flex justify-content-center m-2" style="background: #333333;">
           <img src="/logo.png" style="width: 50px;" alt="logo" class="logo-form" />
           <h2 class="d-flex justify-content-center m-2 text-white">Nuevos Amigos</h2>
@@ -146,6 +167,7 @@
             <div class="form-group col-md-2">
               <p class="text-white">Amigos: {item.telefononuevo}</p>
             </div>
+            <button type="button" on:click={() => deleteItem(item)} class="btn btn-danger">Eliminar</button>
           </form>
         </div>
       </div>

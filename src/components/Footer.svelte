@@ -16,16 +16,16 @@
             <h5 class="card-title m-2">Quienes somos</h5>
             <ul>
               <li>
-                <a class="dropdown-item" href="/links/adn">Nuestro ADN</a>
+                <a class="dropdown-item" href="adn">Nuestro ADN</a>
               </li>
               <li>
-                <a class="nav-link text" href="/links/donaciones">Donaciones</a>
+                <a class="nav-link text" href="misiones">Misiones</a>
               </li>
               <li>
-                <a class="nav-link text" href="/links/Ubicanos">Ubicanos</a>
+                <a class="nav-link text" href="ubicanos">Ubicanos</a>
               </li>
               <li>
-                <a class="nav-link text" href="/links/eventos">Eventos</a>
+                <a class="nav-link text" href="verbosquejo">Bosquejos</a>
               </li>
             </ul>
           </div>

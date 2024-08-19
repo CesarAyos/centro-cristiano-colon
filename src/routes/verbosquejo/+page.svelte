@@ -33,7 +33,7 @@
         <div class="card p-2" style="width: 18rem; border: none;">
           <img src={image.url} class="card-img-top" alt={image.name} />
           <div class="card-body">
-            <h5 class="card-title">{image.name}</h5>
+            <h5 class="card-title">Bosquejo N°{image.name}</h5>
             <p class="card-text">Bosquejo Semanal.</p>
             <button on:click={() => downloadImage(image.url, image.name)} class="btn btn-primary">Descargar</button>
           </div>

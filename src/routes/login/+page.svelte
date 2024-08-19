@@ -52,7 +52,7 @@
             <div>
               <label for="email"></label><br />
               <input
-                style="border:none;border-bottom: 2px solid #37390f;outline: none;background:transparent"
+                style="border:none;border-bottom: 2px solid #37390f;outline: none;background:transparent;width:auto"
                 bind:value={email}
                 required
                 type="email"

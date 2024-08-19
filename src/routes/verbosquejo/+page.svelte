@@ -1,7 +1,7 @@
 <script>
   import Footer from "../../components/Footer.svelte";
   import { onMount } from "svelte";
-  
+
   let images = [];
 
   onMount(async () => {
@@ -9,6 +9,20 @@
     const result = await response.json();
     images = result.images;
   });
+
+  function downloadImage(url, name) {
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(console.error);
+  }
 </script>
 
 <h1>Imágenes de Bosquejo</h1>
@@ -21,13 +35,12 @@
           <div class="card-body">
             <h5 class="card-title">{image.name}</h5>
             <p class="card-text">Bosquejo Semanal.</p>
-            <a href={image.url} download={image.name} class="btn btn-primary">Descargar</a>
+            <button on:click={() => downloadImage(image.url, image.name)} class="btn btn-primary">Descargar</button>
           </div>
         </div>
       </div>
     {/each}
   </div>
 </div>
-
 
 <Footer />

@@ -15,7 +15,7 @@
   >
     <div class="carousel-item active" data-bs-interval="10000">
       <img
-        src="/1.png"
+        src="/1.webp"
         class="d-block w-100"
         alt="lgo"
         style="height: 360px;"
@@ -23,7 +23,7 @@
     </div>
     <div class="carousel-item" data-bs-interval="2000">
       <img
-        src="/2.png"
+        src="/2.webp"
         class="d-block w-100"
         alt="pastor"
         style="height: 360px;"
@@ -31,7 +31,7 @@
     </div>
     <div class="carousel-item">
       <img
-        src="/3.png"
+        src="/3.webp"
         class="d-block w-100"
         alt="pastora"
         style="height: 360px;"
@@ -39,7 +39,7 @@
     </div>
     <div class="carousel-item">
       <img
-        src="/4.png"
+        src="/4.webp"
         class="d-block w-100"
         alt="erick"
         style="height: 360px;"

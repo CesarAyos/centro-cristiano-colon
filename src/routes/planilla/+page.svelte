@@ -3,6 +3,7 @@
 
   let planilla = {
     PASTOR_SUPERVISOR: "",
+    grupobiblico: "",
     COORDINADOR_DPTO: "",
     SUPERVISOR_DE_RED: "",
     FELIPE_DE_RED: "",
@@ -24,6 +25,7 @@
     Participacion_Mision_Amigo: "",
     Participacion_Consolidacion: "",
     Participacion_Discipulado_1: "",
+    Participacion_Discipulado_2: "",
     Asistencia_a_la_Escuela_de_Liderazgo: "",
     asistencia_hermanos: "",
     Asistencia_de_Amigos: "",
@@ -38,6 +40,7 @@
   const Clear = () => {
     planilla = {
       PASTOR_SUPERVISOR: "",
+      grupobiblico: "",
       COORDINADOR_DPTO: "",
       SUPERVISOR_DE_RED: "",
       FELIPE_DE_RED: "",
@@ -59,6 +62,7 @@
       Participacion_Mision_Amigo: "",
       Participacion_Consolidacion: "",
       Participacion_Discipulado_1: "",
+      Participacion_Discipulado_2: "",
       Asistencia_a_la_Escuela_de_Liderazgo: "",
       asistencia_hermanos: "",
       Asistencia_de_Amigos: "",
@@ -157,6 +161,17 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.FELIPE_LIDER}
               placeholder="felipe lider"
+              required
+            />
+          </div>
+
+          <div class="form-group col-md-6">
+            <input
+              type="text"
+              class="form-control"
+              style="border-bottom: 2px solid #5504f8;"
+              bind:value={planilla.grupobiblico}
+              placeholder="Nombre del grupo biblico"
               required
             />
           </div>
@@ -326,11 +341,21 @@
           </div>
           <div class="form-group col-md-6">
             <input
-              type="text"
+              type="number"
               class="form-control"
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Participacion_Discipulado_1}
-              placeholder="Participacion Discipulado 1 / 2"
+              placeholder="Participacion Discipulado 1"
+              required
+            />
+          </div>
+          <div class="form-group col-md-6">
+            <input
+              type="number"
+              class="form-control"
+              style="border-bottom: 2px solid #5504f8;"
+              bind:value={planilla.Participacion_Discipulado_2}
+              placeholder="Participacion Discipulado 2"
               required
             />
           </div>

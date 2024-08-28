@@ -1,131 +1,212 @@
 <script>
-  import { onMount } from 'svelte';
-  import { supabase } from '$lib/supabaseClient';
+  import { onMount } from "svelte";
+  import { supabase } from "$lib/supabaseClient";
 
   let planilla = [];
   let nuevos = [];
 
   onMount(async () => {
     try {
-      const { data: planillaData, error: planillaError } = await supabase.from('planilla').select('*');
+      const { data: planillaData, error: planillaError } = await supabase
+        .from("planilla")
+        .select("*");
       if (planillaError) throw planillaError;
       planilla = planillaData;
 
-      const { data: nuevosData, error: nuevosError } = await supabase.from('nuevos').select('*');
+      const { data: nuevosData, error: nuevosError } = await supabase
+        .from("nuevos")
+        .select("*");
       if (nuevosError) throw nuevosError;
       nuevos = nuevosData;
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   });
 
-
-  
   async function deleteItem(item) {
     try {
-      const { error } = await supabase.from('nuevos').delete().eq('id', item.id);
+      const { error } = await supabase
+        .from("nuevos")
+        .delete()
+        .eq("id", item.id);
       if (error) throw error;
-      nuevos = nuevos.filter(nuevo => nuevo.id !== item.id);
+      nuevos = nuevos.filter((nuevo) => nuevo.id !== item.id);
     } catch (error) {
-      console.error('Error deleting item:', error);
+      console.error("Error deleting item:", error);
     }
   }
 
   async function deletePlanilla(item) {
     try {
-      const { error } = await supabase.from('planilla').delete().eq('id', item.id);
+      const { error } = await supabase
+        .from("planilla")
+        .delete()
+        .eq("id", item.id);
       if (error) throw error;
-      planilla = planilla.filter(planillaItem => planillaItem.id !== item.id);
+      planilla = planilla.filter((planillaItem) => planillaItem.id !== item.id);
     } catch (error) {
-      console.error('Error deleting item from planilla:', error);
+      console.error("Error deleting item from planilla:", error);
     }
   }
-
 </script>
 
 <div class="text-center bg-dark">
-  <p class="text-white fs-1 pt-5">Reportes Grupos Biblicos</p>
-  </div>
-
-<div class="container ">
-  <div class="card row" >
+  <p class="text-white mt-5">Reportes Grupos Biblicos</p>
+</div>
+<div class="container">
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {#each planilla as item}
-      <div class="card d-flex justify-content-center mb-4" style="background: #333333;" >
-        <div class="d-flex justify-content-center m-2" style="background: #333333;">
-          <img src="/logo.png" style="width: 50px;" alt="logo" class="logo-form" />
-          <h2 class="d-flex justify-content-center m-2 text-white">REPORTES DE GRUPOS BÍBLICOS</h2>
+      <button
+        type="button"
+        class="btn btn-outline-secondary mb-2"
+        data-bs-toggle="modal"
+        data-bs-target={`#modal-${item.id}`}
+      >
+        <div style="font-size: 14px;">
+          <p>Felipe Lider: {item.FELIPE_LIDER}</p>
+          <p>Grupo biblico: {item.grupobiblico}</p>
+          <p class="text-end" style="font-size: 10px;">
+            Fecha: {item.created_at}
+          </p>
         </div>
-        
-        <div class="card-body"style="background: #333333;" >
-          <form class="row g-3">
-            <div class="form-group col-md-2">
-              <p class="text-white">Felipe Lider: {item.FELIPE_LIDER}</p>
+      </button>
+      <div
+        class="modal fade"
+        id={`modal-${item.id}`}
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby={`modalLabel-${item.id}`}
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id={`modalLabel-${item.id}`}>
+                Reporte Grupo Biblico: {item.grupobiblico}
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Asistencia VEA: {item.Asistencia_vea}</p>
+            <div class="modal-body">
+              <form class="row g-3">
+                <div class="container text-center">
+                  <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3">
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Asistencia VEA: {item.Asistencia_vea}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Asistentes GB: {item.asistentes}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3"><p>Felipes: {item.Felipes}</p></div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3"><p>Etiopes: {item.Etiopes}</p></div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3"><p>Novedades: {item.novedades}</p></div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3"><p>Amigos: {item.Amigos}</p></div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3"><p>Niños: {item.Ninos}</p></div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3"><p>Ausentes: {item.Ausentes}</p></div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Convertidos Adultos: {item.Convertidos_adultos}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Convertidos Nños: {item.Convertidos_ninos}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Reconciliados: {item.Reconciliados}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3"><p>Diezmos: {item.Diezmos}</p></div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3"><p>Ofrendas: {item.Ofrendas}</p></div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Total: {item.Total_financiero}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Mision Amigo: {item.Participacion_Mision_Amigo}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Consolidacion: {item.Participacion_Consolidacion}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Discipulado 1: {item.Participacion_Discipulado_1}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Discipulado 2: {item.Participacion_Discipulado_2}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>
+                          Escuela de Liderazgo: {item.Asistencia_a_la_Escuela_de_Liderazgo}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>
+                          Asistencia de hermanoss: {item.asistencia_hermanos}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Asistencia de amigos: {item.Asistencia_de_Amigos}</p>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="p-3">
+                        <p>Asistencia de Niños: {item.Asistencia_de_Ninos}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
             </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Asistentes GB: {item.asistentes}</p>
+            <div class="modal-footer">
+              <button
+                type="button"
+                on:click={() => deletePlanilla(item)}
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">Eliminar</button
+              >
             </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Felipes: {item.Felipes}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Etiopes: {item.Etiopes}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Novedades: {item.novedades}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Amigos: {item.Amigos}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Niños: {item.Ninos}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Ausentes: {item.Ausentes}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Convertidos Adultos: {item.Convertidos_adultos}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Convertidos Nños: {item.Convertidos_ninos}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Reconciliados: {item.Reconciliados}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Diezmos: {item.Diezmos}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Ofrendas: {item.Ofrendas}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Total: {item.Total_financiero}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Mision Amigo: {item.Participacion_Mision_Amigo}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Consolidacion: {item.Participacion_Consolidacion}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">d1 / d2: {item.Participacion_Discipulado_1}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Escuela de Liderazgo: {item.Asistencia_a_la_Escuela_de_Liderazgo}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Asistencia de hermanoss: {item.asistencia_hermanos}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Asistencia de amigos: {item.Asistencia_de_Amigos}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Asistencia de Niños: {item.Asistencia_de_Ninos}</p>
-            </div>
-            <button type="button" on:click={() => deletePlanilla(item)} class="btn btn-danger">Eliminar</button>
-          </form>
+          </div>
         </div>
       </div>
     {/each}
@@ -133,42 +214,66 @@
 </div>
 
 <div class="text-center bg-dark">
-<p class="text-white fs-1">Nuevos Amigos</p>
+  <p class="text-white">Nuevos Amigos</p>
 </div>
-<div class="container p-4">
-  <div class="card row" >
+<div class="container">
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {#each nuevos as item}
-      <div class="card d-flex justify-content-center p-2 mb-4" style="background: #333333;" >
-        <div class="d-flex justify-content-center m-2" style="background: #333333;">
-          <img src="/logo.png" style="width: 50px;" alt="logo" class="logo-form" />
-          <h2 class="d-flex justify-content-center m-2 text-white">Nuevos Amigos</h2>
+      <button
+        type="button"
+        class="btn btn-outline-secondary mb-2"
+        data-bs-toggle="modal"
+        data-bs-target={`#modal-${item.id}`}
+      >
+        <div style="font-size: 14px;">
+          <p class="text-start">Felipe Lider: {item.nombrelidernuevo}</p>
+          <p class="text-start">Grupo Biblico: {item.nombregruponuevo}</p>
+          <p class="text-start">Nombres: {item.nombresnuevo}</p>
+          <p class="text-end" style="font-size: 10px;">
+            Fecha: {item.created_at}
+          </p>
         </div>
-        
-        <div class="card-body"style="background: #333333;" >
-          <form class="row g-3">
-            <div class="form-group col-md-2">
-              <p class="text-white">Felipe Lider: {item.nombrelidernuevo}</p>
+      </button>
+      <div
+        class="modal fade"
+        id={`modal-${item.id}`}
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby={`modalLabel-${item.id}`}
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id={`modalLabel-${item.id}`}>
+                Datos de la persona Nueva
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Asistencia VEA: {item.nombregruponuevo}</p>
+            <div class="modal-body">
+              <form class="row g-3">
+                <p>Nombres: {item.nombresnuevo}</p>
+                <p>Apellidos: {item.apellidosnuevo}</p>
+                <p>Direccion: {item.direccionnuevo}</p>
+                <p>Edad: {item.edadnuevo}</p>
+                <p>Telefono: {item.telefononuevo}</p>
+              </form>
             </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Asistentes GB: {item.nombresnuevo}</p>
+            <div class="modal-footer">
+              <button
+                type="button"
+                on:click={() => deleteItem(item)}
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">Eliminar</button
+              >
             </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Felipes: {item.apellidosnuevo}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Etiopes: {item.direccionnuevo}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Novedades: {item.edadnuevo}</p>
-            </div>
-            <div class="form-group col-md-2">
-              <p class="text-white">Amigos: {item.telefononuevo}</p>
-            </div>
-            <button type="button" on:click={() => deleteItem(item)} class="btn btn-danger">Eliminar</button>
-          </form>
+          </div>
         </div>
       </div>
     {/each}

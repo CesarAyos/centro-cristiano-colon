@@ -114,7 +114,7 @@
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {#each planilla as item}
       <div class="card" style="border: none;">
-        <div class="d-flex justify-content-start p-1 bg-primary" style="border-radius: 10px 10px 0px 0px;">
+        <div class="d-flex justify-content-start p-1 bg-dark" style="border-radius: 10px 10px 0px 0px;">
           <input
             type="checkbox"
             checked={isReporteSelected(item.id)}
@@ -125,7 +125,7 @@
           type="button"
           class="btn btn-outline-secondary mb-2"
           data-bs-toggle="modal"
-          style="border: none;border-bottom: solid #0d6efd;"
+          style="border: none;border-bottom: solid #212529;"
           data-bs-target={`#modal-${item.id}`}
         >
           <div style="font-size: 14px;">
@@ -306,7 +306,7 @@
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {#each nuevos as item}
       <div class="card" style="border: none;">
-        <div class="d-flex justify-content-start p-1 bg-primary" style="border-radius: 10px 10px 0px 0px;">
+        <div class="d-flex justify-content-start p-1 bg-dark" style="border-radius: 10px 10px 0px 0px;">
           <input
             type="checkbox"
             checked={isSelected(item.id)}
@@ -316,7 +316,7 @@
         <button
           type="button"
           class="btn btn-outline-secondary mb-2"
-          style="border: none;border-bottom: solid #0d6efd;"
+          style="border: none;border-bottom: solid #212529;"
           data-bs-toggle="modal"
           data-bs-target={`#modal-${item.id}`}
         >

@@ -14,19 +14,22 @@
     try {
       const { data: planillaData, error: planillaError } = await supabase
         .from("planilla")
-        .select("*");
+        .select("*")
+        .order('id', { ascending: false })
       if (planillaError) throw planillaError;
       planilla = planillaData;
 
       const { data: nuevosData, error: nuevosError } = await supabase
         .from("nuevos")
-        .select("*");
+        .select("*")
+        .order('id', { ascending: false })
       if (nuevosError) throw nuevosError;
       nuevos = nuevosData;
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   });
+
 
   async function deleteItem(item) {
     try {
@@ -92,11 +95,15 @@
 
   function toggleReporteSelection(id) {
     if (selectedReporte.includes(id)) {
-      selectedReporte = selectedReporte.filter((selectedId) => selectedId !== id);
+      selectedReporte = selectedReporte.filter(
+        (selectedId) => selectedId !== id
+      );
     } else {
       selectedReporte = [...selectedReporte, id];
     }
   }
+
+  
 </script>
 
 <div class="text-center bg-dark">
@@ -107,14 +114,18 @@
     <button
       class="btn btn-success text-center"
       style="font-size: 12px;"
-      on:click={handleReporte}>Exportar Reportes</button>
+      on:click={handleReporte}>Exportar Reportes</button
+    >
   {/if}
 </div>
 <div class="container">
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {#each planilla as item}
       <div class="card" style="border: none;">
-        <div class="d-flex justify-content-start p-1 bg-dark" style="border-radius: 10px 10px 0px 0px;">
+        <div
+          class="d-flex justify-content-start p-1 bg-dark"
+          style="border-radius: 10px 10px 0px 0px;"
+        >
           <input
             type="checkbox"
             checked={isReporteSelected(item.id)}
@@ -306,7 +317,10 @@
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {#each nuevos as item}
       <div class="card" style="border: none;">
-        <div class="d-flex justify-content-start p-1 bg-dark" style="border-radius: 10px 10px 0px 0px;">
+        <div
+          class="d-flex justify-content-start p-1 bg-dark"
+          style="border-radius: 10px 10px 0px 0px;"
+        >
           <input
             type="checkbox"
             checked={isSelected(item.id)}

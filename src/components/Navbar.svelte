@@ -71,39 +71,5 @@
 
     
   </nav>
-  <div class="btn-group dropup btn-float">
-    <button
-      type="button"
-      style="width: 250px;background: #333333;color: rgb(244, 242, 239)"
-      class="btn"
-      data-bs-toggle="dropdown"
-      aria-expanded="false"
-    >
-      Informacion o Ayuda
-    </button>
-    <ul
-      class="dropdown-menu"
-      style="background: #333333;width: 250px;"
-    >
-      <li>
-        <a
-          class="dropdown-item"
-          style="color: rgb(218, 218, 24);"
-          href="https://web.whatsapp.com/send?phone=5804247187229"
-          target="_blank">WhatsApp</a
-        >
-      </li>
-    </ul>
-  </div>
 </header>
 
-
-<style>
-  .btn-float {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-  }
-
-</style>

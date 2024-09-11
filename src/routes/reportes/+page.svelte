@@ -156,6 +156,8 @@ onMount(() => {
   
 </script>
 
+
+<div id="planilla">
 <div class="text-center bg-dark">
   <p class="text-white mt-5">Reportes Grupos Biblicos</p>
 </div>
@@ -168,7 +170,7 @@ onMount(() => {
     >
   {/if}
 </div>
-<div class="container" style="height: 400px;">
+<div class="container planilla" >
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {#each paginatedPlanilla as item}
       <div class="card" style="border: none;">
@@ -354,9 +356,12 @@ onMount(() => {
   <button class="btn btn-primary" on:click={prevPagePlanilla} disabled={currentPagePlanilla === 1}>Anterior</button>
   <button class="btn btn-primary" on:click={nextPagePlanilla} disabled={currentPagePlanilla === totalPagesPlanilla}>Siguiente</button>
 </div>
+</div>
 
 
 
+
+<div id="nuevos" >
 <div class="text-center bg-dark">
   <p class="text-white">Nuevos Amigos</p>
 </div>
@@ -368,7 +373,7 @@ onMount(() => {
       on:click={handleExport}>Exportar Nuevos</button>
   {/if}
 </div>
-<div class="container" style="height: 450px;">
+<div class="container nuevos" >
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {#each paginatedNuevos as item}
       <div class="card" style="border: none;">
@@ -447,4 +452,6 @@ onMount(() => {
 <div class="d-flex justify-content-center m-2">
   <button class="btn btn-primary" on:click={prevPageNuevos} disabled={currentPageNuevos === 1}>Anterior</button>
   <button class="btn btn-primary" on:click={nextPageNuevos} disabled={currentPageNuevos === totalPagesNuevos}>Siguiente</button>
+</div>
+
 </div>

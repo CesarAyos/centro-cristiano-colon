@@ -1,4 +1,5 @@
 <script>
+  import { goto } from "$app/navigation";
   import { supabase } from "../../components/supabase.js";
 
   let file;
@@ -15,6 +16,8 @@
         console.error("Hubo un error subiendo el archivo:", error.message);
       } else {
         console.log("Archivo subido con éxito:", data);
+        goto('verbosquejoadmin');
+        
       }
     } catch (error) {
       console.error("Error general:", error.message);

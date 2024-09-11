@@ -7,28 +7,37 @@
   let selectedCards = [];
   let nuevos = [];
   let selectedReporte = [];
+  let currentPagePlanilla = 1;
+  let currentPageNuevos = 1;
+  const itemsPerPage = 10;
+  const itemsPerPagePlanilla = 7;
+  let totalPagesPlanilla = 1;
+  let totalPagesNuevos = 1;
   $: hasSelectedCards = selectedCards.length > 0;
   $: hasSelectedReporte = selectedReporte.length > 0;
 
-  onMount(async () => {
+  // Función para obtener los datos de Supabase
+  async function fetchData() {
     try {
       const { data: planillaData, error: planillaError } = await supabase
         .from("planilla")
         .select("*")
-        .order('id', { ascending: false })
+        .order('id', { ascending: false });
       if (planillaError) throw planillaError;
       planilla = planillaData;
+      totalPagesPlanilla = Math.ceil(planilla.length / itemsPerPagePlanilla);
 
       const { data: nuevosData, error: nuevosError } = await supabase
         .from("nuevos")
         .select("*")
-        .order('id', { ascending: false })
+        .order('id', { ascending: false });
       if (nuevosError) throw nuevosError;
       nuevos = nuevosData;
+      totalPagesNuevos = Math.ceil(nuevos.length / itemsPerPage);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  });
+  }
 
 
   async function deleteItem(item) {
@@ -103,6 +112,47 @@
     }
   }
 
+// Llamar a fetchData cuando el componente se monta
+onMount(() => {
+    fetchData();
+  });
+
+  // Filtrar los elementos para la página actual
+  $: paginatedPlanilla = planilla.slice(
+    (currentPagePlanilla - 1) * itemsPerPagePlanilla,
+    currentPagePlanilla * itemsPerPagePlanilla
+  );
+
+  $: paginatedNuevos = nuevos.slice(
+    (currentPageNuevos - 1) * itemsPerPage,
+    currentPageNuevos * itemsPerPage
+  );
+
+  function nextPagePlanilla() {
+    if (currentPagePlanilla < totalPagesPlanilla) {
+      currentPagePlanilla += 1;
+    }
+  }
+
+  function prevPagePlanilla() {
+    if (currentPagePlanilla > 1) {
+      currentPagePlanilla -= 1;
+    }
+  }
+
+  function nextPageNuevos() {
+    if (currentPageNuevos < totalPagesNuevos) {
+      currentPageNuevos += 1;
+    }
+  }
+
+  function prevPageNuevos() {
+    if (currentPageNuevos > 1) {
+      currentPageNuevos -= 1;
+    }
+  }
+
+
   
 </script>
 
@@ -118,9 +168,9 @@
     >
   {/if}
 </div>
-<div class="container">
+<div class="container" style="height: 400px;">
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-    {#each planilla as item}
+    {#each paginatedPlanilla as item}
       <div class="card" style="border: none;">
         <div
           class="d-flex justify-content-start p-1 bg-dark"
@@ -300,6 +350,12 @@
     {/each}
   </div>
 </div>
+<div class="d-flex justify-content-center m-2">
+  <button class="btn btn-primary" on:click={prevPagePlanilla} disabled={currentPagePlanilla === 1}>Anterior</button>
+  <button class="btn btn-primary" on:click={nextPagePlanilla} disabled={currentPagePlanilla === totalPagesPlanilla}>Siguiente</button>
+</div>
+
+
 
 <div class="text-center bg-dark">
   <p class="text-white">Nuevos Amigos</p>
@@ -309,13 +365,12 @@
     <button
       class="btn btn-success text-center"
       style="font-size: 12px;"
-      on:click={handleExport}>Exportar Nuevos</button
-    >
+      on:click={handleExport}>Exportar Nuevos</button>
   {/if}
 </div>
-<div class="container">
+<div class="container" style="height: 450px;">
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-    {#each nuevos as item}
+    {#each paginatedNuevos as item}
       <div class="card" style="border: none;">
         <div
           class="d-flex justify-content-start p-1 bg-dark"
@@ -379,8 +434,7 @@
                   type="button"
                   on:click={() => deleteItem(item)}
                   class="btn btn-secondary"
-                  data-bs-dismiss="modal">Eliminar</button
-                >
+                  data-bs-dismiss="modal">Eliminar</button>
               </div>
             </div>
           </div>
@@ -388,4 +442,9 @@
       </div>
     {/each}
   </div>
+</div>
+
+<div class="d-flex justify-content-center m-2">
+  <button class="btn btn-primary" on:click={prevPageNuevos} disabled={currentPageNuevos === 1}>Anterior</button>
+  <button class="btn btn-primary" on:click={nextPageNuevos} disabled={currentPageNuevos === totalPagesNuevos}>Siguiente</button>
 </div>

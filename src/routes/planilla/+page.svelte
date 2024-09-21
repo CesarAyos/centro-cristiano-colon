@@ -87,6 +87,10 @@
 
     alert(" Reporte Enviado con Exito");
   };
+
+  function calcularResultado() {
+    planilla.Total_financiero = planilla.Ofrendas + planilla.Diezmos;
+  }
 </script>
 
 <main class="pt-5">
@@ -288,6 +292,7 @@
           <div class="form-group col-md-6">
             <input
               type="number"
+              id="diezmos"
               class="form-control"
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Diezmos}
@@ -295,23 +300,38 @@
               required
             />
           </div>
+
           <div class="form-group col-md-6">
             <input
               type="number"
               class="form-control"
+              id="ofrendas"
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Ofrendas}
+              on:input={calcularResultado}
               placeholder="Ofrendas"
               required
             />
           </div>
+
           <div class="form-group col-md-6">
-            <input
-              type="number"
+            <p class="text-white">Total Financiero</p>
+            <p
               class="form-control"
               style="border-bottom: 2px solid #5504f8;"
+            >
+               {planilla.Total_financiero}
+            </p>
+          </div>
+
+          <div class="form-group col-md-6">
+            <input
+              type="hidden"
+              class="form-control"
+              style="border-bottom: 2px solid #5504f8;"
+              id="resultado"
               bind:value={planilla.Total_financiero}
-              placeholder="Total"
+              on:input={calcularResultado}
               required
             />
           </div>

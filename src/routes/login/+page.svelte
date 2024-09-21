@@ -37,7 +37,7 @@
     <div class="d-flex justify-content-center p-4 m-5">
       <div
         class="card pt-3"
-        style="width: 30rem;border:none;background: linear-gradient(360deg, rgba(243, 240, 240, 0.055) 10%, #333333 90%);box-shadow: 12px -12px 5px -1px rgba(0,0,0,0.75);"
+        style="border:none;background: linear-gradient(360deg, rgba(243, 240, 240, 0.055) 10%, #333333 90%);box-shadow: 12px -12px 5px -1px rgba(0,0,0,0.75);"
       >
         <div class="d-flex justify-content-center">
           <img

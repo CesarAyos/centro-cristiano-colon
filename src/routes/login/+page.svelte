@@ -37,7 +37,7 @@
     <div class="d-flex justify-content-center p-4 m-5">
       <div
         class="card pt-3"
-        style="border:none;background: linear-gradient(360deg, rgba(243, 240, 240, 0.055) 10%, #333333 90%);box-shadow: 12px -12px 5px -1px rgba(0,0,0,0.75);"
+        style="width:20rem;border:none;background: linear-gradient(360deg, rgba(243, 240, 240, 0.055) 10%, #333333 90%);box-shadow: 12px -12px 5px -1px rgba(0,0,0,0.75);"
       >
         <div class="d-flex justify-content-center">
           <img
@@ -62,7 +62,7 @@
               /><br />
             </div>
             <div>
-              <label class=" m-2" for="password"></label><br />
+              <label for="password"></label><br />
               <input
                 style="border:none;border-bottom: 2px solid #37390f;outline: none;background:transparent"
                 bind:value={password}

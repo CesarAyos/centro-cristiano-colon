@@ -315,14 +315,15 @@
           </div>
 
           <div class="form-group col-md-6">
-            <p class="text-white">Total Financiero</p>
             <p
               class="form-control"
               style="border-bottom: 2px solid #5504f8;"
             >
-               {planilla.Total_financiero}
+              Total Financiero {planilla.Total_financiero}
             </p>
+            
           </div>
+          
 
           <div class="form-group col-md-6">
             <input

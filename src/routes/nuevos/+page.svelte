@@ -84,6 +84,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={nuevos.nombrelidernuevo}
               placeholder="Nombre del lider"
+              title="Nombre del lider"
               required
             />
           </div>
@@ -94,6 +95,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={nuevos.nombregruponuevo}
               placeholder="Nombre del grupo Biblico"
+              title="Nombre del grupo Biblico"
               required
             />
           </div>
@@ -104,6 +106,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={nuevos.nombresnuevo}
               placeholder="Nombre de la persona nueva"
+              title="Nombre de la persona nueva"
               required
             />
           </div>
@@ -114,6 +117,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={nuevos.apellidosnuevo}
               placeholder="Apellido de la persona nueva"
+              title="Apellido de la persona nueva"
               required
             />
           </div>
@@ -125,6 +129,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={nuevos.direccionnuevo}
               placeholder="Direccion donde vive la persona nueva"
+              title="Direccion donde vive la persona nueva"
               required
             />
           </div>
@@ -135,6 +140,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={nuevos.edadnuevo}
               placeholder="edad de la persona nueva"
+              title="edad de la persona nueva"
               required
             />
           </div>
@@ -145,6 +151,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={nuevos.telefononuevo}
               placeholder="Numero de telefono de la persona nueva"
+              title="Numero de telefono de la persona nueva"
               required
             />
           </div>

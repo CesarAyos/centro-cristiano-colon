@@ -91,6 +91,8 @@
   function calcularResultado() {
     planilla.Total_financiero = planilla.Ofrendas + planilla.Diezmos;
   }
+
+  
 </script>
 
 <main class="pt-5">
@@ -124,6 +126,7 @@
               class="form-control"
               style="border-bottom: 2px solid #5504f8;"
               placeholder="Pastor Supervisor"
+              title="Pastor Supervisor"
               required
             />
           </div>
@@ -134,6 +137,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.COORDINADOR_DPTO}
               placeholder="Coordinador de departamento"
+              title="Coordinador de departamento"
               required
             />
           </div>
@@ -144,6 +148,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.SUPERVISOR_DE_RED}
               placeholder="Supervisor de red"
+              title="Supervir de red"
               required
             />
           </div>
@@ -154,6 +159,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.FELIPE_DE_RED}
               placeholder="Felipe de red"
+              title="Felipe de red"
               required
             />
           </div>
@@ -165,6 +171,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.FELIPE_LIDER}
               placeholder="felipe lider"
+              title="felipe lider"
               required
             />
           </div>
@@ -176,6 +183,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.grupobiblico}
               placeholder="Nombre del grupo biblico"
+              title="Nombre del grupo biblico"
               required
             />
           </div>
@@ -186,6 +194,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Asistencia_vea}
               placeholder="asistencia en el vea"
+              title="asistencia en el vea"
               required
             />
           </div>
@@ -196,6 +205,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.asistentes}
               placeholder="asistencia Grupo Biblico"
+              title="asistencia Grupo biblico"
               required
             />
           </div>
@@ -206,6 +216,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Felipes}
               placeholder="felipes"
+              title="felipes"
               required
             />
           </div>
@@ -216,6 +227,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Etiopes}
               placeholder="Etiopes"
+              title="Etiopes"
               required
             />
           </div>
@@ -226,6 +238,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.novedades}
               placeholder="Novedades"
+              title="Novedades"
               required
             />
           </div>
@@ -236,6 +249,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Amigos}
               placeholder="Amigos"
+              title="Amigos"
               required
             />
           </div>
@@ -246,6 +260,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Ninos}
               placeholder="Niños Grupo biblico"
+              title="Niños Grupo biblico"
               required
             />
           </div>
@@ -256,6 +271,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Ausentes}
               placeholder="Ausentes"
+              title="Ausentes"
               required
             />
           </div>
@@ -266,6 +282,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Convertidos_adultos}
               placeholder="Adultos convertidos"
+              title="Adultos convertidos"
               required
             />
           </div>
@@ -276,6 +293,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Convertidos_ninos}
               placeholder="Niños Convertidos"
+              title="niños Convertidos"
               required
             />
           </div>
@@ -286,6 +304,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Reconciliados}
               placeholder="Reconciliados"
+              title="Reconciliados"
               required
             />
           </div>
@@ -297,6 +316,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Diezmos}
               placeholder="Diezmos"
+              title="Diesmos"
               required
             />
           </div>
@@ -310,6 +330,7 @@
               bind:value={planilla.Ofrendas}
               on:input={calcularResultado}
               placeholder="Ofrendas"
+              title="Ofrendas"
               required
             />
           </div>
@@ -347,6 +368,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Participacion_Mision_Amigo}
               placeholder="Participacion mision amigo"
+              title="Participacion mision amigo"
               required
             />
           </div>
@@ -357,6 +379,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Participacion_Consolidacion}
               placeholder="participacion consolidacion"
+              title="participacion consolidacion"
               required
             />
           </div>
@@ -367,6 +390,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Participacion_Discipulado_1}
               placeholder="Participacion Discipulado 1"
+              title="Participacion Discipulado 1"
               required
             />
           </div>
@@ -377,6 +401,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Participacion_Discipulado_2}
               placeholder="Participacion Discipulado 2"
+              title="Participacion Discipulado 2"
               required
             />
           </div>
@@ -387,6 +412,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Asistencia_a_la_Escuela_de_Liderazgo}
               placeholder="Asistencia a la Escuela de Liderazgo"
+              title="Asistencia a la Escuela de Liderazgo"
               required
             />
           </div>
@@ -402,6 +428,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.asistencia_hermanos}
               placeholder="Asistencia de Hermanos en la Iglesia"
+              title="Asistencia de Hermanos en la Iglesia"
               required
             />
           </div>
@@ -412,6 +439,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Asistencia_de_Amigos}
               placeholder="Asistencia de Amigos en la Iglesia"
+              title="Asistencia de Amigos en la Iglesia"
               required
             />
           </div>
@@ -422,6 +450,7 @@
               style="border-bottom: 2px solid #5504f8;"
               bind:value={planilla.Asistencia_de_Ninos}
               placeholder="Asistencia de Niños en la Iglesia"
+              title="Asistencia de Niños en la Iglesia"
               required
             />
           </div>
@@ -462,3 +491,7 @@
     style="border: none;color: rgb(231, 14, 14);"
   ></button>
 </form>
+
+
+
+

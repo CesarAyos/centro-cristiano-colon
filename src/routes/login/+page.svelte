@@ -7,7 +7,7 @@
   let errorMessage = "";
 
   const handleLogin = async () => {
-    const { user, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -28,62 +28,45 @@
   });
 </script>
 
-<main>
-  <div class="login-container">
-    <h1>Iniciar Sesión</h1>
-    {#if errorMessage}
-      <p class="error">{errorMessage}</p>
-    {/if}
-    <div class="d-flex justify-content-center p-4 m-5">
-      <div
-        class="card pt-3"
-        style="width:20rem;border:none;background: linear-gradient(360deg, rgba(243, 240, 240, 0.055) 10%, #333333 90%);box-shadow: 12px -12px 5px -1px rgba(0,0,0,0.75);"
-      >
-        <div class="d-flex justify-content-center">
-          <img
-            src="/logo.png"
-            class="card-img-top d-flex"
-            alt="login"
-            style="height: 120px;width:150px;"
-          />
-        </div>
-        <div class="card-body d-flex justify-content-center">
-          <form on:submit|preventDefault={handleLogin}>
-            <div>
-              <label for="email"></label><br />
-              <input
-                style="border:none;border-bottom: 2px solid #37390f;outline: none;background:transparent;width:auto"
-                bind:value={email}
-                required
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Usuario"
-              /><br />
+<section class="vh-100">
+  <div class="container mt-5">
+    <div>
+      {#if errorMessage}
+        <p class="error">{errorMessage}</p>
+      {/if}
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+              <form on:submit|preventDefault={handleLogin}>
+                <div class="mt-5">
+                  <div class="d-flex justify-content-center">
+                    <img
+                      src="/logo.png"
+                      class="card-img-top d-flex"
+                      alt="login"
+                      style="height: 120px; width: 150px;"
+                    />
+                  </div>
+                  <p class="text-white-50 mb-5">Por favor ingrese su nombre de usuario y contraseña</p>
+
+                  <div data-mdb-input-init class="form-outline form-white mb-4">
+                    <input type="email" bind:value={email} id="typeEmailX" class="form-control form-control-lg" />
+                    <label class="form-label" for="typeEmailX">Correo</label>
+                  </div>
+
+                  <div data-mdb-input-init class="form-outline form-white mb-4">
+                    <input type="password" bind:value={password} id="typePasswordX" class="form-control form-control-lg" />
+                    <label class="form-label" for="typePasswordX">Contraseña</label>
+                  </div>
+
+                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-light btn-lg px-5" type="submit">Ingresar</button>
+                </div>
+              </form>
             </div>
-            <div>
-              <label for="password"></label><br />
-              <input
-                style="border:none;border-bottom: 2px solid #37390f;outline: none;background:transparent"
-                bind:value={password}
-                required
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Contraseña"
-              /><br />
-            </div>
-            <div class=" d-flex justify-content-center m-4">
-              <input
-                class="btn btn-dark"
-                type="submit"
-                value="Iniciar sesión"
-                style="border-radius:10px; "
-              />
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</main>
+</section>

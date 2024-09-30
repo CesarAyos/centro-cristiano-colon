@@ -56,6 +56,13 @@
           style="border-radius:20px;">Ver bosquejo</button
         ></a
       >
+      <a href="vervideoadmin" class="text-center text-decoration-none fs-5 m-2">
+        <button
+          type="button"
+          class="list-group-item list-group-item-action text-dark"
+          style="border-radius:20px;">Ver Video</button
+        ></a
+      >
       <a
         href="bosquejos"
         class="text-center text-decoration-none fs-5 m-2"
@@ -64,6 +71,16 @@
           type="button"
           class="list-group-item list-group-item-action text-dark"
           style="border-radius:20px;">Subir Bosquejos</button
+        ></a
+      >
+      <a
+        href="subirvideos"
+        class="text-center text-decoration-none fs-5 m-2"
+      >
+        <button
+          type="button"
+          class="list-group-item list-group-item-action text-dark"
+          style="border-radius:20px;">Subir Video</button
         ></a
       >
       <button

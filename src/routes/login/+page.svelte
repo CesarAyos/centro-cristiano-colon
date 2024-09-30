@@ -29,7 +29,7 @@
 </script>
 
 <section class="vh-100">
-  <div class="container mt-5">
+  <div class="container">
     <div>
       {#if errorMessage}
         <p class="error">{errorMessage}</p>
@@ -39,7 +39,7 @@
           <div class="card bg-dark text-white" style="border-radius: 1rem;">
             <div class="card-body p-5 text-center">
               <form on:submit|preventDefault={handleLogin}>
-                <div class="mt-5">
+                <div class="">
                   <div class="d-flex justify-content-center">
                     <img
                       src="/logo.png"

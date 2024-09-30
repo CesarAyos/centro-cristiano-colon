@@ -21,7 +21,7 @@
   };
 </script>
 
-<main class="p-5">
+<main>
   <div class="d-flex justify-content-center m-5">
     <div
       class="list-group p-4"

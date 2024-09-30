@@ -1,4 +1,4 @@
-<header class="fixed-top">
+<header >
   <nav
     class="navbar navbar-expand-lg"
     style="background:#333333; font-family:serif;"

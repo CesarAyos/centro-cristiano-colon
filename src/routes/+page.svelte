@@ -10,7 +10,7 @@
   data-bs-ride="carousel"
 >
   <div
-    class="carousel-inner mt-5"
+    class="carousel-inner"
     style="height:360px;"
   >
     <div class="carousel-item active" data-bs-interval="10000">

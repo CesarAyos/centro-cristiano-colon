@@ -281,7 +281,7 @@
   @media (max-width: 900px) {
 
     .movil{
-      margin-top: 120px;
+      margin-top: 160px;
     }
 
  .movilletrero{

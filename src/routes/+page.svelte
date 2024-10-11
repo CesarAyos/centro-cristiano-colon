@@ -247,13 +247,13 @@
     <div id="carouselExample" class="carousel slide">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="/1p.png" class="d-block w-100" alt="...">
+          <img src="/1p.png" class="d-block img w-100" alt="...">
         </div>
         <div class="carousel-item">
-          <img src="/2p.png" class="d-block w-100" alt="...">
+          <img src="/2p.png" class="d-block img w-100" alt="...">
         </div>
         <div class="carousel-item">
-          <img src="/3p.png" class="d-block w-100" alt="...">
+          <img src="/3p.png" class="d-block img w-100" alt="...">
         </div>
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -280,8 +280,12 @@
 
   @media (max-width: 900px) {
 
+    .img{
+      height: 250px;
+    }
+
     .movil{
-      margin-top: 160px;
+      margin-top: 100px;
     }
 
  .movilletrero{

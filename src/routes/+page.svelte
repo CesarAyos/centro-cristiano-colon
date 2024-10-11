@@ -4,8 +4,8 @@
   
 </script>
 
-<div class="d-grid gap-3" style="grid-template-columns: 1fr 2fr;">
-  <div class="bg-light pt-5 border rounded-3 movil2">
+<div class="d-grid gap-3 movil2" style="grid-template-columns: 1fr 2fr;">
+  <div class="bg-light pt-5 border rounded-3 ">
     <p
       class="text-center movilletrero"
       style="font-family: Arial, Helvetica, sans-serif;"
@@ -279,12 +279,10 @@
 
 
   @media (max-width: 900px) {
- .movil{
-  display: none;
- }  
- .movil2{
-  width: 21rem;
- }
+
+    .movil{
+      margin-top: 120px;
+    }
 
  .movilletrero{
   font-size: 35px;

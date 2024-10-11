@@ -1,4 +1,4 @@
-<header class="py-3 mb-3 border-bottom" style="background:rgb(51, 51, 51)">
+<header class="py-3 border-bottom" style="background:rgb(51, 51, 51)">
   <div
     class="container-fluid d-grid gap-3 align-items-center"
     style="grid-template-columns: 1fr 2fr;"

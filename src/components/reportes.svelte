@@ -166,7 +166,7 @@
     {/if}
   </div>
   <div class="container planilla">
-    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 movil">
+    <div class="row movil">
       {#each paginatedPlanilla as item}
         <div class="card" style="border: none;">
           <div
@@ -187,11 +187,7 @@
             data-bs-target={`#modal-${item.id}`}
           >
             <div style="font-size: 14px;">
-              <p>Felipe Lider: {item.FELIPE_LIDER}</p>
-              <p>Grupo biblico: {item.grupobiblico}</p>
-              <p class="text-end" style="font-size: 10px;">
-                Fecha: {item.created_at}
-              </p>
+              <p class="text-start">Felipe Lider: {item.FELIPE_LIDER} | Grupo biblico: {item.grupobiblico} | Fecha: {item.created_at}</p>
             </div>
           </button>
           <div
@@ -373,7 +369,7 @@
 
 <div id="nuevos">
   <div class="text-center bg-dark movil">
-    <p class="text-white ">Nuevos Amigos</p>
+    <p class="text-white">Nuevos Amigos</p>
   </div>
   <div class="d-flex justify-content-center m-2">
     {#if hasSelectedCards}
@@ -385,7 +381,7 @@
     {/if}
   </div>
   <div class="container nuevos">
-    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 movil">
+    <div class="row movil">
       {#each paginatedNuevos as item}
         <div class="card" style="border: none;">
           <div
@@ -406,11 +402,9 @@
             data-bs-target={`#modal-${item.id}`}
           >
             <div style="font-size: 14px;">
-              <p class="text-start">Felipe Lider: {item.nombrelidernuevo}</p>
-              <p class="text-start">Grupo Biblico: {item.nombregruponuevo}</p>
-              <p class="text-start">Nombres: {item.nombresnuevo}</p>
-              <p class="text-end" style="font-size: 10px;">
-                Fecha: {item.created_at}
+              <p class="text-start">
+                Felipe Lider: {item.nombrelidernuevo} | Nombres: {item.nombresnuevo}
+                | Grupo Biblico: {item.nombregruponuevo} | Fecha: {item.created_at}
               </p>
             </div>
           </button>

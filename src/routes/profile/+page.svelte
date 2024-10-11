@@ -46,10 +46,10 @@
   <div class="container-fluid">
     <div class="row">
       <!-- Menú de Navegación -->
-      <div class="col-3 bg-light p-4 pc">
-        <p class="text-center">Bienvenido, {userName}</p>
+      <div class="col-3 p-3 pc" style="background: #333333;">
+        <p class="text-center mt-4 text-white">Bienvenido, {userName}</p>
         <div class="list-group">
-          <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('planilla')}>Reporte de Grupo Biblico</button>
+          <button type="button" class="list-group-item  list-group-item-action text-dark" on:click={() => showContent('planilla')}>Reporte de Grupo Biblico</button>
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('nuevos')}>Reporte de Personas Nuevas</button>
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('reportes')}>Ver Reportes</button>
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('verbosquejoadmin')}>Ver bosquejo</button>
@@ -134,6 +134,12 @@
   .movil{
     display: none;
   }
+
+  #planilla , #nuevos, #reportes, #verbosquejoadmin, #vervideoadmin, #subirvideos, #bosquejos {
+  overflow-y: auto;
+  max-height: 500px; /* Ajusta la altura máxima según sea necesario */
+}
+
 
   @media (max-width: 900px) {
    .pc{

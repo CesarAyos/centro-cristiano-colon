@@ -93,7 +93,7 @@
   }
 </script>
 
-<main class="pt-5">
+<main class="">
   <div class="container d-flex justify-content-center mt-3 mb-3 movil" >
     <div
       class="card bg-body-secondary"

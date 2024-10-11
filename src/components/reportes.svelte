@@ -154,7 +154,7 @@
 
 <div id="planilla">
   <div class="text-center bg-dark movil">
-    <p class="text-white mt-5">Reportes Grupos Biblicos</p>
+    <p class="text-white">Reportes Grupos Biblicos</p>
   </div>
   <div class="d-flex justify-content-center m-2">
     {#if hasSelectedReporte}

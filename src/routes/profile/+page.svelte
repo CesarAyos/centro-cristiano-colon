@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <!-- Contenido -->
+      <!-- pc -->
       <div class="col-9">
         <div id="planilla" class="content">
           <Planilla/>
@@ -135,18 +135,25 @@
     display: none;
   }
 
+
   #planilla , #nuevos, #reportes, #verbosquejoadmin, #vervideoadmin, #subirvideos, #bosquejos {
   overflow-y: auto;
-  max-height: 500px; /* Ajusta la altura máxima según sea necesario */
+  max-height: 500px;
 }
 
 
   @media (max-width: 900px) {
+    
    .pc{
     display: none;
    }
    .movil{
     display: block;
    }
+
+   #planilla , #nuevos, #reportes, #verbosquejoadmin, #vervideoadmin, #subirvideos, #bosquejos {
+  overflow-y: visible;
+   }
+   
 }
 </style>

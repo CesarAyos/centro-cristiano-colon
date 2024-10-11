@@ -46,7 +46,7 @@
   </script>
   
   <main>
-    <div class="container d-flex justify-content-center mt-5 mb-5 movil">
+    <div class="container d-flex justify-content-center mb-5 movil">
       <div
         class="card bg-body-secondary"
         style="width: 70rem; box-shadow: 10px 10px 5px 0px rgba(54,130,123,0.75);"

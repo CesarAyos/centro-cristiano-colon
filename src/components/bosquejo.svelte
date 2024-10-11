@@ -36,9 +36,9 @@
     };
   </script>
   
-  <main class="pt-5 movil">
+  <main class="movil">
     <div
-      class="container d-flex justify-content-center mt-5"
+      class="container d-flex justify-content-center"
       style="margin-bottom: 150px;"
     >
       <div

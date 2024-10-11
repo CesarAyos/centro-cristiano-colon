@@ -1,6 +1,6 @@
 <script>
     import { goto } from "$app/navigation";
-    import { supabase } from "../../components/supabase.js";
+    import { supabase } from "../components/supabase.js";
   
     let video = {
         Titulo:"",

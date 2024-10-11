@@ -1,80 +1,72 @@
-<header >
-  <nav
-    class="navbar navbar-expand-lg"
-    style="background:#333333; font-family:serif;"
+<header class="py-3 mb-3 border-bottom" style="background:rgb(51, 51, 51)">
+  <div
+    class="container-fluid d-grid gap-3 align-items-center"
+    style="grid-template-columns: 1fr 2fr;"
   >
-    <div class="container-fluid">
-        <div>
-      <a class="navbar-brand text-white" href="/"><img src="logo.png" style="height:32px;" alt="logo"></a
-      >
-    </div>
-      <button
-        class="navbar-toggler justify-content-center"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown"
+    <div class="dropdown">
+      <a
+        href="/"
+        class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none dropdown-toggle"
+        id="dropdownNavLink"
+        data-bs-toggle="dropdown"
         aria-expanded="false"
-        aria-label="Toggle navigation"
       >
-      <i class="fa-solid fa-bars" style="color:white"></i>
-      </button>
-      <div
-        class="collapse navbar-collapse justify-content-center"
-        id="navbarNavDropdown"
+        <img width="60" height="32" src="/logo.png" alt="" />
+      </a>
+      <ul
+        class="dropdown-menu text-small shadow"
+        aria-labelledby="dropdownNavLink"
+        style=""
       >
-        <ul class="navbar-nav">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle text-white"
-              href="!#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Quienes Somos
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="adn">Nuestro ADN</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="fundadores"
-                  >Nuestros Fundadores</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link active text-white"
-              aria-current="page"
-              href="misiones">Misiones</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" href="ubicanos"
-              >Ubicanos</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" href="predica"
-              >Predicas</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" href="verbosquejo"
-              >Bosquejos</a
-            >
-          </li>
+        <li><a class="dropdown-item" href="adn">Nuestro ADN</a></li>
+        <li>
+          <a class="dropdown-item" href="fundadores">Nuestros Fundadores</a>
+        </li>
+        <li><a class="dropdown-item" href="misiones">Misiones</a></li>
+        <li><a class="dropdown-item" href="ubicanos">Ubicanos</a></li>
+        <li><a class="dropdown-item" href="predica">Predicas</a></li>
+        <li><a class="dropdown-item" href="verbosquejo">Bosquejos</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="/">Inicio</a></li>
+      </ul>
+    </div>
+
+    <div class="d-flex align-items-center">
+      <div class="w-100 me-3 letrero">
+        <p class="text-white fs-4">UN SITIO IDEAL PARA UN MOMENTO ESPIRITUAL</p>
+      </div>
+
+      <div class="flex-shrink-0 dropdown">
+        <a
+          href="#!"
+          class="d-block link-dark text-decoration-none dropdown-toggle"
+          id="dropdownUser2"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <img
+            src="/user.png"
+            alt="mdo"
+            width="32"
+            height="32"
+            class="rounded-circle"
+          />
+        </a>
+        <ul
+          class="dropdown-menu text-small shadow"
+          aria-labelledby="dropdownUser2"
+        >
+          <li><a class="dropdown-item" href="login">Signin</a></li>
         </ul>
       </div>
-      <div class="justify-content-center">
-      <a href="login"><i class="fa-regular fa-user" style="color: white;"></i></a>
     </div>
-    </div>
-
-    
-  </nav>
+  </div>
 </header>
 
+<style> 
+  @media (max-width: 900px) {
+ .letrero{
+  display: none;
+ }  
+}
+</style>

@@ -1,5 +1,5 @@
 <script>
-  import { supabase } from "../../components/supabase.js";
+  import { supabase } from "../components/supabase.js";
 
   let planilla = {
     PASTOR_SUPERVISOR: "",
@@ -91,12 +91,10 @@
   function calcularResultado() {
     planilla.Total_financiero = planilla.Ofrendas + planilla.Diezmos;
   }
-
-  
 </script>
 
 <main class="pt-5">
-  <div class="container d-flex justify-content-center mt-3 mb-3" style="">
+  <div class="container d-flex justify-content-center mt-3 mb-3 movil" >
     <div
       class="card bg-body-secondary"
       style="width: 70rem; box-shadow: 10px 10px 5px 0px rgba(54,130,123,0.75);"
@@ -336,15 +334,10 @@
           </div>
 
           <div class="form-group col-md-6">
-            <p
-              class="form-control"
-              style="border-bottom: 2px solid #5504f8;"
-            >
+            <p class="form-control" style="border-bottom: 2px solid #5504f8;">
               Total Financiero {planilla.Total_financiero}
             </p>
-            
           </div>
-          
 
           <div class="form-group col-md-6">
             <input
@@ -481,17 +474,12 @@
   </div>
 </main>
 
-<form
-  action="profile"
-  class="btn-group dropup btn-float fs-2 m-2"
-  style="left: 5px;"
->
-  <button
-    class="fa-solid fa-house fa-flip bg-transparent"
-    style="border: none;color: rgb(231, 14, 14);"
-  ></button>
-</form>
 
-
-
+<style> 
+  @media (max-width: 900px) {
+ .movil{
+  width: 25rem;
+ }  
+}
+</style>
 

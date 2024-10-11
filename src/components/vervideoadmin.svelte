@@ -36,13 +36,13 @@
 
 
 <div class="container mt-5">
-  <div class="row row-cols-1 row-cols-md-4">
+  <div class="row">
     {#each video as item}
       <div class="col mb-4 p-1">
-        <div class="card p-2" style="width: 18rem; border: none;">
+        <div class="card m-5" >
           <h5 class="card-title">Titulo :{item.Titulo}</h5>
           <iframe
-            class="ratio ratio-16x9"
+            class="ratio ratio-4x3"
             src={`https://www.youtube.com/embed/${getYoutubeVideoId(item.Url)}`}
             frameborder="0"
             allowfullscreen

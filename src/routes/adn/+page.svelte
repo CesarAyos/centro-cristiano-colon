@@ -5,16 +5,7 @@
 </script>
 
 
-<div class="seccion mt-5">
-
-    <div class="d-flex justify-content-center pt-3" style="background: #333333;">
-      <img
-      src="/logo.png"
-      alt="logo"
-      class="logo-form"
-      style="height: 50px;"
-    />
-    </div>
+<div class="seccion">
 
 <div class="container overflow-hidden text-center">
     <div class="row gx-5">

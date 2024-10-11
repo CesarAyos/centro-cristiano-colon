@@ -28,45 +28,109 @@
   });
 </script>
 
-<section class="vh-100">
-  <div class="container">
-    <div>
-      {#if errorMessage}
-        <p class="error">{errorMessage}</p>
-      {/if}
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-          <div class="card bg-dark text-white" style="border-radius: 1rem;">
-            <div class="card-body p-5 text-center">
-              <form on:submit|preventDefault={handleLogin}>
-                <div class="">
-                  <div class="d-flex justify-content-center">
-                    <img
-                      src="/logo.png"
-                      class="card-img-top d-flex"
-                      alt="login"
-                      style="height: 120px; width: 150px;"
-                    />
-                  </div>
-                  <p class="text-white-50 mb-5">Por favor ingrese su nombre de usuario y contraseña</p>
 
-                  <div data-mdb-input-init class="form-outline form-white mb-4">
-                    <input type="email" bind:value={email} id="typeEmailX" class="form-control form-control-lg" />
-                    <label class="form-label" for="typeEmailX">Correo</label>
-                  </div>
-
-                  <div data-mdb-input-init class="form-outline form-white mb-4">
-                    <input type="password" bind:value={password} id="typePasswordX" class="form-control form-control-lg" />
-                    <label class="form-label" for="typePasswordX">Contraseña</label>
-                  </div>
-
-                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-light btn-lg px-5" type="submit">Ingresar</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="wrapper mb-5">
+  <div class="logo">
+    <img src="/mini.png" alt="logo">
   </div>
-</section>
+  <div class="text-center mt-4 name">
+    Centro Cristiano Colón
+  </div>
+  <form on:submit|preventDefault={handleLogin} class="p-3 mt-3">
+    <div class="form-field d-flex align-items-center">
+      <input type="email" name="userName" bind:value={email} id="userName" placeholder="Correo" autocomplete="off">
+    </div>
+    <div class="form-field d-flex align-items-center">
+      <input type="password" name="password" bind:value={password} id="pwd" placeholder="Contraseña" autocomplete="off">
+    </div>
+    <button type="submit" class="btn mt-3 ">Ingresar</button>
+  </form>
+</div>
+
+<style>
+  /* Importing fonts from Google */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+  /* Reseting */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .wrapper {
+    max-width: 350px;
+    min-height: 500px;
+    margin: 80px auto;
+    padding: 40px 30px 30px 30px;
+    background-color: #ecf0f3;
+    border-radius: 15px;
+    box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
+  }
+
+  .logo {
+    width: 80px;
+    margin: auto;
+  }
+
+  .logo img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px #5f5f5f,
+      0px 0px 0px 5px #ecf0f3,
+      8px 8px 15px #a7aaa7,
+      -8px -8px 15px #fff;
+  }
+
+  .wrapper .name {
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 1.3px;
+    padding-left: 10px;
+    color: #555;
+  }
+
+  .wrapper .form-field input {
+    width: 100%;
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 10px 15px 10px 10px;
+  }
+
+  .wrapper .form-field {
+    padding-left: 10px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
+  }
+
+
+  .wrapper .btn {
+    box-shadow: none;
+    width: 100%;
+    height: 40px;
+    background-color: #03A9F4;
+    color: #fff;
+    border-radius: 25px;
+    box-shadow: 3px 3px 3px #b1b1b1,
+      -3px -3px 3px #fff;
+    letter-spacing: 1.3px;
+  }
+
+
+
+
+  @media (max-width: 380px) {
+    .wrapper {
+      margin: 30px 20px;
+      padding: 40px 15px 15px 15px;
+    }
+  }
+</style>

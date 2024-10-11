@@ -478,7 +478,7 @@
 <style>
   @media (max-width: 900px) {
     .movil {
-      width: 28rem;
+      width: 18rem;
     }
   }
 </style>

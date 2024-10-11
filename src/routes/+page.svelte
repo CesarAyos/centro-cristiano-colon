@@ -283,7 +283,7 @@
   display: none;
  }  
  .movil2{
-  width: 26rem;
+  width: 28rem;
  }
 
  .movilletrero{

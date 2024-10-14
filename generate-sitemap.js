@@ -1,9 +1,10 @@
-import { sitemap } from 'sveltekit-sitemap';
+import pkg from 'sveltekit-sitemap';
+const { sitemap } = pkg;
 
 async function generateSitemap() {
   await sitemap({
     config: 'svelte.config.js',
-    hostname: 'https://centro-cristiano-colon.vercel.app/', // Cambia esto a tu dominio
+    hostname: 'https://example.com', // Cambia esto a tu dominio
   });
 }
 

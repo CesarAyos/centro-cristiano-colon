@@ -1,4 +1,5 @@
-const sitemap = require('sveltekit-sitemap');
+import pkg from 'sveltekit-sitemap';
+const sitemap = pkg.default;
 
 async function generateSitemap() {
   await sitemap({

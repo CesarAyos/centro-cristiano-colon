@@ -1,5 +1,6 @@
 <script>
   import { supabase } from "../components/supabase.js";
+  import { onMount } from "svelte";
 
   let planilla = {
     PASTOR_SUPERVISOR: "",
@@ -70,22 +71,47 @@
     };
   };
 
+  onMount(() => {
+    solicitarPermisoNotificacion();
+  });
+  const solicitarPermisoNotificacion = async () => {
+    if (!("Notification" in window)) {
+      console.error("Este navegador no soporta notificaciones de escritorio.");
+    } else if (Notification.permission === "granted") {
+      console.log("Permiso de notificación ya otorgado.");
+    } else if (Notification.permission !== "denied") {
+      const permiso = await Notification.requestPermission();
+      if (permiso === "granted") {
+        console.log("Permiso de notificación otorgado.");
+      } else {
+        console.error("Permiso de notificación denegado.");
+      }
+    }
+  };
+
+  const mostrarNotificacion = () => {
+    if (Notification.permission === "granted") {
+      new Notification(`${planilla.grupobiblico}`, {
+        body: `El reporte del grupo bíblico ha sido enviado con éxito.`,
+        icon: "/logo.png",
+      });
+    }
+  };
+
   const insertPlanilla = async () => {
     try {
       const { data, error } = await supabase
         .from("planilla")
-        .insert([planilla]);
-
+        .insert([planilla])
+        .select();
       if (error) {
         console.error("Error al insertar datos:", error.message, error.details);
       } else {
-        console.log("Datos insertados correctamente:", data);
+        mostrarNotificacion();
       }
     } catch (error) {
       console.error("Error general:", error.message);
     }
-
-    alert(" Reporte Enviado con Exito");
   };
 
   function calcularResultado() {
@@ -94,7 +120,7 @@
 </script>
 
 <main class="">
-  <div class="container d-flex justify-content-center mt-3 mb-3 movil" >
+  <div class="container d-flex justify-content-center mt-3 mb-3 movil">
     <div
       class="card bg-body-secondary"
       style="width: 70rem; box-shadow: 10px 10px 5px 0px rgba(54,130,123,0.75);"
@@ -474,12 +500,10 @@
   </div>
 </main>
 
-
-<style> 
+<style>
   @media (max-width: 900px) {
- .movil{
-  width: 21rem;
- }  
-}
+    .movil {
+      width: 21rem;
+    }
+  }
 </style>
-

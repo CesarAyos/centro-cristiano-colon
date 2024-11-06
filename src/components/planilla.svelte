@@ -112,6 +112,7 @@
     } catch (error) {
       console.error("Error general:", error.message);
     }
+    alert("Enviado con Exito");
   };
 
   function calcularResultado() {

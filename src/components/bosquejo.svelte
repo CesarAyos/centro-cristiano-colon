@@ -16,7 +16,7 @@
           console.error("Hubo un error subiendo el archivo:", error.message);
         } else {
           console.log("Archivo subido con éxito:", data);
-          goto('verbosquejoadmin');
+          goto('profile');
           
         }
       } catch (error) {

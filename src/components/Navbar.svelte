@@ -11,7 +11,7 @@
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        <img width="60" height="32" src="/logo.png" alt="" />
+        <img width="40" height="32" src="/logo.png" alt="" />
       </a>
       <ul
         class="dropdown-menu text-small shadow"
@@ -33,7 +33,7 @@
 
     <div class="d-flex align-items-center">
       <div class="w-100 me-3 letrero">
-        <p class="text-white fs-4">UN SITIO IDEAL PARA UN MOMENTO ESPIRITUAL</p>
+        <h2 class="fs-4" style="color:#92ae83;">UN SITIO IDEAL PARA UN MOMENTO ESPIRITUAL</h2>
       </div>
 
       <div class="flex-shrink-0 dropdown">
@@ -56,7 +56,7 @@
           class="dropdown-menu text-small shadow"
           aria-labelledby="dropdownUser2"
         >
-          <li><a class="dropdown-item" href="login">Signin</a></li>
+          <li><a class="dropdown-item" href="login">EQUIPO DE LÍDERES</a></li>
         </ul>
       </div>
     </div>

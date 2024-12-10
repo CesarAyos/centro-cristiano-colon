@@ -2,6 +2,8 @@
   import { supabase } from "../components/supabase.js";
   import { onMount } from "svelte";
 
+  
+
   let planilla = {
     PASTOR_SUPERVISOR: "",
     grupobiblico: "",
@@ -91,7 +93,7 @@
 
   const mostrarNotificacion = () => {
     if (Notification.permission === "granted") {
-      new Notification(`${planilla.grupobiblico}`, {
+      new Notification(`Reporte`, {
         body: `El reporte del grupo bíblico ha sido enviado con éxito.`,
         icon: "/logo.png",
       });

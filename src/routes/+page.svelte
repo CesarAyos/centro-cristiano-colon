@@ -76,7 +76,7 @@
       <div class="col pb-5" style="background: #0e0d06">
         <p
           class="text-end"
-          style="font-size: 60px; background: #0e0d06;color:#92ae83;"
+          style="font-size: 50px; background: #0e0d06;color:#92ae83;"
         >
           UNA IGLESIA EN CONSTANTE CRECIMIENTO
         </p>

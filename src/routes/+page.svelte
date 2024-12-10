@@ -9,7 +9,7 @@
   <div class="container text-center">
     <div class="row">
       <div class="col">
-        <p class="text-start mt-5" style="font-size: 62px;color:#92ae83;">
+        <p class="text-start mt-5" style="font-size: 50px;color:#92ae83;">
           CENTRO CRISTIANO COLÓN
         </p>
         <p class="fs-3 text-start" style="color:#92ae83;">

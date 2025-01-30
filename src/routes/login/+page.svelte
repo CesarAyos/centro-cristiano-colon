@@ -29,108 +29,47 @@
 </script>
 
 
-<div class="wrapper mb-5">
-  <div class="logo">
-    <img src="/mini.png" alt="logo">
-  </div>
-  <div class="text-center mt-4 name">
+
+<div
+  class="card mt-5 p-5 position-absolute top-50 start-50 translate-middle"
+  style="background: rgba(31, 54, 61, 0.75); box-shadow: 1px 2px 6px 3px rgba(0,0,0,0.75) inset;"
+>
+  <h1 class="text-center text-white">
     Centro Cristiano Colón
-  </div>
-  <form on:submit|preventDefault={handleLogin} class="p-3 mt-3">
-    <div class="form-field d-flex align-items-center">
-      <input type="email" name="userName" bind:value={email} id="userName" placeholder="Correo" autocomplete="off">
+  </h1>
+  <form on:submit|preventDefault={handleLogin}>
+    <div class="mb-3">
+      <label for="email" class="form-label text-white">Email</label>
+      <input
+        type="email"
+        placeholder="Correo electrónico"
+        class="form-control"
+        style="box-shadow: 1px 2px 6px 3px rgba(0,0,0,0.75) inset;"
+        id="email"
+        bind:value={email}
+        name="email"
+        required
+      />
     </div>
-    <div class="form-field d-flex align-items-center">
-      <input type="password" name="password" bind:value={password} id="pwd" placeholder="Contraseña" autocomplete="off">
+    <div class="mb-3">
+      <label for="password" class="form-label text-white">Contraseña</label>
+      <input
+        type="password"
+        placeholder="Contraseña"
+        class="form-control"
+        style="box-shadow: 1px 2px 6px 3px rgba(0,0,0,0.75) inset;"
+        id="password"
+        bind:value={password}
+        name="password"
+        required
+      />
     </div>
-    <button type="submit" class="btn mt-3 ">Ingresar</button>
+    <button type="submit" class="btn btn-primary">Login</button>
+    <div class="d-flex justify-content-end">
+      <a href="/" aria-label="Inicio"><i class="fa-solid fa-house fs-4"></i></a>
+    </div>
   </form>
+  {#if errorMessage}
+    <div class="mt-3 alert alert-danger">{errorMessage}</div>
+  {/if}
 </div>
-
-<style>
-  /* Importing fonts from Google */
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
-  /* Reseting */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-  }
-
-  .wrapper {
-    max-width: 350px;
-    min-height: 500px;
-    margin: 80px auto;
-    padding: 40px 30px 30px 30px;
-    background-color: #ecf0f3;
-    border-radius: 15px;
-    box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
-  }
-
-  .logo {
-    width: 80px;
-    margin: auto;
-  }
-
-  .logo img {
-    width: 100%;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 50%;
-    box-shadow: 0px 0px 3px #5f5f5f,
-      0px 0px 0px 5px #ecf0f3,
-      8px 8px 15px #a7aaa7,
-      -8px -8px 15px #fff;
-  }
-
-  .wrapper .name {
-    font-weight: 600;
-    font-size: 1.4rem;
-    letter-spacing: 1.3px;
-    padding-left: 10px;
-    color: #555;
-  }
-
-  .wrapper .form-field input {
-    width: 100%;
-    display: block;
-    border: none;
-    outline: none;
-    background: none;
-    font-size: 1.2rem;
-    color: #666;
-    padding: 10px 15px 10px 10px;
-  }
-
-  .wrapper .form-field {
-    padding-left: 10px;
-    margin-bottom: 20px;
-    border-radius: 20px;
-    box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
-  }
-
-
-  .wrapper .btn {
-    box-shadow: none;
-    width: 100%;
-    height: 40px;
-    background-color: #03A9F4;
-    color: #fff;
-    border-radius: 25px;
-    box-shadow: 3px 3px 3px #b1b1b1,
-      -3px -3px 3px #fff;
-    letter-spacing: 1.3px;
-  }
-
-
-
-
-  @media (max-width: 380px) {
-    .wrapper {
-      margin: 30px 20px;
-      padding: 40px 15px 15px 15px;
-    }
-  }
-</style>

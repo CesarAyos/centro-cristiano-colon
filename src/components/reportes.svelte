@@ -10,7 +10,7 @@
   let currentPagePlanilla = 1;
   let currentPageNuevos = 1;
   const itemsPerPage = 10;
-  const itemsPerPagePlanilla = 7;
+  const itemsPerPagePlanilla = 8;
   let totalPagesPlanilla = 1;
   let totalPagesNuevos = 1;
   $: hasSelectedCards = selectedCards.length > 0;

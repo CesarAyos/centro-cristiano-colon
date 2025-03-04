@@ -75,7 +75,7 @@
         <div id="verbosquejoadmin" class="content d-none">
           <Verbosquejo/>
         </div>
-        <div id="verbosquejoadmin" class="content d-none">
+        <div id="estadistica" class="content d-none">
           <Estadistica/>
         </div>
         <div id="vervideoadmin" class="content d-none">
@@ -141,7 +141,7 @@
   }
 
 
-  #planilla , #nuevos, #reportes, #verbosquejoadmin, #vervideoadmin, #subirvideos, #bosquejos {
+  #planilla , #nuevos, #reportes, #verbosquejoadmin, #vervideoadmin, #subirvideos, #bosquejos ,#estadistica {
   overflow-y: auto;
   max-height: 500px;
 }
@@ -156,7 +156,7 @@
     display: block;
    }
 
-   #planilla , #nuevos, #reportes, #verbosquejoadmin, #vervideoadmin, #subirvideos, #bosquejos {
+   #planilla , #nuevos, #reportes, #verbosquejoadmin, #vervideoadmin, #subirvideos, #bosquejos ,#estadistica {
   overflow-y: visible;
    }
    

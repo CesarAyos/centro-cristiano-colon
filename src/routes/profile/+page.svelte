@@ -8,7 +8,7 @@
   import { onMount } from "svelte";
   import Verbosquejo from "../../components/verbosquejo.svelte";
   import Vervideoadmin from "../../components/vervideoadmin.svelte";
-  
+  import Estadistica from "../../components/estadistica.svelte";
 
 
   let user = null;
@@ -53,6 +53,7 @@
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('nuevos')}>Reporte de Personas Nuevas</button>
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('reportes')}>Ver Reportes</button>
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('verbosquejoadmin')}>Ver bosquejo</button>
+          <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('estadistica')}>Estadistica</button>
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('vervideoadmin')}>Ver Video</button>
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('bosquejos')}>Subir Bosquejos</button>
           <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('subirvideos')}>Subir Video</button>
@@ -73,6 +74,9 @@
         </div>
         <div id="verbosquejoadmin" class="content d-none">
           <Verbosquejo/>
+        </div>
+        <div id="verbosquejoadmin" class="content d-none">
+          <Estadistica/>
         </div>
         <div id="vervideoadmin" class="content d-none">
           <!-- Contenido de "Ver Video" -->
@@ -114,6 +118,7 @@
             <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('nuevos')}>Reporte de Personas Nuevas</button>
             <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('reportes')}>Ver Reportes</button>
             <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('verbosquejoadmin')}>Ver bosquejo</button>
+            <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('estadistica')}>Estadistica</button>
             <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('vervideoadmin')}>Ver Video</button>
             <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('bosquejos')}>Subir Bosquejos</button>
             <button type="button" class="list-group-item list-group-item-action text-dark" on:click={() => showContent('subirvideos')}>Subir Video</button>

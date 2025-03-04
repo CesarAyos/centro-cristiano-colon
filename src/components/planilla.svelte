@@ -204,16 +204,24 @@
           </div>
 
           <div class="form-group col-md-6">
-            <input
-              type="text"
-              class="form-control"
-              style="border-bottom: 2px solid #5504f8;"
-              bind:value={planilla.grupobiblico}
-              placeholder="Nombre del grupo biblico"
-              title="Nombre del grupo biblico"
+            <select 
+              class="form-control" 
+              style="border-bottom: 2px solid #5504f8;" 
+              bind:value={planilla.grupobiblico} 
               required
-            />
+            >
+              <option value="" disabled selected>Selecciona el grupo bíblico</option>
+              <option value="belen">Belén</option>
+              <option value="elohim">Elohim</option>
+              <option value="juda">Judá</option>
+              <option value="betel">Betel</option>
+              <option value="alfa-y-omega">Alfa y Omega</option>
+              <option value="jireth">Jireth</option>
+              <option value="agente-de-paz">Agente de paz</option>
+              <option value="el-roi">El Roi</option>
+            </select>
           </div>
+          
           <div class="form-group col-6">
             <input
               type="number"

@@ -31,7 +31,6 @@
     asistencia_hermanos: "",
     Asistencia_de_Amigos: "",
     Asistencia_de_Ninos: "",
-
   };
 
   const onSubmitHandlers = () => {
@@ -100,37 +99,36 @@
   };
 
   const insertPlanilla = async () => {
-   try {
+    try {
       const { data, error } = await supabase
-         .from("planilla")
-         .insert([planilla])
-         .select();
+        .from("planilla")
+        .insert([planilla])
+        .select();
 
       if (error) {
-         console.error("Error al insertar datos:", error.message, error.details);
+        console.error("Error al insertar datos:", error.message, error.details);
       } else {
-         console.log("Datos insertados con éxito:", data);
-         
-         // Aseguramos que los datos de Supabase se reflejen en planilla
-         planilla = data[0] || planilla; 
+        console.log("Datos insertados con éxito:", data);
 
-         mostrarNotificacion();
-         enviarAWhatsApp(); // Enviamos solo cuando los datos están seguros
+        // Aseguramos que los datos de Supabase se reflejen en planilla
+        planilla = data[0] || planilla;
+
+        mostrarNotificacion();
+        enviarAWhatsApp(); // Enviamos solo cuando los datos están seguros
       }
-   } catch (error) {
+    } catch (error) {
       console.error("Error general:", error.message);
-   }
-   alert("Enviado con éxito");
-};
-
+    }
+    alert("Enviado con éxito");
+  };
 
   function calcularResultado() {
     planilla.Total_financiero = planilla.Ofrendas + planilla.Diezmos;
   }
 
-const enviarAWhatsApp = () => {
-  const numero = "584165313465"; // Código de país + número sin el 0 inicial
-  const mensaje = encodeURIComponent(`
+  const enviarAWhatsApp = () => {
+    const numero = "584165313465"; // Código de país + número sin el 0 inicial
+    const mensaje = encodeURIComponent(`
     📄 *Reporte del Grupo Bíblico* 
     🔹 *Pastor Supervisor:* ${planilla.PASTOR_SUPERVISOR}
     🔹 *Grupo Bíblico:* ${planilla.grupobiblico}
@@ -164,18 +162,17 @@ const enviarAWhatsApp = () => {
     👶 *Niños:* ${planilla.Asistencia_de_Ninos}
   `);
 
-  const url = `https://wa.me/${numero}?text=${mensaje}`;
+    const url = `https://wa.me/${numero}?text=${mensaje}`;
 
-  // En móviles, cambiar la página activa en lugar de abrir una nueva ventana
-  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-    window.location.href = url;
-  } else {
-    window.open(url, "_blank");
-  }
-};
-
-
-
+    // Abrir WhatsApp correctamente en móviles y PC
+    setTimeout(() => {
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        window.open(url, "_self"); // Abre en la misma ventana en móviles
+      } else {
+        window.open(url, "_blank"); // Abre en una nueva pestaña en PC
+      }
+    }, 500); // Retraso de medio segundo para evitar bloqueos
+  };
 </script>
 
 <main class="">
@@ -260,13 +257,15 @@ const enviarAWhatsApp = () => {
           </div>
 
           <div class="form-group col-md-6">
-            <select 
-              class="form-control" 
-              style="border-bottom: 2px solid #5504f8;" 
-              bind:value={planilla.grupobiblico} 
+            <select
+              class="form-control"
+              style="border-bottom: 2px solid #5504f8;"
+              bind:value={planilla.grupobiblico}
               required
             >
-              <option value="" disabled selected>Selecciona el grupo bíblico</option>
+              <option value="" disabled selected
+                >Selecciona el grupo bíblico</option
+              >
               <option value="belen">Belén</option>
               <option value="elohim">Elohim</option>
               <option value="juda">Judá</option>
@@ -277,7 +276,7 @@ const enviarAWhatsApp = () => {
               <option value="el-roi">El Roi</option>
             </select>
           </div>
-          
+
           <div class="form-group col-6">
             <input
               type="number"

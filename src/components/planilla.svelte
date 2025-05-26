@@ -128,8 +128,8 @@
     planilla.Total_financiero = planilla.Ofrendas + planilla.Diezmos;
   }
 
- const enviarAWhatsApp = () => {
-  const numero = "584165313465"; // Código de país (+58 para Venezuela) + número sin el 0 inicial
+const enviarAWhatsApp = () => {
+  const numero = "584165313465"; // Código de país + número sin el 0 inicial
   const mensaje = encodeURIComponent(`
     📄 *Reporte del Grupo Bíblico* 
     🔹 *Pastor Supervisor:* ${planilla.PASTOR_SUPERVISOR}
@@ -165,8 +165,15 @@
   `);
 
   const url = `https://wa.me/${numero}?text=${mensaje}`;
-  window.open(url, "_blank");
+
+  // En móviles, cambiar la página activa en lugar de abrir una nueva ventana
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    window.location.href = url;
+  } else {
+    window.open(url, "_blank");
+  }
 };
+
 
 
 </script>

@@ -2,8 +2,6 @@
   import { supabase } from "../components/supabase.js";
   import { onMount } from "svelte";
 
-  
-
   let planilla = {
     PASTOR_SUPERVISOR: "",
     grupobiblico: "",
@@ -33,6 +31,7 @@
     asistencia_hermanos: "",
     Asistencia_de_Amigos: "",
     Asistencia_de_Ninos: "",
+
   };
 
   const onSubmitHandlers = () => {
@@ -101,25 +100,75 @@
   };
 
   const insertPlanilla = async () => {
-    try {
+   try {
       const { data, error } = await supabase
-        .from("planilla")
-        .insert([planilla])
-        .select();
+         .from("planilla")
+         .insert([planilla])
+         .select();
+
       if (error) {
-        console.error("Error al insertar datos:", error.message, error.details);
+         console.error("Error al insertar datos:", error.message, error.details);
       } else {
-        mostrarNotificacion();
+         console.log("Datos insertados con éxito:", data);
+         
+         // Aseguramos que los datos de Supabase se reflejen en planilla
+         planilla = data[0] || planilla; 
+
+         mostrarNotificacion();
+         enviarAWhatsApp(); // Enviamos solo cuando los datos están seguros
       }
-    } catch (error) {
+   } catch (error) {
       console.error("Error general:", error.message);
-    }
-    alert("Enviado con Exito");
-  };
+   }
+   alert("Enviado con éxito");
+};
+
 
   function calcularResultado() {
     planilla.Total_financiero = planilla.Ofrendas + planilla.Diezmos;
   }
+
+ const enviarAWhatsApp = () => {
+  const numero = "584165313465"; // Código de país (+58 para Venezuela) + número sin el 0 inicial
+  const mensaje = encodeURIComponent(`
+    📄 *Reporte del Grupo Bíblico* 
+    🔹 *Pastor Supervisor:* ${planilla.PASTOR_SUPERVISOR}
+    🔹 *Grupo Bíblico:* ${planilla.grupobiblico}
+    🏅 *Coordinador Dpto:* ${planilla.COORDINADOR_DPTO}
+    🔰 *Supervisor de Red:* ${planilla.SUPERVISOR_DE_RED}
+    🏆 *Felipe de Red:* ${planilla.FELIPE_DE_RED}
+    ⭐ *Felipe Líder:* ${planilla.FELIPE_LIDER}
+    
+    👥 *Asistencia* 
+    ✅ *VEA:* ${planilla.Asistencia_vea}
+    ✅ *Asistentes:* ${planilla.asistentes}
+    👤 *Felipes:* ${planilla.Felipes}
+    🧑🏽 *Etíopes:* ${planilla.Etiopes}
+    📝 *Novedades:* ${planilla.novedades}
+    
+    🤝 *Participación* 
+    🎯 *Misión Amigo:* ${planilla.Participacion_Mision_Amigo}
+    🔄 *Consolidación:* ${planilla.Participacion_Consolidacion}
+    📖 *Discipulado 1:* ${planilla.Participacion_Discipulado_1}
+    📖 *Discipulado 2:* ${planilla.Participacion_Discipulado_2}
+    🏫 *Escuela de Liderazgo:* ${planilla.Asistencia_a_la_Escuela_de_Liderazgo}
+    
+    💰 *Finanzas* 
+    💵 *Diezmos:* ${planilla.Diezmos}
+    💸 *Ofrendas:* ${planilla.Ofrendas}
+    💳 *Total Financiero:* ${planilla.Total_financiero}
+    
+    🙌 *Asistencia General* 
+    🙋‍♂️ *Hermanos:* ${planilla.asistencia_hermanos}
+    🧑‍🤝‍🧑 *Amigos:* ${planilla.Asistencia_de_Amigos}
+    👶 *Niños:* ${planilla.Asistencia_de_Ninos}
+  `);
+
+  const url = `https://wa.me/${numero}?text=${mensaje}`;
+  window.open(url, "_blank");
+};
+
+
 </script>
 
 <main class="">

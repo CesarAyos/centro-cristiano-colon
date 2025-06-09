@@ -90,13 +90,38 @@
   };
 
   const mostrarNotificacion = () => {
-    if (Notification.permission === "granted") {
-      new Notification(`Reporte`, {
-        body: `El reporte del grupo bíblico ha sido enviado con éxito.`,
-        icon: "/logo.png",
+  // 1. Verificar si el navegador soporta notificaciones
+  if (!("Notification" in window)) {
+    console.warn("Este navegador no soporta notificaciones.");
+    return; // Salir si no hay soporte
+  }
+
+  // 2. Si ya tienes permiso
+  if (Notification.permission === "granted") {
+    try {
+      // Intentar mostrar la notificación
+      new Notification(`📄 Reporte`, {
+        body: `✅ El reporte del grupo bíblico se envió correctamente.`,
+        icon: "/logo.png", // Opcional: añade un ícono
       });
+    } catch (error) {
+      console.error("Error al mostrar notificación:", error);
+      // Fallback: Usar un alert si falla
+      alert("✅ El reporte se envió correctamente.");
     }
-  };
+  } 
+  // 3. Si el permiso no está denegado, pedirlo
+  else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then((permiso) => {
+      if (permiso === "granted") {
+        new Notification(`📄 Reporte`, {
+          body: `✅ El reporte se envió correctamente.`,
+          icon: "/logo.png",
+        });
+      }
+    });
+  }
+};
 
  const insertPlanilla = async () => {
   try {

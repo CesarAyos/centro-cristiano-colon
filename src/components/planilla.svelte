@@ -98,37 +98,38 @@
     }
   };
 
-  const insertPlanilla = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("planilla")
-        .insert([planilla])
-        .select();
+ const insertPlanilla = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("planilla")
+      .insert([planilla])
+      .select();
 
-      if (error) {
-        console.error("Error al insertar datos:", error.message, error.details);
-      } else {
-        console.log("Datos insertados con éxito:", data);
-
-        // Aseguramos que los datos de Supabase se reflejen en planilla
-        planilla = data[0] || planilla;
-
-        mostrarNotificacion();
-        enviarAWhatsApp(); // Enviamos solo cuando los datos están seguros
-      }
-    } catch (error) {
-      console.error("Error general:", error.message);
+    if (error) {
+      console.error("Error al insertar datos:", error.message, error.details);
+      alert("Error al enviar los datos");
+      return; // Salimos si hay error
+    } else {
+      console.log("Datos insertados con éxito:", data);
+      planilla = data[0] || planilla;
+      
+      mostrarNotificacion();
+      
+      enviarAWhatsApp();
     }
-    alert("Enviado con éxito");
-  };
+  } catch (error) {
+    console.error("Error general:", error.message);
+    alert("Ocurrió un error al procesar la solicitud");
+  }
+};
 
   function calcularResultado() {
     planilla.Total_financiero = planilla.Ofrendas + planilla.Diezmos;
   }
 
   const enviarAWhatsApp = () => {
-    const numero = "584165313465"; // Código de país + número sin el 0 inicial
-    const mensaje = encodeURIComponent(`
+  const numero = "584165313465";
+  const mensaje = encodeURIComponent(`
     📄 *Reporte del Grupo Bíblico* 
     🔹 *Pastor Supervisor:* ${planilla.PASTOR_SUPERVISOR}
     🔹 *Grupo Bíblico:* ${planilla.grupobiblico}
@@ -141,7 +142,7 @@
     ✅ *VEA:* ${planilla.Asistencia_vea}
     ✅ *Asistentes:* ${planilla.asistentes}
     👤 *Felipes:* ${planilla.Felipes}
-    🧑🏽 *Etíopes:* ${planilla.Etiopes}
+    � *Etíopes:* ${planilla.Etiopes}
     📝 *Novedades:* ${planilla.novedades}
     
     🤝 *Participación* 
@@ -162,17 +163,16 @@
     👶 *Niños:* ${planilla.Asistencia_de_Ninos}
   `);
 
-    const url = `https://wa.me/${numero}?text=${mensaje}`;
+  const url = `https://wa.me/${numero}?text=${mensaje}`;
 
-    // Abrir WhatsApp correctamente en móviles y PC
-    setTimeout(() => {
-      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        window.open(url, "_self"); // Abre en la misma ventana en móviles
-      } else {
-        window.open(url, "_blank"); // Abre en una nueva pestaña en PC
-      }
-    }, 500); // Retraso de medio segundo para evitar bloqueos
-  };
+  
+  window.open(url, '_blank');
+  
+  
+  setTimeout(() => {
+    alert("Enviado con éxito");
+  }, 1000);
+};
 </script>
 
 <main class="">

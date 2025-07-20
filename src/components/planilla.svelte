@@ -169,7 +169,7 @@
   }
 
   const enviarAWhatsApp = () => {
-  const numero = "584165313465";
+  const numero = "584247187229";
   const mensaje = encodeURIComponent(`
     📄 *Reporte del Grupo Bíblico* 
     🔹 *Pastor Supervisor:* ${planilla.PASTOR_SUPERVISOR}

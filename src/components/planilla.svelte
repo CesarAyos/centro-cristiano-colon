@@ -33,6 +33,11 @@
     Asistencia_de_Ninos: "",
   };
 
+  // Variables para notificaciones
+  let mostrarNotif = false;
+  let mensajeNotif = "";
+  let tipoNotif = "success"; // success, error, info
+
   const onSubmitHandlers = () => {
     insertPlanilla();
     Clear();
@@ -89,58 +94,16 @@
     }
   };
 
-  const mostrarNotificacion = () => {
-  // Detectar si estamos en App24Creator
-  if (isApp24Creator()) {
-    // Para App24Creator, usar alert simple con instrucciones claras
-    alert("✅ Reporte guardado exitosamente en la base de datos.\n\n📱 En 3 segundos se abrirá WhatsApp con el mensaje pre-llenado.\n\nSi WhatsApp no se abre, se copiará el mensaje al portapapeles.");
-    return;
-  }
-
-  // 1. Verificar si el navegador soporta notificaciones
-  if (!("Notification" in window)) {
-    console.warn("Este navegador no soporta notificaciones.");
-    // Fallback: Usar un alert si no hay soporte
-    alert("✅ Reporte enviado correctamente a la base de datos y WhatsApp.");
-    return;
-  }
-
-  // 2. Si ya tienes permiso
-  if (Notification.permission === "granted") {
-    try {
-      // Intentar mostrar la notificación
-      new Notification(`📄 Reporte Enviado`, {
-        body: `✅ Reporte guardado en la base de datos y enviado a WhatsApp automáticamente.`,
-        icon: "/logo.png",
-        requireInteraction: false, // No requiere interacción del usuario
-        silent: false
-      });
-    } catch (error) {
-      console.error("Error al mostrar notificación:", error);
-      // Fallback: Usar un alert si falla
-      alert("✅ Reporte enviado correctamente a la base de datos y WhatsApp.");
-    }
-  } 
-  // 3. Si el permiso no está denegado, pedirlo
-  else if (Notification.permission !== "denied") {
-    Notification.requestPermission().then((permiso) => {
-      if (permiso === "granted") {
-        new Notification(`📄 Reporte Enviado`, {
-          body: `✅ Reporte guardado en la base de datos y enviado a WhatsApp automáticamente.`,
-          icon: "/logo.png",
-          requireInteraction: false,
-          silent: false
-        });
-      } else {
-        // Si no se otorga permiso, mostrar alert
-        alert("✅ Reporte enviado correctamente a la base de datos y WhatsApp.");
-      }
-    });
-  } else {
-    // Si el permiso está denegado, mostrar alert
-    alert("✅ Reporte enviado correctamente a la base de datos y WhatsApp.");
-  }
-};
+  const mostrarNotificacion = (mensaje = "✅ Reporte enviado exitosamente a la base de datos y WhatsApp.", tipo = "success") => {
+    mensajeNotif = mensaje;
+    tipoNotif = tipo;
+    mostrarNotif = true;
+    
+    // Ocultar la notificación después de 4 segundos
+    setTimeout(() => {
+      mostrarNotif = false;
+    }, 4000);
+  };
 
  const insertPlanilla = async () => {
   try {
@@ -151,25 +114,21 @@
 
     if (error) {
       console.error("Error al insertar datos:", error.message, error.details);
-      alert("Error al enviar los datos");
+      mostrarNotificacion("❌ Error al enviar los datos", "error");
       return; // Salimos si hay error
     } else {
       console.log("Datos insertados con éxito:", data);
       planilla = data[0] || planilla;
       
-      // Mostrar notificación de éxito primero
-      mostrarNotificacion();
+      // Enviar a WhatsApp inmediatamente después de guardar en BD
+      enviarAWhatsApp();
       
-      // Enviar a WhatsApp automáticamente después de un delay
-      // Delay más largo para App24Creator
-      const delay = isApp24Creator() ? 3000 : 1500;
-      setTimeout(() => {
-        enviarAWhatsApp();
-      }, delay);
+      // Mostrar notificación inmediatamente
+      mostrarNotificacion();
     }
   } catch (error) {
     console.error("Error general:", error.message);
-    alert("Ocurrió un error al procesar la solicitud");
+    mostrarNotificacion("❌ Ocurrió un error al procesar la solicitud", "error");
   }
 };
 
@@ -186,20 +145,75 @@
 
   // Función para abrir WhatsApp de manera más confiable
   const abrirWhatsApp = (numero, mensaje) => {
-    // Crear un elemento <a> temporal
-    const link = document.createElement('a');
-    link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
+    try {
+      // Método 1: Crear un elemento <a> temporal
+      const link = document.createElement('a');
+      link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      
+      // Agregar al DOM temporalmente
+      document.body.appendChild(link);
+      
+      // Hacer clic en el enlace
+      link.click();
+      
+      // Remover el elemento temporal después de un pequeño delay
+      setTimeout(() => {
+        if (document.body.contains(link)) {
+          document.body.removeChild(link);
+        }
+      }, 100);
+      
+      return true;
+    } catch (error) {
+      console.error('Error en abrirWhatsApp:', error);
+      return false;
+    }
+  };
+
+  // Función para forzar la apertura de WhatsApp
+  const forzarAperturaWhatsApp = (numero, mensaje) => {
+    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
     
-    // Agregar al DOM temporalmente
-    document.body.appendChild(link);
+    // Intentar múltiples métodos
+    try {
+      // Método 1: window.open
+      const nuevaVentana = window.open(url, '_blank');
+      if (nuevaVentana) {
+        return true;
+      }
+    } catch (error) {
+      console.log('Método 1 falló:', error);
+    }
     
-    // Hacer clic en el enlace
-    link.click();
+    try {
+      // Método 2: window.location.href
+      window.location.href = url;
+      return true;
+    } catch (error) {
+      console.log('Método 2 falló:', error);
+    }
     
-    // Remover el elemento temporal
-    document.body.removeChild(link);
+    try {
+      // Método 3: Crear iframe temporal
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = url;
+      document.body.appendChild(iframe);
+      
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      }, 1000);
+      
+      return true;
+    } catch (error) {
+      console.log('Método 3 falló:', error);
+    }
+    
+    return false;
   };
 
   const enviarAWhatsApp = () => {
@@ -242,41 +256,31 @@
   const mensaje = encodeURIComponent(mensajeTexto);
   const url = `https://wa.me/${numero}?text=${mensaje}`;
 
-  // Detectar si estamos en App24Creator
-  if (isApp24Creator()) {
-    // Para App24Creator, usar método más confiable
-    try {
-      // Método 1: Usar función personalizada para abrir WhatsApp
-      abrirWhatsApp(numero, mensajeTexto);
-    } catch (error) {
-      try {
-        // Método 2: URL directa como fallback
-        window.location.href = url;
-      } catch (error2) {
-        try {
-          // Método 3: Intent de Android como último recurso
-          const intentUrl = `intent://send/${numero}#Intent;scheme=smsto;package=com.whatsapp;S.sms_body=${encodeURIComponent(mensajeTexto)};end`;
-          window.location.href = intentUrl;
-        } catch (error3) {
-          // Método 4: Fallback con copia al portapapeles
-          if (navigator.clipboard) {
-            navigator.clipboard.writeText(mensajeTexto).then(() => {
-              alert(`📱 Mensaje copiado al portapapeles!\n\nNúmero: ${numero}\n\nEl mensaje ya está en tu portapapeles, solo pégalo en WhatsApp.`);
-            });
-          } else {
-            alert(`📱 Para enviar el reporte a WhatsApp:\n\nNúmero: ${numero}\n\nMensaje:\n\n${mensajeTexto}`);
-          }
-        }
-      }
+  // Método más agresivo para asegurar que funcione desde la primera vez
+  if (!forzarAperturaWhatsApp(numero, mensajeTexto)) {
+    // Si todos los métodos fallan, copiar al portapapeles
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(mensajeTexto).then(() => {
+        mostrarNotificacion(`📱 Mensaje copiado al portapapeles! Número: ${numero}`, "info");
+      });
+    } else {
+      mostrarNotificacion(`📱 Para enviar: Número ${numero} - Mensaje copiado`, "info");
     }
-  } else {
-    // Para navegador normal
-    window.open(url, '_blank');
   }
 };
 </script>
 
 <main class="">
+  <!-- Notificación elegante -->
+  {#if mostrarNotif}
+    <div class="notification-container">
+      <div class="notification {tipoNotif}">
+        <span class="notification-message">{mensajeNotif}</span>
+        <button class="notification-close" on:click={() => mostrarNotif = false}>×</button>
+      </div>
+    </div>
+  {/if}
+
   <div class="container d-flex justify-content-center mt-3 mb-3 movil">
     <div
       class="card bg-body-secondary"
@@ -671,6 +675,106 @@
   @media (max-width: 900px) {
     .movil {
       width: 21rem;
+    }
+  }
+
+  /* Estilos para notificaciones elegantes */
+  .notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 300px;
+    max-width: 400px;
+    font-weight: 500;
+    color: white;
+  }
+
+  .notification.success {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border-left: 4px solid #2E7D32;
+  }
+
+  .notification.error {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    border-left: 4px solid #C62828;
+  }
+
+  .notification.info {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+    border-left: 4px solid #1565C0;
+  }
+
+  .notification-message {
+    flex: 1;
+    margin-right: 10px;
+    font-size: 14px;
+  }
+
+  .notification-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+  }
+
+  .notification-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    .notification-container {
+      top: 10px;
+      right: 10px;
+      left: 10px;
+    }
+
+    .notification {
+      min-width: auto;
+      max-width: none;
+      width: 100%;
     }
   }
 </style>

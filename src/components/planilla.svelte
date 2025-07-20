@@ -90,6 +90,13 @@
   };
 
   const mostrarNotificacion = () => {
+  // Detectar si estamos en App24Creator
+  if (isApp24Creator()) {
+    // Para App24Creator, usar alert simple con instrucciones claras
+    alert("✅ Reporte guardado exitosamente en la base de datos.\n\n📱 En 3 segundos se intentará abrir WhatsApp automáticamente.\n\nSi no se abre WhatsApp, se te mostrará el mensaje para copiar manualmente.");
+    return;
+  }
+
   // 1. Verificar si el navegador soporta notificaciones
   if (!("Notification" in window)) {
     console.warn("Este navegador no soporta notificaciones.");
@@ -153,10 +160,12 @@
       // Mostrar notificación de éxito primero
       mostrarNotificacion();
       
-      // Enviar a WhatsApp automáticamente después de un pequeño delay
+      // Enviar a WhatsApp automáticamente después de un delay
+      // Delay más largo para App24Creator
+      const delay = isApp24Creator() ? 3000 : 1500;
       setTimeout(() => {
         enviarAWhatsApp();
-      }, 1500);
+      }, delay);
     }
   } catch (error) {
     console.error("Error general:", error.message);
@@ -167,6 +176,13 @@
   function calcularResultado() {
     planilla.Total_financiero = planilla.Ofrendas + planilla.Diezmos;
   }
+
+  // Función para detectar si estamos en App24Creator
+  const isApp24Creator = () => {
+    return window.navigator.userAgent.includes('App24Creator') || 
+           window.navigator.userAgent.includes('WebView') ||
+           window.navigator.userAgent.includes('Android') && window.navigator.userAgent.includes('Mobile');
+  };
 
   const enviarAWhatsApp = () => {
   const numero = "584247187229";
@@ -206,8 +222,26 @@
 
   const url = `https://wa.me/${numero}?text=${mensaje}`;
 
-  // Abrir WhatsApp automáticamente sin confirmaciones adicionales
-  window.open(url, '_blank');
+  // Detectar si estamos en App24Creator
+  if (isApp24Creator()) {
+    // Para App24Creator, intentar múltiples métodos
+    try {
+      // Método 1: Intent de Android
+      const intentUrl = `intent://send/${numero}#Intent;scheme=smsto;package=com.whatsapp;S.sms_body=${mensaje};end`;
+      window.location.href = intentUrl;
+    } catch (error) {
+      try {
+        // Método 2: URL directa de WhatsApp
+        window.location.href = url;
+      } catch (error2) {
+        // Método 3: Fallback con alert
+        alert(`📱 Para enviar el reporte a WhatsApp, copia este número: ${numero}\n\nY pega este mensaje:\n\n${decodeURIComponent(mensaje)}`);
+      }
+    }
+  } else {
+    // Para navegador normal
+    window.open(url, '_blank');
+  }
 };
 </script>
 

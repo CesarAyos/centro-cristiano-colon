@@ -93,7 +93,7 @@
   // Detectar si estamos en App24Creator
   if (isApp24Creator()) {
     // Para App24Creator, usar alert simple con instrucciones claras
-    alert("✅ Reporte guardado exitosamente en la base de datos.\n\n📱 En 3 segundos se intentará abrir WhatsApp automáticamente.\n\nSi no se abre WhatsApp, se te mostrará el mensaje para copiar manualmente.");
+    alert("✅ Reporte guardado exitosamente en la base de datos.\n\n📱 En 3 segundos se abrirá WhatsApp con el mensaje pre-llenado.\n\nSi WhatsApp no se abre, se copiará el mensaje al portapapeles.");
     return;
   }
 
@@ -184,58 +184,89 @@
            window.navigator.userAgent.includes('Android') && window.navigator.userAgent.includes('Mobile');
   };
 
+  // Función para abrir WhatsApp de manera más confiable
+  const abrirWhatsApp = (numero, mensaje) => {
+    // Crear un elemento <a> temporal
+    const link = document.createElement('a');
+    link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    
+    // Agregar al DOM temporalmente
+    document.body.appendChild(link);
+    
+    // Hacer clic en el enlace
+    link.click();
+    
+    // Remover el elemento temporal
+    document.body.removeChild(link);
+  };
+
   const enviarAWhatsApp = () => {
   const numero = "584247187229";
-  const mensaje = encodeURIComponent(`
-    📄 *Reporte del Grupo Bíblico* 
-    🔹 *Pastor Supervisor:* ${planilla.PASTOR_SUPERVISOR}
-    🔹 *Grupo Bíblico:* ${planilla.grupobiblico}
-    🏅 *Coordinador Dpto:* ${planilla.COORDINADOR_DPTO}
-    🔰 *Supervisor de Red:* ${planilla.SUPERVISOR_DE_RED}
-    🏆 *Felipe de Red:* ${planilla.FELIPE_DE_RED}
-    ⭐ *Felipe Líder:* ${planilla.FELIPE_LIDER}
-    
-    👥 *Asistencia* 
-    ✅ *VEA:* ${planilla.Asistencia_vea}
-    ✅ *Asistentes:* ${planilla.asistentes}
-    👤 *Felipes:* ${planilla.Felipes}
-    👥 *Etíopes:* ${planilla.Etiopes}
-    📝 *Novedades:* ${planilla.novedades}
-    
-    🤝 *Participación* 
-    🎯 *Misión Amigo:* ${planilla.Participacion_Mision_Amigo}
-    🔄 *Consolidación:* ${planilla.Participacion_Consolidacion}
-    📖 *Discipulado 1:* ${planilla.Participacion_Discipulado_1}
-    📖 *Discipulado 2:* ${planilla.Participacion_Discipulado_2}
-    🏫 *Escuela de Liderazgo:* ${planilla.Asistencia_a_la_Escuela_de_Liderazgo}
-    
-    💰 *Finanzas* 
-    💵 *Diezmos:* ${planilla.Diezmos}
-    💸 *Ofrendas:* ${planilla.Ofrendas}
-    💳 *Total Financiero:* ${planilla.Total_financiero}
-    
-    🙌 *Asistencia General* 
-    🙋‍♂️ *Hermanos:* ${planilla.asistencia_hermanos}
-    🧑‍🤝‍🧑 *Amigos:* ${planilla.Asistencia_de_Amigos}
-    👶 *Niños:* ${planilla.Asistencia_de_Ninos}
-  `);
+  
+  // Crear mensaje más simple y compatible (sin asteriscos para evitar problemas)
+  const mensajeTexto = `📄 Reporte del Grupo Bíblico
 
+🔹 Pastor Supervisor: ${planilla.PASTOR_SUPERVISOR}
+🔹 Grupo Bíblico: ${planilla.grupobiblico}
+🏅 Coordinador Dpto: ${planilla.COORDINADOR_DPTO}
+🔰 Supervisor de Red: ${planilla.SUPERVISOR_DE_RED}
+🏆 Felipe de Red: ${planilla.FELIPE_DE_RED}
+⭐ Felipe Líder: ${planilla.FELIPE_LIDER}
+
+👥 Asistencia
+✅ VEA: ${planilla.Asistencia_vea}
+✅ Asistentes: ${planilla.asistentes}
+👤 Felipes: ${planilla.Felipes}
+👥 Etíopes: ${planilla.Etiopes}
+📝 Novedades: ${planilla.novedades}
+
+🤝 Participación
+🎯 Misión Amigo: ${planilla.Participacion_Mision_Amigo}
+🔄 Consolidación: ${planilla.Participacion_Consolidacion}
+📖 Discipulado 1: ${planilla.Participacion_Discipulado_1}
+📖 Discipulado 2: ${planilla.Participacion_Discipulado_2}
+🏫 Escuela de Liderazgo: ${planilla.Asistencia_a_la_Escuela_de_Liderazgo}
+
+💰 Finanzas
+💵 Diezmos: ${planilla.Diezmos}
+💸 Ofrendas: ${planilla.Ofrendas}
+💳 Total Financiero: ${planilla.Total_financiero}
+
+🙌 Asistencia General
+🙋‍♂️ Hermanos: ${planilla.asistencia_hermanos}
+🧑‍🤝‍🧑 Amigos: ${planilla.Asistencia_de_Amigos}
+👶 Niños: ${planilla.Asistencia_de_Ninos}`;
+
+  const mensaje = encodeURIComponent(mensajeTexto);
   const url = `https://wa.me/${numero}?text=${mensaje}`;
 
   // Detectar si estamos en App24Creator
   if (isApp24Creator()) {
-    // Para App24Creator, intentar múltiples métodos
+    // Para App24Creator, usar método más confiable
     try {
-      // Método 1: Intent de Android
-      const intentUrl = `intent://send/${numero}#Intent;scheme=smsto;package=com.whatsapp;S.sms_body=${mensaje};end`;
-      window.location.href = intentUrl;
+      // Método 1: Usar función personalizada para abrir WhatsApp
+      abrirWhatsApp(numero, mensajeTexto);
     } catch (error) {
       try {
-        // Método 2: URL directa de WhatsApp
+        // Método 2: URL directa como fallback
         window.location.href = url;
       } catch (error2) {
-        // Método 3: Fallback con alert
-        alert(`📱 Para enviar el reporte a WhatsApp, copia este número: ${numero}\n\nY pega este mensaje:\n\n${decodeURIComponent(mensaje)}`);
+        try {
+          // Método 3: Intent de Android como último recurso
+          const intentUrl = `intent://send/${numero}#Intent;scheme=smsto;package=com.whatsapp;S.sms_body=${encodeURIComponent(mensajeTexto)};end`;
+          window.location.href = intentUrl;
+        } catch (error3) {
+          // Método 4: Fallback con copia al portapapeles
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(mensajeTexto).then(() => {
+              alert(`📱 Mensaje copiado al portapapeles!\n\nNúmero: ${numero}\n\nEl mensaje ya está en tu portapapeles, solo pégalo en WhatsApp.`);
+            });
+          } else {
+            alert(`📱 Para enviar el reporte a WhatsApp:\n\nNúmero: ${numero}\n\nMensaje:\n\n${mensajeTexto}`);
+          }
+        }
       }
     }
   } else {

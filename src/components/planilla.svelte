@@ -93,33 +93,45 @@
   // 1. Verificar si el navegador soporta notificaciones
   if (!("Notification" in window)) {
     console.warn("Este navegador no soporta notificaciones.");
-    return; // Salir si no hay soporte
+    // Fallback: Usar un alert si no hay soporte
+    alert("✅ Reporte enviado correctamente a la base de datos y WhatsApp.");
+    return;
   }
 
   // 2. Si ya tienes permiso
   if (Notification.permission === "granted") {
     try {
       // Intentar mostrar la notificación
-      new Notification(`📄 Reporte`, {
-        body: `✅ El reporte del grupo bíblico se envió correctamente.`,
-        icon: "/logo.png", // Opcional: añade un ícono
+      new Notification(`📄 Reporte Enviado`, {
+        body: `✅ Reporte guardado en la base de datos y enviado a WhatsApp automáticamente.`,
+        icon: "/logo.png",
+        requireInteraction: false, // No requiere interacción del usuario
+        silent: false
       });
     } catch (error) {
       console.error("Error al mostrar notificación:", error);
       // Fallback: Usar un alert si falla
-      alert("✅ El reporte se envió correctamente.");
+      alert("✅ Reporte enviado correctamente a la base de datos y WhatsApp.");
     }
   } 
   // 3. Si el permiso no está denegado, pedirlo
   else if (Notification.permission !== "denied") {
     Notification.requestPermission().then((permiso) => {
       if (permiso === "granted") {
-        new Notification(`📄 Reporte`, {
-          body: `✅ El reporte se envió correctamente.`,
+        new Notification(`📄 Reporte Enviado`, {
+          body: `✅ Reporte guardado en la base de datos y enviado a WhatsApp automáticamente.`,
           icon: "/logo.png",
+          requireInteraction: false,
+          silent: false
         });
+      } else {
+        // Si no se otorga permiso, mostrar alert
+        alert("✅ Reporte enviado correctamente a la base de datos y WhatsApp.");
       }
     });
+  } else {
+    // Si el permiso está denegado, mostrar alert
+    alert("✅ Reporte enviado correctamente a la base de datos y WhatsApp.");
   }
 };
 
@@ -138,9 +150,13 @@
       console.log("Datos insertados con éxito:", data);
       planilla = data[0] || planilla;
       
+      // Mostrar notificación de éxito primero
       mostrarNotificacion();
       
-      enviarAWhatsApp();
+      // Enviar a WhatsApp automáticamente después de un pequeño delay
+      setTimeout(() => {
+        enviarAWhatsApp();
+      }, 1500);
     }
   } catch (error) {
     console.error("Error general:", error.message);
@@ -167,7 +183,7 @@
     ✅ *VEA:* ${planilla.Asistencia_vea}
     ✅ *Asistentes:* ${planilla.asistentes}
     👤 *Felipes:* ${planilla.Felipes}
-    � *Etíopes:* ${planilla.Etiopes}
+    👥 *Etíopes:* ${planilla.Etiopes}
     📝 *Novedades:* ${planilla.novedades}
     
     🤝 *Participación* 
@@ -190,13 +206,8 @@
 
   const url = `https://wa.me/${numero}?text=${mensaje}`;
 
-  
+  // Abrir WhatsApp automáticamente sin confirmaciones adicionales
   window.open(url, '_blank');
-  
-  
-  setTimeout(() => {
-    alert("Enviado con éxito");
-  }, 1000);
 };
 </script>
 
@@ -582,7 +593,7 @@
           </div>
           <div class="col-12 d-flex mt-4 justify-content-center m">
             <button type="submit" class="btn btn-primary btn-lg"
-              >Enviar reporte</button
+              >📤 Enviar reporte a BD y WhatsApp</button
             >
           </div>
         </form>

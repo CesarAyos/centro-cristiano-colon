@@ -371,14 +371,16 @@
               <option value="" disabled selected
                 >Selecciona el grupo bíblico</option
               >
-              <option value="belen">Belén</option>
-              <option value="elohim">Elohim</option>
-              <option value="juda">Judá</option>
-              <option value="betel">Betel</option>
-              <option value="alfa-y-omega">Alfa y Omega</option>
-              <option value="jireth">Jireth</option>
               <option value="agente-de-paz">Agente de paz</option>
-              <option value="el-roi">El Roi</option>
+              <option value="alfa-y-omega">Alfa y Omega</option>
+              <option value="belen">Belén</option>
+              <option value="betel">Betel</option>
+               <option value="el-roi">El Roi</option>
+              <option value="elohim">Elohim</option>
+              <option value="betel">Emanuel</option>
+              <option value="juda">Judá</option>
+              <option value="jireth">Jireth</option>
+              
             </select>
           </div>
 

@@ -375,7 +375,6 @@
               <option value="alfa-y-omega">Alfa y Omega</option>
               <option value="belen">Belén</option>
               <option value="betel">Betel</option>
-               <option value="el-roi">El Roi</option>
               <option value="elohim">Elohim</option>
               <option value="betel">Emanuel</option>
               <option value="juda">Judá</option>

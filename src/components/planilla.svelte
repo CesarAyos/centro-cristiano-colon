@@ -376,7 +376,7 @@
               <option value="belen">Belén</option>
               <option value="betel">Betel</option>
               <option value="elohim">Elohim</option>
-              <option value="betel">Emanuel</option>
+              <option value="Emanuel">Emanuel</option>
               <option value="juda">Judá</option>
               <option value="jireth">Jireth</option>
               

@@ -20,46 +20,50 @@
     </section>
 
     <!-- Sección de Crecimiento -->
-    <section class="growth-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0">
-                    <div class="modern-carousel animate-left">
-                        <div id="growthCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img src="/carru2.jpg" class="d-block w-100" alt="Reunión en la iglesia">
-                                </div>
-                                <div class="carousel-item">
-                                    <img src="/carru1.jpg" class="d-block w-100" alt="Alabanza y adoración">
-                                </div>
-                                <div class="carousel-item">
-                                    <img src="/carru3.jpg" class="d-block w-100" alt="Comunidad cristiana">
-                                </div>
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#growthCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#growthCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <h2 class="growth-title animate-up">UNA IGLESIA EN CONSTANTE CRECIMIENTO</h2>
-                    <p class="growth-text animate-up delay-1">Cada día, nuevos miembros se unen a nosotros, atraídos por nuestra devoción al Señor y el sentido de pertenencia que cultivamos. Nuestras puertas están siempre abiertas, y juntos, como una gran familia, seguimos fortaleciendo nuestra fe y extendiendo nuestro amor a todos los rincones del mundo.</p>
-                    <div class="mt-4 animate-up delay-2">
-                        <a href="#servicios" class="cta-button" style="background: transparent; border: 2px solid var(--primary-color);">
-                            Ver nuestros servicios <i class="fas fa-arrow-down"></i>
-                        </a>
-                    </div>
-                </div>
+   <div class="modern-carousel animate-left">
+    <div id="growthCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <!-- Imagen 1 con fallback -->
+                <img src="./carru2.jpg" 
+                     onerror="this.src='https://images.unsplash.com/photo-1509099836639-18ba1795216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
+                     class="d-block w-100" 
+                     alt="Reunión en la iglesia">
+            </div>
+            <div class="carousel-item">
+                <!-- Imagen 2 con fallback -->
+                <img src="./carru1.jpg" 
+                     onerror="this.src='https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
+                     class="d-block w-100" 
+                     alt="Alabanza y adoración">
+            </div>
+            <div class="carousel-item">
+                <!-- Imagen 3 con fallback -->
+                <img src="./carru3.jpg" 
+                     onerror="this.src='https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
+                     class="d-block w-100" 
+                     alt="Comunidad cristiana">
             </div>
         </div>
-    </section>
+        
+        <!-- Controles -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#growthCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#growthCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
+        
+        <!-- Indicadores -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#growthCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#growthCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#growthCarousel" data-bs-slide-to="2"></button>
+        </div>
+    </div>
+</div>
 
     <!-- Servicios Semanales -->
     <section id="servicios" class="services-section">

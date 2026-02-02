@@ -1,60 +1,73 @@
 <script>
   import { supabase } from "../components/supabase.js";
   import { onMount } from "svelte";
-  import { fade } from 'svelte/transition';
+  import { fade } from "svelte/transition";
 
   // Variables del formulario
   let planilla = {
+    tipo: "",
     PASTOR_SUPERVISOR: "",
     grupobiblico: "",
     COORDINADOR_DPTO: "",
     SUPERVISOR_DE_RED: "",
-    FELIPE_DE_RED: "",
-    FELIPE_LIDER: "",
+    lidercasa: "",
+    area: "",
+    codigo: "",
     Asistencia_vea: "",
     asistentes: "",
-    Felipes: "",
-    Etiopes: "",
+    visitas: "",
+    Decision: "",
     novedades: "",
     Amigos: "",
     Ninos: "",
-    Ausentes: "",
-    Convertidos_adultos: "",
-    Convertidos_ninos: "",
-    Reconciliados: "",
+    Decisionninos: "",
+    adultos: "",
+    joven: "",
+    ninoscasa: "",
     Diezmos: "",
     Ofrendas: "",
     Total_financiero: "0",
-    Participacion_Mision_Amigo: "",
+    misionvida: "",
     Participacion_Consolidacion: "",
-    Participacion_Discipulado_1: "",
-    Participacion_Discipulado_2: "",
-    Asistencia_a_la_Escuela_de_Liderazgo: "",
-    asistencia_hermanos: "",
-    Asistencia_de_Amigos: "",
+    pasosdevida: "",
+    hermanosdominical: "",
+    amigosIglesia: "",
+    escueladevida: "",
+    vea: "",
     Asistencia_de_Ninos: "",
+    ninosdominical: "",
+    adultosdominical: "",
+    jovendominical: "",
+    total_casa_familiar: "0",
+    total_dominical: "0",
+    lider: "",
+    aprendiz: "",
+    maestrninos: "",
+    anfitrion: "",
+    direccion: "",
+    telefono: "",
+    diahora: "",
+    observaciones: "",
   };
 
   // Variables de estado
-  let formValid = false;
   let isSubmitting = false;
-  let touchedFields = {};
-  
+
   // Variables para notificaciones
   let mostrarNotif = false;
   let mensajeNotif = "";
-  let tipoNotif = "success"; // success, error, info
+  let tipoNotif = "success";
 
   // Grupos bíblicos disponibles
   const gruposBiblicos = [
-    { value: 'agente-de-paz', label: 'Agente de Paz' },
-    { value: 'alfa-y-omega', label: 'Alfa y Omega' },
-    { value: 'belen', label: 'Belén' },
-    { value: 'betel', label: 'Betel' },
-    { value: 'elohim', label: 'Elohim' },
-    { value: 'emanuel', label: 'Emanuel' },
-    { value: 'juda', label: 'Judá' },
-    { value: 'jireth', label: 'Jireth' }
+    { value: "agente-de-paz", label: "Agente de Paz" },
+    { value: "alfa-y-omega", label: "Alfa y Omega" },
+    { value: "belen", label: "Belén" },
+    { value: "betel", label: "Betel" },
+    { value: "elohim", label: "Elohim" },
+    { value: "emanuel", label: "Emanuel" },
+    { value: "juda", label: "Judá" },
+    { value: "jireth", label: "Jireth" },
   ];
 
   // Función para calcular total financiero
@@ -64,39 +77,31 @@
     planilla.Total_financiero = (diezmos + ofrendas).toFixed(2);
   };
 
-  // Función para marcar campo como tocado
-  const marcarCampoTocado = (fieldName) => {
-    touchedFields[fieldName] = true;
-    validarFormulario();
+  const calcularTotalCasaFamiliar = () => {
+    const adultos = parseFloat(planilla.adultos) || 0;
+    const ninoscasa = parseFloat(planilla.ninoscasa) || 0;
+    const joven = parseFloat(planilla.joven) || 0;
+    const total = adultos + ninoscasa + joven;
+    planilla.total_casa_familiar = total.toString();
   };
 
-  // Función para validar el formulario
-  const validarFormulario = () => {
-    const requiredFields = [
-      'PASTOR_SUPERVISOR', 'grupobiblico', 'COORDINADOR_DPTO', 
-      'SUPERVISOR_DE_RED', 'FELIPE_DE_RED', 'FELIPE_LIDER', 
-      'Asistencia_vea', 'asistentes', 'Felipes', 'Etiopes', 
-      'novedades', 'Amigos', 'Ninos', 'Ausentes', 
-      'Convertidos_adultos', 'Convertidos_ninos', 'Reconciliados',
-      'Diezmos', 'Ofrendas', 'Participacion_Mision_Amigo', 
-      'Participacion_Consolidacion', 'Participacion_Discipulado_1', 
-      'Participacion_Discipulado_2', 'Asistencia_a_la_Escuela_de_Liderazgo',
-      'asistencia_hermanos', 'Asistencia_de_Amigos', 'Asistencia_de_Ninos'
-    ];
-    
-    formValid = requiredFields.every(field => {
-      const value = planilla[field];
-      return value !== null && value !== undefined && value.toString().trim() !== '';
-    });
+  const calcularTotalDominical = () => {
+    const adultosdominical = parseFloat(planilla.adultosdominical) || 0;
+    const jovendominical = parseFloat(planilla.jovendominical) || 0;
+    const ninosdominical = parseFloat(planilla.ninosdominical) || 0;
+    const total = adultosdominical + jovendominical + ninosdominical;
+    planilla.total_dominical = total.toString();
   };
 
   // Función para mostrar notificación
-  const mostrarNotificacion = (mensaje = "✅ Reporte enviado exitosamente a la base de datos y WhatsApp.", tipo = "success") => {
+  const mostrarNotificacion = (
+    mensaje = "✅ Reporte enviado exitosamente a la base de datos y WhatsApp.",
+    tipo = "success",
+  ) => {
     mensajeNotif = mensaje;
     tipoNotif = tipo;
     mostrarNotif = true;
-    
-    // Ocultar la notificación después de 4 segundos
+
     setTimeout(() => {
       mostrarNotif = false;
     }, 4000);
@@ -105,205 +110,237 @@
   // Función para limpiar el formulario
   const Clear = () => {
     planilla = {
+      tipo: "",
       PASTOR_SUPERVISOR: "",
       grupobiblico: "",
       COORDINADOR_DPTO: "",
       SUPERVISOR_DE_RED: "",
-      FELIPE_DE_RED: "",
-      FELIPE_LIDER: "",
+      area: "",
+      codigo: "",
       Asistencia_vea: "",
       asistentes: "",
-      Felipes: "",
-      Etiopes: "",
+      visitas: "",
+      Decision: "",
       novedades: "",
       Amigos: "",
       Ninos: "",
-      Ausentes: "",
-      Convertidos_adultos: "",
-      Convertidos_ninos: "",
-      Reconciliados: "",
+      Decisionninos: "",
+      adultos: "",
+      joven: "",
+      ninoscasa: "",
+      lidercasa: "",
       Diezmos: "",
       Ofrendas: "",
       Total_financiero: "0",
-      Participacion_Mision_Amigo: "",
+      misionvida: "",
       Participacion_Consolidacion: "",
-      Participacion_Discipulado_1: "",
-      Participacion_Discipulado_2: "",
-      Asistencia_a_la_Escuela_de_Liderazgo: "",
-      asistencia_hermanos: "",
-      Asistencia_de_Amigos: "",
+      pasosdevida: "",
+      hermanosdominical: "",
+      amigosIglesia: "",
+      escueladevida: "",
+      vea: "",
+      ninosdominical: "",
+      adultosdominical: "",
+      jovendominical: "",
       Asistencia_de_Ninos: "",
+      total_casa_familiar: "0",
+      total_dominical: "0",
+      lider: "",
+      aprendiz: "",
+      maestrninos: "",
+      anfitrion: "",
+      direccion: "",
+      telefono: "",
+      diahora: "",
+      observaciones: "",
     };
-    touchedFields = {};
-    validarFormulario();
   };
 
-  // Función para insertar en Supabase
-  const insertPlanilla = async () => {
-    isSubmitting = true;
-    
-    try {
-      const { data, error } = await supabase
-        .from("planilla")
-        .insert([planilla])
-        .select();
+const insertPlanilla = async () => {
+  isSubmitting = true;
 
-      if (error) {
-        console.error("Error al insertar datos:", error.message, error.details);
-        mostrarNotificacion("❌ Error al enviar los datos", "error");
-        return;
-      } else {
-        console.log("Datos insertados con éxito:", data);
-        
-        // Enviar a WhatsApp inmediatamente después de guardar en BD
-        enviarAWhatsApp();
-        
-        // Mostrar notificación de éxito
-        mostrarNotificacion();
-        
-        // Limpiar formulario después de 1 segundo
-        setTimeout(() => {
-          Clear();
-        }, 1000);
-      }
-    } catch (error) {
-      console.error("Error general:", error.message);
-      mostrarNotificacion("❌ Ocurrió un error al procesar la solicitud", "error");
-    } finally {
-      isSubmitting = false;
+  try {
+    const { data, error } = await supabase
+      .from("planilla")
+      .insert([planilla])
+      .select();
+
+    if (error) {
+      console.error("Error al insertar datos:", error.message, error.details);
+      mostrarNotificacion("❌ Error al enviar los datos", "error");
+      return;
+    } else {
+      console.log("Datos insertados con éxito:", data);
+      enviarAWhatsApp();
+      mostrarNotificacion();
+      setTimeout(() => {
+        Clear();
+      }, 1000);
     }
-  };
+  } catch (error) {
+    console.error("Error general:", error?.message || error);
+    mostrarNotificacion(
+      "❌ Ocurrió un error al procesar la solicitud",
+      "error",
+    );
+  } finally {
+    isSubmitting = false;
+  }
+};
 
   // Función para manejar el submit
   const onSubmitHandlers = (event) => {
     event.preventDefault();
-    
-    if (!formValid) {
-      mostrarNotificacion("❌ Por favor, completa todos los campos requeridos", "error");
-      return;
-    }
-    
     insertPlanilla();
-  };
-
-  // Función para solicitar permiso de notificaciones
-  const solicitarPermisoNotificacion = async () => {
-    if (!("Notification" in window)) {
-      console.error("Este navegador no soporta notificaciones de escritorio.");
-    } else if (Notification.permission === "granted") {
-      console.log("Permiso de notificación ya otorgado.");
-    } else if (Notification.permission !== "denied") {
-      const permiso = await Notification.requestPermission();
-      if (permiso === "granted") {
-        console.log("Permiso de notificación otorgado.");
-      } else {
-        console.error("Permiso de notificación denegado.");
-      }
-    }
   };
 
   // Función para forzar la apertura de WhatsApp
   const forzarAperturaWhatsApp = (numero, mensaje) => {
     const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-    
-    // Intentar múltiples métodos
+
     try {
-      // Método 1: window.open
-      const nuevaVentana = window.open(url, '_blank');
+      const nuevaVentana = window.open(url, "_blank");
       if (nuevaVentana) {
         return true;
       }
     } catch (error) {
-      console.log('Método 1 falló:', error);
+      console.log("Método 1 falló:", error);
     }
-    
+
     try {
-      // Método 2: window.location.href
       window.location.href = url;
       return true;
     } catch (error) {
-      console.log('Método 2 falló:', error);
+      console.log("Método 2 falló:", error);
     }
-    
+
     try {
-      // Método 3: Crear iframe temporal
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
       iframe.src = url;
       document.body.appendChild(iframe);
-      
+
       setTimeout(() => {
         if (document.body.contains(iframe)) {
           document.body.removeChild(iframe);
         }
       }, 1000);
-      
+
       return true;
     } catch (error) {
-      console.log('Método 3 falló:', error);
+      console.log("Método 3 falló:", error);
     }
-    
+
     return false;
   };
 
   // Función para enviar a WhatsApp
-  const enviarAWhatsApp = () => {
-    const numero = "584247187229";
-    
-    // Crear mensaje más simple y compatible
-    const mensajeTexto = `📄 Reporte del Grupo Bíblico
+const enviarAWhatsApp = () => {
+  const numero = "584247187229";
 
-🔹 Pastor Supervisor: ${planilla.PASTOR_SUPERVISOR}
-🔹 Grupo Bíblico: ${planilla.grupobiblico}
-🏅 Coordinador Dpto: ${planilla.COORDINADOR_DPTO}
+  const mensajeTexto = `📄 REPORTE DE GRUPO BÍBLICO - CASA DE VIDA
+
+📋 INFORME GENERAL
+────────────────────
+🔹 Tipo de reporte: ${planilla.tipo}
+🙏 Pastor Supervisor: ${planilla.PASTOR_SUPERVISOR}
+🏠 Casa de Vida: ${planilla.grupobiblico}
+🎖️ Coordinador Departamento: ${planilla.COORDINADOR_DPTO}
 🔰 Supervisor de Red: ${planilla.SUPERVISOR_DE_RED}
-🏆 Felipe de Red: ${planilla.FELIPE_DE_RED}
-⭐ Felipe Líder: ${planilla.FELIPE_LIDER}
+🌐 Área: ${planilla.area}
+⭐ Código: ${planilla.codigo}
 
-👥 Asistencia
+👥 ASISTENCIA CASA DE VIDA FAMILIAR
+──────────────────────────────────
 ✅ VEA: ${planilla.Asistencia_vea}
-✅ Asistentes: ${planilla.asistentes}
-👤 Felipes: ${planilla.Felipes}
-👥 Etíopes: ${planilla.Etiopes}
-📝 Novedades: ${planilla.novedades}
+🙋‍♂️ Adultos (+26): ${planilla.adultos}
+🧑‍🎓 Jóvenes (13-26): ${planilla.joven}
+👶 Niños (1-12): ${planilla.ninoscasa}
+📊 TOTAL CASA: ${planilla.total_casa_familiar}
 
-🤝 Participación
-🎯 Misión Amigo: ${planilla.Participacion_Mision_Amigo}
-🔄 Consolidación: ${planilla.Participacion_Consolidacion}
-📖 Discipulado 1: ${planilla.Participacion_Discipulado_1}
-📖 Discipulado 2: ${planilla.Participacion_Discipulado_2}
-🏫 Escuela de Liderazgo: ${planilla.Asistencia_a_la_Escuela_de_Liderazgo}
+📈 REPORTE DE REUNIÓN
+────────────────────
+🎯 Misión Vida: ${planilla.misionvida}
+🔗 Consolidación: ${planilla.Participacion_Consolidacion}
+📖 Pasos de vida: ${planilla.pasosdevida}
 
-💰 Finanzas
-💵 Diezmos: ${planilla.Diezmos}
-💸 Ofrendas: ${planilla.Ofrendas}
-💳 Total Financiero: ${planilla.Total_financiero}
 
-🙌 Asistencia General
-🙋‍♂️ Hermanos: ${planilla.asistencia_hermanos}
-🧑‍🤝‍🧑 Amigos: ${planilla.Asistencia_de_Amigos}
-👶 Niños: ${planilla.Asistencia_de_Ninos}`;
+👥 ASISTENCIA DOMINICAL
+──────────────────────
+🙏 Hermanos: ${planilla.hermanosdominical}
+🤝 Amigos Iglesia: ${planilla.amigosIglesia}
+👧 Niños Iglesia: ${planilla.Asistencia_de_Ninos}
+🙋‍♂️ Adultos Dominical: ${planilla.adultosdominical}
+🧑‍🎓 Jóvenes Dominical: ${planilla.jovendominical}
+👶 Niños Dominical: ${planilla.ninosdominical}
+📊 TOTAL DOMINICAL: ${planilla.total_dominical}
 
-    const mensaje = encodeURIComponent(mensajeTexto);
+💰 FINANZAS
+──────────
+💵 Diezmos: $${planilla.Diezmos}
+💸 Ofrendas: $${planilla.Ofrendas}
+💳 TOTAL FINANCIERO: $${planilla.Total_financiero}
 
-    // Método más agresivo para asegurar que funcione desde la primera vez
-    if (!forzarAperturaWhatsApp(numero, mensajeTexto)) {
-      // Si todos los métodos fallan, copiar al portapapeles
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(mensajeTexto).then(() => {
-          mostrarNotificacion(`📱 Mensaje copiado al portapapeles! Número: ${numero}`, "info");
-        });
-      } else {
-        mostrarNotificacion(`📱 Para enviar: Número ${numero} - Mensaje copiado`, "info");
-      }
+🎯 PARTICIPACIÓN CICLO
+─────────────────────
+🎯 Misión Vida: ${planilla.misionvida}
+🔗 Consolidación: ${planilla.Participacion_Consolidacion}
+📖 Pasos de Vida: ${planilla.pasosdevida}
+📖 Hermanos Dominical: ${planilla.hermanosdominical}
+
+🏃 ASISTIERON A:
+────────────────
+✅ VEA: ${planilla.vea}
+🏫 Escuela de Vida: ${planilla.escueladevida}
+
+👥 ESTADÍSTICAS ADICIONALES
+──────────────────────────
+🤝 Amigos: ${planilla.Amigos}
+👶 Niños GB: ${planilla.Ninos}
+🏡 Visitas Hogares: ${planilla.visitas}
+✝️ Decisión Fe Adultos: ${planilla.Decision}
+✝️ Decisión Fe Niños: ${planilla.Decisionninos}
+
+👑 LIDERAZGO
+───────────
+🏠 Líder Casa: ${planilla.lidercasa}
+👨‍💼 Líder: ${planilla.lider}
+👨‍🎓 Aprendiz: ${planilla.aprendiz}
+👩‍🏫 Maestro Niños: ${planilla.maestrninos}
+🏡 Anfitrión: ${planilla.anfitrion}
+
+📍 INFORMACIÓN DE CONTACTO
+─────────────────────────
+🏠 Dirección: ${planilla.direccion}
+📞 Teléfono: ${planilla.telefono}
+📅 Día/Hora: ${planilla.diahora}
+
+📝 OBSERVACIONES
+────────────────
+${planilla.observaciones || "Sin observaciones"}
+
+📊 RESUMEN FINAL
+────────────────
+🏠 TOTAL CASA VIDA: ${planilla.total_casa_familiar}
+⛪ TOTAL DOMINICAL: ${planilla.total_dominical}
+💰 TOTAL FINANCIERO: $${planilla.Total_financiero}`;
+
+  if (!forzarAperturaWhatsApp(numero, mensajeTexto)) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(mensajeTexto).then(() => {
+        mostrarNotificacion(
+          `📱 Mensaje copiado al portapapeles! Número: ${numero}`,
+          "info",
+        );
+      });
+    } else {
+      mostrarNotificacion(
+        `📱 Para enviar: Número ${numero} - Mensaje copiado`,
+        "info",
+      );
     }
-  };
-
-  // Inicialización
-  onMount(() => {
-    solicitarPermisoNotificacion();
-    validarFormulario();
-  });
+  }
+};
 </script>
 
 <main class="modern-form-container">
@@ -312,16 +349,19 @@
     <div class="modern-notification-container" in:fade out:fade>
       <div class="modern-notification {tipoNotif}">
         <div class="notification-icon">
-          {#if tipoNotif === 'success'}
+          {#if tipoNotif === "success"}
             <i class="fas fa-check-circle"></i>
-          {:else if tipoNotif === 'error'}
+          {:else if tipoNotif === "error"}
             <i class="fas fa-exclamation-circle"></i>
           {:else}
             <i class="fas fa-info-circle"></i>
           {/if}
         </div>
         <span class="notification-message">{mensajeNotif}</span>
-        <button class="notification-close" on:click={() => mostrarNotif = false}>
+        <button
+          class="notification-close"
+          on:click={() => (mostrarNotif = false)}
+        >
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -333,16 +373,16 @@
       <!-- Header del formulario -->
       <div class="form-header">
         <div class="header-logo">
-          <img src="/logo.png" alt="Centro Cristiano Colón" class="logo-image" />
+          <img
+            src="/logo.png"
+            alt="Centro Cristiano Colón"
+            class="logo-image"
+          />
           <div class="header-title">
             <h1>REPORTE DE GRUPO BÍBLICO</h1>
-            <p class="header-subtitle">Complete el formulario con la información del reporte</p>
-          </div>
-        </div>
-        <div class="header-status">
-          <div class="status-indicator {formValid ? 'valid' : 'invalid'}">
-            <i class="fas {formValid ? 'fa-check' : 'fa-exclamation'}"></i>
-            <span>{formValid ? 'Formulario completo' : 'Campos pendientes'}</span>
+            <p class="header-subtitle">
+              Complete el formulario con la información del reporte
+            </p>
           </div>
         </div>
       </div>
@@ -353,96 +393,109 @@
         <div class="form-section">
           <div class="section-header">
             <i class="fas fa-users"></i>
-            <h3>INFORMACIÓN DEL LIDERAZGO</h3>
+            <h3>P.V.A</h3>
           </div>
-          
+
           <div class="form-grid">
-            <div class="form-group" class:has-value={planilla.PASTOR_SUPERVISOR} class:touched={touchedFields.PASTOR_SUPERVISOR}>
-              <label for="pastorSupervisor">Pastor Supervisor</label>
+            <div class="form-group">
+              <label for="tipo">Tipo de reporte</label>
+              <div class="select-with-icon">
+                <i class="fas fa-church"></i>
+                <select
+                  id="tipo"
+                  bind:value={planilla.tipo}
+                  required
+                >
+                  <option value="" selected>Seleccione el tipo de reporte</option>
+                  <option value="Grupal">Grupal</option>
+                  <option value="Familiar">Familiar</option>
+                </select>
+                <i class="fas fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="pastorSupervisor">Supervisor de red</label>
               <div class="input-with-icon">
                 <i class="fas fa-user-tie"></i>
                 <input
                   id="pastorSupervisor"
                   type="text"
                   bind:value={planilla.PASTOR_SUPERVISOR}
-                  on:blur={() => marcarCampoTocado('PASTOR_SUPERVISOR')}
-                  placeholder="Ingrese el nombre del pastor supervisor"
+                  placeholder="Ingrese el nombre del Supervisor de red"
                   required
                 />
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.COORDINADOR_DPTO} class:touched={touchedFields.COORDINADOR_DPTO}>
-              <label for="coordinador">Coordinador de Departamento</label>
+            <div class="form-group">
+              <label for="coordinador">Departamento</label>
               <div class="input-with-icon">
                 <i class="fas fa-user-cog"></i>
                 <input
                   id="coordinador"
                   type="text"
                   bind:value={planilla.COORDINADOR_DPTO}
-                  on:blur={() => marcarCampoTocado('COORDINADOR_DPTO')}
-                  placeholder="Ingrese el nombre del coordinador"
+                  placeholder="Departamento"
                   required
                 />
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.SUPERVISOR_DE_RED} class:touched={touchedFields.SUPERVISOR_DE_RED}>
-              <label for="supervisorRed">Supervisor de Red</label>
+            <div class="form-group">
+              <label for="supervisorRed">Lider de Red</label>
               <div class="input-with-icon">
                 <i class="fas fa-user-friends"></i>
                 <input
                   id="supervisorRed"
                   type="text"
                   bind:value={planilla.SUPERVISOR_DE_RED}
-                  on:blur={() => marcarCampoTocado('SUPERVISOR_DE_RED')}
-                  placeholder="Ingrese el nombre del supervisor"
+                  placeholder="Lider de red"
                   required
                 />
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.FELIPE_DE_RED} class:touched={touchedFields.FELIPE_DE_RED}>
-              <label for="felipeRed">Felipe de Red</label>
+            <div class="form-group">
+              <label for="area">Area</label>
               <div class="input-with-icon">
                 <i class="fas fa-hands-helping"></i>
                 <input
-                  id="felipeRed"
+                  id="area"
                   type="text"
-                  bind:value={planilla.FELIPE_DE_RED}
-                  on:blur={() => marcarCampoTocado('FELIPE_DE_RED')}
-                  placeholder="Ingrese el nombre del felipe"
+                  bind:value={planilla.area}
+                  placeholder="area"
                   required
                 />
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.FELIPE_LIDER} class:touched={touchedFields.FELIPE_LIDER}>
-              <label for="felipeLider">Felipe Líder</label>
+            <div class="form-group">
+              <label for="codigo">codigo</label>
               <div class="input-with-icon">
                 <i class="fas fa-user-check"></i>
                 <input
-                  id="felipeLider"
+                  id="codigo"
                   type="text"
-                  bind:value={planilla.FELIPE_LIDER}
-                  on:blur={() => marcarCampoTocado('FELIPE_LIDER')}
-                  placeholder="Ingrese el nombre del líder"
+                  bind:value={planilla.codigo}
+                  placeholder="codigo"
                   required
                 />
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.grupobiblico} class:touched={touchedFields.grupobiblico}>
-              <label for="grupoBiblico">Grupo Bíblico</label>
+            <div class="form-group">
+              <label for="grupoBiblico">Nombre de casa de vida</label>
               <div class="select-with-icon">
                 <i class="fas fa-church"></i>
                 <select
                   id="grupoBiblico"
                   bind:value={planilla.grupobiblico}
-                  on:change={() => marcarCampoTocado('grupobiblico')}
                   required
                 >
-                  <option value="" disabled selected>Seleccione un grupo</option>
+                  <option value=""  selected>Seleccione un grupo de vida</option>
                   {#each gruposBiblicos as grupo}
                     <option value={grupo.value}>{grupo.label}</option>
                   {/each}
@@ -457,19 +510,18 @@
         <div class="form-section">
           <div class="section-header">
             <i class="fas fa-chart-line"></i>
-            <h3>ASISTENCIA Y ESTADÍSTICAS</h3>
+            <h3>REPORTE DE LA REUNIÓN</h3>
           </div>
-          
+
           <div class="form-grid">
-            <div class="form-group" class:has-value={planilla.Asistencia_vea} class:touched={touchedFields.Asistencia_vea}>
-              <label for="asistenciaVea">Asistencia VEA</label>
+            <div class="form-group">
+              <label for="asistenciaVea">Hermanos</label>
               <div class="input-with-icon">
                 <i class="fas fa-calendar-check"></i>
                 <input
                   id="asistenciaVea"
                   type="number"
                   bind:value={planilla.Asistencia_vea}
-                  on:blur={() => marcarCampoTocado('Asistencia_vea')}
                   min="0"
                   placeholder="0"
                   required
@@ -477,15 +529,14 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.asistentes} class:touched={touchedFields.asistentes}>
-              <label for="asistentesGB">Asistencia Grupo Bíblico</label>
+            <div class="form-group">
+              <label for="asistentesGB">Discipulos</label>
               <div class="input-with-icon">
                 <i class="fas fa-users"></i>
                 <input
                   id="asistentesGB"
                   type="number"
                   bind:value={planilla.asistentes}
-                  on:blur={() => marcarCampoTocado('asistentes')}
                   min="0"
                   placeholder="0"
                   required
@@ -493,39 +544,7 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.Felipes} class:touched={touchedFields.Felipes}>
-              <label for="felipes">Felipes</label>
-              <div class="input-with-icon">
-                <i class="fas fa-user-graduate"></i>
-                <input
-                  id="felipes"
-                  type="number"
-                  bind:value={planilla.Felipes}
-                  on:blur={() => marcarCampoTocado('Felipes')}
-                  min="0"
-                  placeholder="0"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-group" class:has-value={planilla.Etiopes} class:touched={touchedFields.Etiopes}>
-              <label for="etiopes">Etiopes</label>
-              <div class="input-with-icon">
-                <i class="fas fa-user-tag"></i>
-                <input
-                  id="etiopes"
-                  type="number"
-                  bind:value={planilla.Etiopes}
-                  on:blur={() => marcarCampoTocado('Etiopes')}
-                  min="0"
-                  placeholder="0"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-group" class:has-value={planilla.Amigos} class:touched={touchedFields.Amigos}>
+            <div class="form-group">
               <label for="amigos">Amigos</label>
               <div class="input-with-icon">
                 <i class="fas fa-handshake"></i>
@@ -533,7 +552,6 @@
                   id="amigos"
                   type="number"
                   bind:value={planilla.Amigos}
-                  on:blur={() => marcarCampoTocado('Amigos')}
                   min="0"
                   placeholder="0"
                   required
@@ -541,15 +559,14 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.Ninos} class:touched={touchedFields.Ninos}>
-              <label for="ninosGB">Niños Grupo Bíblico</label>
+            <div class="form-group">
+              <label for="ninosGB">Niños(as)</label>
               <div class="input-with-icon">
                 <i class="fas fa-child"></i>
                 <input
                   id="ninosGB"
                   type="number"
                   bind:value={planilla.Ninos}
-                  on:blur={() => marcarCampoTocado('Ninos')}
                   min="0"
                   placeholder="0"
                   required
@@ -557,80 +574,46 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.Ausentes} class:touched={touchedFields.Ausentes}>
-              <label for="ausentes">Ausentes</label>
+            <div class="form-group">
+              <label for="visitas">Visitas hogares</label>
+              <div class="input-with-icon">
+                <i class="fas fa-user-graduate"></i>
+                <input
+                  id="visitas"
+                  type="number"
+                  bind:value={planilla.visitas}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="Decision">Decisión fe adultos</label>
+              <div class="input-with-icon">
+                <i class="fas fa-user-tag"></i>
+                <input
+                  id="Decision"
+                  type="number"
+                  bind:value={planilla.Decision}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="Decisionninos">Decisión fe Niños</label>
               <div class="input-with-icon">
                 <i class="fas fa-user-times"></i>
                 <input
-                  id="ausentes"
+                  id="Decisionninos"
                   type="number"
-                  bind:value={planilla.Ausentes}
-                  on:blur={() => marcarCampoTocado('Ausentes')}
+                  bind:value={planilla.Decisionninos}
                   min="0"
                   placeholder="0"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-group" class:has-value={planilla.Convertidos_adultos} class:touched={touchedFields.Convertidos_adultos}>
-              <label for="convertidosAdultos">Adultos Convertidos</label>
-              <div class="input-with-icon">
-                <i class="fas fa-pray"></i>
-                <input
-                  id="convertidosAdultos"
-                  type="number"
-                  bind:value={planilla.Convertidos_adultos}
-                  on:blur={() => marcarCampoTocado('Convertidos_adultos')}
-                  min="0"
-                  placeholder="0"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-group" class:has-value={planilla.Convertidos_ninos} class:touched={touchedFields.Convertidos_ninos}>
-              <label for="convertidosNinos">Niños Convertidos</label>
-              <div class="input-with-icon">
-                <i class="fas fa-hands-praying"></i>
-                <input
-                  id="convertidosNinos"
-                  type="number"
-                  bind:value={planilla.Convertidos_ninos}
-                  on:blur={() => marcarCampoTocado('Convertidos_ninos')}
-                  min="0"
-                  placeholder="0"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-group" class:has-value={planilla.Reconciliados} class:touched={touchedFields.Reconciliados}>
-              <label for="reconciliados">Reconciliados</label>
-              <div class="input-with-icon">
-                <i class="fas fa-heart"></i>
-                <input
-                  id="reconciliados"
-                  type="number"
-                  bind:value={planilla.Reconciliados}
-                  on:blur={() => marcarCampoTocado('Reconciliados')}
-                  min="0"
-                  placeholder="0"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-group wide" class:has-value={planilla.novedades} class:touched={touchedFields.novedades}>
-              <label for="novedades">Novedades</label>
-              <div class="input-with-icon">
-                <i class="fas fa-sticky-note"></i>
-                <input
-                  id="novedades"
-                  type="text"
-                  bind:value={planilla.novedades}
-                  on:blur={() => marcarCampoTocado('novedades')}
-                  placeholder="Ingrese las novedades del grupo"
                   required
                 />
               </div>
@@ -638,15 +621,81 @@
           </div>
         </div>
 
-        <!-- Sección 3: Finanzas -->
+        <!-- Sección 3: Asistencia Casa de Vida Familiar -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-chart-line"></i>
+            <h3>ASISTENCIA CASA DE VIDA FAMILIAR</h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="adultos">Adultos (+26)</label>
+              <div class="input-with-icon">
+                <i class="fas fa-pray"></i>
+                <input
+                  id="adultos"
+                  type="number"
+                  bind:value={planilla.adultos}
+                  on:input={calcularTotalCasaFamiliar}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="joven">Joven (13 a 26 años)</label>
+              <div class="input-with-icon">
+                <i class="fas fa-hands-praying"></i>
+                <input
+                  id="joven"
+                  type="number"
+                  bind:value={planilla.joven}
+                  on:input={calcularTotalCasaFamiliar}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="ninoscasa">Niños (1 a 12 años)</label>
+              <div class="input-with-icon">
+                <i class="fas fa-heart"></i>
+                <input
+                  id="ninoscasa"
+                  type="number"
+                  bind:value={planilla.ninoscasa}
+                  on:input={calcularTotalCasaFamiliar}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div class="form-group highlight">
+              <label for="totalasistencia">Total asistencia</label>
+              <div class="total-display">
+                <i class="fas fa-calculator"></i>
+                <span class="total-amount">{planilla.total_casa_familiar}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 4: Finanzas -->
         <div class="form-section">
           <div class="section-header">
             <i class="fas fa-coins"></i>
             <h3>FINANZAS</h3>
           </div>
-          
+
           <div class="form-grid">
-            <div class="form-group" class:has-value={planilla.Diezmos} class:touched={touchedFields.Diezmos}>
+            <div class="form-group">
               <label for="diezmos">Diezmos</label>
               <div class="input-with-icon currency">
                 <i class="fas fa-hand-holding-usd"></i>
@@ -654,10 +703,7 @@
                   id="diezmos"
                   type="number"
                   bind:value={planilla.Diezmos}
-                  on:input={() => {
-                    marcarCampoTocado('Diezmos');
-                    calcularTotalFinanciero();
-                  }}
+                  on:input={calcularTotalFinanciero}
                   min="0"
                   step="0.01"
                   placeholder="0.00"
@@ -667,7 +713,7 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.Ofrendas} class:touched={touchedFields.Ofrendas}>
+            <div class="form-group">
               <label for="ofrendas">Ofrendas</label>
               <div class="input-with-icon currency">
                 <i class="fas fa-donate"></i>
@@ -675,10 +721,7 @@
                   id="ofrendas"
                   type="number"
                   bind:value={planilla.Ofrendas}
-                  on:input={() => {
-                    marcarCampoTocado('Ofrendas');
-                    calcularTotalFinanciero();
-                  }}
+                  on:input={calcularTotalFinanciero}
                   min="0"
                   step="0.01"
                   placeholder="0.00"
@@ -688,7 +731,7 @@
               </div>
             </div>
 
-            <div class="form-group highlight" class:has-value={planilla.Total_financiero}>
+            <div class="form-group highlight">
               <label for="totalFinanciero">Total Financiero</label>
               <div class="total-display">
                 <i class="fas fa-calculator"></i>
@@ -698,23 +741,22 @@
           </div>
         </div>
 
-        <!-- Sección 4: Participaciones -->
+        <!-- Sección 5: Participaciones -->
         <div class="form-section">
           <div class="section-header">
             <i class="fas fa-chart-bar"></i>
-            <h3>PARTICIPACIONES</h3>
+            <h3>PARTICIPACION EN EL CICLO</h3>
           </div>
-          
+
           <div class="form-grid">
-            <div class="form-group" class:has-value={planilla.Participacion_Mision_Amigo} class:touched={touchedFields.Participacion_Mision_Amigo}>
-              <label for="misionAmigo">Misión Amigo</label>
+            <div class="form-group">
+              <label for="misionvida">Misión Vida</label>
               <div class="input-with-icon">
                 <i class="fas fa-user-plus"></i>
                 <input
-                  id="misionAmigo"
+                  id="misionvida"
                   type="number"
-                  bind:value={planilla.Participacion_Mision_Amigo}
-                  on:blur={() => marcarCampoTocado('Participacion_Mision_Amigo')}
+                  bind:value={planilla.misionvida}
                   min="0"
                   placeholder="0"
                   required
@@ -722,7 +764,7 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.Participacion_Consolidacion} class:touched={touchedFields.Participacion_Consolidacion}>
+            <div class="form-group">
               <label for="consolidacion">Consolidación</label>
               <div class="input-with-icon">
                 <i class="fas fa-link"></i>
@@ -730,7 +772,6 @@
                   id="consolidacion"
                   type="number"
                   bind:value={planilla.Participacion_Consolidacion}
-                  on:blur={() => marcarCampoTocado('Participacion_Consolidacion')}
                   min="0"
                   placeholder="0"
                   required
@@ -738,47 +779,14 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.Participacion_Discipulado_1} class:touched={touchedFields.Participacion_Discipulado_1}>
-              <label for="discipulado1">Discipulado 1</label>
+            <div class="form-group">
+              <label for="pasosdevida">Pasos de vida</label>
               <div class="input-with-icon">
                 <i class="fas fa-book-open"></i>
                 <input
-                  id="discipulado1"
+                  id="pasosdevida"
                   type="number"
-                  bind:value={planilla.Participacion_Discipulado_1}
-                  on:blur={() => marcarCampoTocado('Participacion_Discipulado_1')}
-                  min="0"
-                  placeholder="0"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-group" class:has-value={planilla.Participacion_Discipulado_2} class:touched={touchedFields.Participacion_Discipulado_2}>
-              <label for="discipulado2">Discipulado 2</label>
-              <div class="input-with-icon">
-                <i class="fas fa-graduation-cap"></i>
-                <input
-                  id="discipulado2"
-                  type="number"
-                  bind:value={planilla.Participacion_Discipulado_2}
-                  on:blur={() => marcarCampoTocado('Participacion_Discipulado_2')}
-                  min="0"
-                  placeholder="0"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-group" class:has-value={planilla.Asistencia_a_la_Escuela_de_Liderazgo} class:touched={touchedFields.Asistencia_a_la_Escuela_de_Liderazgo}>
-              <label for="escuelaLiderazgo">Escuela de Liderazgo</label>
-              <div class="input-with-icon">
-                <i class="fas fa-user-graduate"></i>
-                <input
-                  id="escuelaLiderazgo"
-                  type="number"
-                  bind:value={planilla.Asistencia_a_la_Escuela_de_Liderazgo}
-                  on:blur={() => marcarCampoTocado('Asistencia_a_la_Escuela_de_Liderazgo')}
+                  bind:value={planilla.pasosdevida}
                   min="0"
                   placeholder="0"
                   required
@@ -788,23 +796,22 @@
           </div>
         </div>
 
-        <!-- Sección 5: Reunión Dominical -->
+        <!-- Sección 6: Asistencia a la Reunión Dominical -->
         <div class="form-section">
           <div class="section-header">
-            <i class="fas fa-church"></i>
-            <h3>REUNIÓN DOMINICAL</h3>
+            <i class="fas fa-chart-bar"></i>
+            <h3>ASISTENCIA A LA REUNION DOMINICAL</h3>
           </div>
-          
+
           <div class="form-grid">
-            <div class="form-group" class:has-value={planilla.asistencia_hermanos} class:touched={touchedFields.asistencia_hermanos}>
-              <label for="hermanosIglesia">Hermanos en la Iglesia</label>
+            <div class="form-group">
+              <label for="hermanosdominical">Hermanos</label>
               <div class="input-with-icon">
-                <i class="fas fa-user-friends"></i>
+                <i class="fas fa-graduation-cap"></i>
                 <input
-                  id="hermanosIglesia"
+                  id="hermanosdominical"
                   type="number"
-                  bind:value={planilla.asistencia_hermanos}
-                  on:blur={() => marcarCampoTocado('asistencia_hermanos')}
+                  bind:value={planilla.hermanosdominical}
                   min="0"
                   placeholder="0"
                   required
@@ -812,15 +819,14 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.Asistencia_de_Amigos} class:touched={touchedFields.Asistencia_de_Amigos}>
+            <div class="form-group">
               <label for="amigosIglesia">Amigos en la Iglesia</label>
               <div class="input-with-icon">
                 <i class="fas fa-handshake"></i>
                 <input
                   id="amigosIglesia"
                   type="number"
-                  bind:value={planilla.Asistencia_de_Amigos}
-                  on:blur={() => marcarCampoTocado('Asistencia_de_Amigos')}
+                  bind:value={planilla.amigosIglesia}
                   min="0"
                   placeholder="0"
                   required
@@ -828,7 +834,7 @@
               </div>
             </div>
 
-            <div class="form-group" class:has-value={planilla.Asistencia_de_Ninos} class:touched={touchedFields.Asistencia_de_Ninos}>
+            <div class="form-group">
               <label for="ninosIglesia">Niños en la Iglesia</label>
               <div class="input-with-icon">
                 <i class="fas fa-child"></i>
@@ -836,10 +842,257 @@
                   id="ninosIglesia"
                   type="number"
                   bind:value={planilla.Asistencia_de_Ninos}
-                  on:blur={() => marcarCampoTocado('Asistencia_de_Ninos')}
                   min="0"
                   placeholder="0"
                   required
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 7: Asistieron A -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-church"></i>
+            <h3>Asistieron A:</h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="vea">V.E.A</label>
+              <div class="input-with-icon">
+                <i class="fas fa-user-friends"></i>
+                <input
+                  id="vea"
+                  type="number"
+                  bind:value={planilla.vea}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="escueladevida">Escuela de vida</label>
+              <div class="input-with-icon">
+                <i class="fas fa-handshake"></i>
+                <input
+                  id="escueladevida"
+                  type="number"
+                  bind:value={planilla.escueladevida}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 8: Asistencia Reunión Dominical -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-chart-line"></i>
+            <h3>ASISTENCIA REUNION DOMINICAL</h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="adultosdominical">Adultos (+26)</label>
+              <div class="input-with-icon">
+                <i class="fas fa-pray"></i>
+                <input
+                  id="adultosdominical"
+                  type="number"
+                  bind:value={planilla.adultosdominical}
+                  on:input={calcularTotalDominical}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="jovendominical">Joven (13 a 26 años)</label>
+              <div class="input-with-icon">
+                <i class="fas fa-hands-praying"></i>
+                <input
+                  id="jovendominical"
+                  type="number"
+                  bind:value={planilla.jovendominical}
+                  on:input={calcularTotalDominical}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="ninosdominical">Niños (1 a 12 años)</label>
+              <div class="input-with-icon">
+                <i class="fas fa-heart"></i>
+                <input
+                  id="ninosdominical"
+                  type="number"
+                  bind:value={planilla.ninosdominical}
+                  on:input={calcularTotalDominical}
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div class="form-group highlight">
+              <label for="totalasistencia">Total asistencia</label>
+              <div class="total-display">
+                <i class="fas fa-calculator"></i>
+                <span class="total-amount">{planilla.total_dominical}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 9: Liderazgo -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-users"></i>
+            <h3>LIDERAZGO</h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="lidercasa">Lider casa de vida</label>
+              <div class="input-with-icon">
+                <i class="fas fa-user-tie"></i>
+                <input
+                  id="lidercasa"
+                  type="text"
+                  bind:value={planilla.lidercasa}
+                  placeholder="Lider casa de vida"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="lider">Lider</label>
+              <div class="input-with-icon">
+                <i class="fas fa-user-cog"></i>
+                <input
+                  id="lider"
+                  type="text"
+                  bind:value={planilla.lider}
+                  placeholder="lider"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="aprendiz">Aprendiz</label>
+              <div class="input-with-icon">
+                <i class="fas fa-user-friends"></i>
+                <input
+                  id="aprendiz"
+                  type="text"
+                  bind:value={planilla.aprendiz}
+                  placeholder="aprendiz"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="maestrninos">Maestro niños</label>
+              <div class="input-with-icon">
+                <i class="fas fa-hands-helping"></i>
+                <input
+                  id="maestrninos"
+                  type="text"
+                  bind:value={planilla.maestrninos}
+                  placeholder="Maestro niños"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="anfitrion">Anfitrión</label>
+              <div class="input-with-icon">
+                <i class="fas fa-user-check"></i>
+                <input
+                  id="anfitrion"
+                  type="text"
+                  bind:value={planilla.anfitrion}
+                  placeholder="anfitrion"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 10: Novedades -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-chart-line"></i>
+            <h3>NOVEDADES</h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="direccion">Direccion</label>
+              <div class="input-with-icon">
+                <i class="fas fa-map-marker-alt"></i>
+                <input
+                  id="direccion"
+                  type="text"
+                  bind:value={planilla.direccion}
+                  placeholder="direccion"
+                />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="telefono">Telefono</label>
+              <div class="input-with-icon">
+                <i class="fas fa-phone"></i>
+                <input
+                  id="telefono"
+                  type="text"
+                  bind:value={planilla.telefono}
+                  placeholder="telefono"
+                />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="diahora">Dia y hora</label>
+              <div class="input-with-icon">
+                <i class="fas fa-clock"></i>
+                <input
+                  id="diahora"
+                  type="text"
+                  bind:value={planilla.diahora}
+                  placeholder="dia y hora"
+                />
+              </div>
+            </div>
+            
+            <div class="form-group wide">
+              <label for="observaciones">Observaciones</label>
+              <div class="input-with-icon">
+                <i class="fas fa-comment-alt"></i>
+                <input
+                  id="observaciones"
+                  type="text"
+                  bind:value={planilla.observaciones}
+                  placeholder="observaciones"
                 />
               </div>
             </div>
@@ -852,8 +1105,8 @@
             <input
               type="checkbox"
               id="confirmationCheck"
-              required
               class="modern-checkbox"
+              required
             />
             <label for="confirmationCheck">
               <i class="fas fa-shield-alt"></i>
@@ -862,11 +1115,10 @@
           </div>
 
           <div class="submit-actions">
-            <button 
-              type="submit" 
-              class="submit-button"
-              disabled={!formValid || isSubmitting}
-              class:loading={isSubmitting}
+            <button
+              type="submit"
+              class="submit-button {isSubmitting ? 'loading' : ''}"
+              disabled={isSubmitting}
             >
               {#if isSubmitting}
                 <i class="fas fa-spinner fa-spin"></i>
@@ -876,17 +1128,6 @@
                 <span>Enviar Reporte a BD y WhatsApp</span>
               {/if}
             </button>
-            
-            <div class="form-stats">
-              <div class="stat-item">
-                <i class="fas fa-check-circle"></i>
-                <span>Campos completados: {Object.values(planilla).filter(v => v && v.toString().trim() !== '' && v !== '0').length}/28</span>
-              </div>
-              <div class="stat-item">
-                <i class="fas fa-clock"></i>
-                <span>Última actualización: {new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
-              </div>
-            </div>
           </div>
         </div>
       </form>
@@ -901,10 +1142,10 @@
     --primary-dark: #789768;
     --secondary-color: #5504f8;
     --accent-color: #36827b;
-    --success-color: #4CAF50;
+    --success-color: #4caf50;
     --error-color: #f44336;
-    --warning-color: #FF9800;
-    --info-color: #2196F3;
+    --warning-color: #ff9800;
+    --info-color: #2196f3;
     --bg-light: #f8f9fa;
     --bg-dark: #333333;
     --text-light: #ffffff;
@@ -918,18 +1159,18 @@
     --radius-lg: 16px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
   /* Contenedor principal */
   .modern-form-container {
     padding: 1.5rem;
     min-height: 100vh;
   }
-  
+
   .form-wrapper {
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+
   /* Tarjeta principal */
   .modern-card {
     background: var(--card-bg);
@@ -938,23 +1179,20 @@
     overflow: hidden;
     transition: var(--transition);
   }
-  
+
   /* Header del formulario */
   .form-header {
     background: linear-gradient(135deg, var(--bg-dark) 0%, #444 100%);
     padding: 2rem;
     color: var(--text-light);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
   }
-  
+
   .header-logo {
     display: flex;
     align-items: center;
     gap: 1.5rem;
   }
-  
+
   .logo-image {
     width: 80px;
     height: 80px;
@@ -963,7 +1201,7 @@
     border: 3px solid var(--primary-color);
     padding: 3px;
   }
-  
+
   .header-title h1 {
     font-size: 2rem;
     font-weight: 700;
@@ -973,63 +1211,36 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .header-subtitle {
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.95rem;
   }
-  
-  .header-status {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .status-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-  
-  .status-indicator.valid {
-    background: rgba(76, 175, 80, 0.1);
-    color: var(--success-color);
-    border: 1px solid rgba(76, 175, 80, 0.3);
-  }
-  
-  .status-indicator.invalid {
-    background: rgba(255, 152, 0, 0.1);
-    color: var(--warning-color);
-    border: 1px solid rgba(255, 152, 0, 0.3);
-  }
-  
+
   /* Formulario */
   .modern-form {
     padding: 2rem;
   }
-  
+
   /* Secciones del formulario */
   .form-section {
     margin-bottom: 2.5rem;
     padding-bottom: 2rem;
     border-bottom: 1px solid var(--border-color);
   }
-  
+
   .form-section:last-of-type {
     border-bottom: none;
     margin-bottom: 0;
   }
-  
+
   .section-header {
     display: flex;
     align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
   }
-  
+
   .section-header i {
     font-size: 1.5rem;
     color: var(--primary-color);
@@ -1037,53 +1248,46 @@
     padding: 0.75rem;
     border-radius: 50%;
   }
-  
+
   .section-header h3 {
     font-size: 1.25rem;
     color: var(--text-dark);
     font-weight: 600;
     margin: 0;
   }
-  
+
   /* Grid del formulario */
   .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
   }
-  
+
   .form-group.wide {
     grid-column: 1 / -1;
   }
-  
+
   /* Grupos de formulario */
   .form-group {
     position: relative;
   }
-  
+
   .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
     color: var(--text-dark);
     font-size: 0.9rem;
-    transition: var(--transition);
   }
-  
-  .form-group:focus-within label {
-    color: var(--primary-color);
-  }
-  
-  .form-group.touched:not(.has-value) label {
-    color: var(--error-color);
-  }
-  
+
   /* Inputs con iconos */
-  .input-with-icon, .select-with-icon {
+  .input-with-icon,
+  .select-with-icon {
     position: relative;
   }
-  
-  .input-with-icon i, .select-with-icon i:first-child {
+
+  .input-with-icon i,
+  .select-with-icon i:first-child {
     position: absolute;
     left: 1rem;
     top: 50%;
@@ -1093,8 +1297,9 @@
     z-index: 1;
     transition: var(--transition);
   }
-  
-  .input-with-icon input, .select-with-icon select {
+
+  .input-with-icon input,
+  .select-with-icon select {
     width: 100%;
     padding: 0.875rem 1rem 0.875rem 3rem;
     border: 2px solid var(--border-color);
@@ -1103,17 +1308,18 @@
     transition: var(--transition);
     background: var(--bg-light);
   }
-  
-  .input-with-icon input:focus, .select-with-icon select:focus {
+
+  .input-with-icon input:focus,
+  .select-with-icon select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(146, 174, 131, 0.1);
   }
-  
+
   .input-with-icon.currency {
     position: relative;
   }
-  
+
   .input-with-icon.currency .currency-symbol {
     position: absolute;
     right: 1rem;
@@ -1122,18 +1328,18 @@
     color: var(--text-muted);
     font-weight: 500;
   }
-  
+
   .select-with-icon .select-arrow {
     left: auto;
     right: 1rem;
     pointer-events: none;
   }
-  
+
   .select-with-icon select {
     appearance: none;
     cursor: pointer;
   }
-  
+
   /* Display de total */
   .total-display {
     padding: 1rem;
@@ -1147,16 +1353,16 @@
     font-weight: 700;
     color: var(--primary-color);
   }
-  
+
   .total-display i {
     font-size: 1.5rem;
   }
-  
+
   .total-amount {
     flex: 1;
     text-align: right;
   }
-  
+
   /* Checkbox moderno */
   .confirmation-check {
     display: flex;
@@ -1164,7 +1370,7 @@
     gap: 0.75rem;
     margin-bottom: 2rem;
   }
-  
+
   .modern-checkbox {
     width: 20px;
     height: 20px;
@@ -1175,14 +1381,14 @@
     position: relative;
     transition: var(--transition);
   }
-  
+
   .modern-checkbox:checked {
     background: var(--primary-color);
     border-color: var(--primary-color);
   }
-  
+
   .modern-checkbox:checked::after {
-    content: '✓';
+    content: "✓";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1190,7 +1396,7 @@
     color: white;
     font-size: 0.8rem;
   }
-  
+
   .confirmation-check label {
     cursor: pointer;
     color: var(--text-dark);
@@ -1199,14 +1405,14 @@
     gap: 0.5rem;
     font-weight: 500;
   }
-  
+
   /* Botón de enviar */
   .submit-actions {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
-  
+
   .submit-button {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     color: white;
@@ -1224,41 +1430,21 @@
     min-width: 300px;
     align-self: center;
   }
-  
+
   .submit-button:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(146, 174, 131, 0.3);
   }
-  
+
   .submit-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
-  
+
   .submit-button.loading {
     opacity: 0.8;
   }
-  
-  /* Estadísticas del formulario */
-  .form-stats {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-  
-  .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-  
-  .stat-item i {
-    font-size: 1rem;
-  }
-  
+
   /* Notificaciones modernas */
   .modern-notification-container {
     position: fixed;
@@ -1267,7 +1453,7 @@
     z-index: 9999;
     animation: slideIn 0.3s ease-out;
   }
-  
+
   .modern-notification {
     display: flex;
     align-items: center;
@@ -1280,28 +1466,28 @@
     color: white;
     background: var(--info-color);
   }
-  
+
   .modern-notification.success {
     background: linear-gradient(135deg, var(--success-color) 0%, #45a049 100%);
   }
-  
+
   .modern-notification.error {
     background: linear-gradient(135deg, var(--error-color) 0%, #d32f2f 100%);
   }
-  
+
   .modern-notification.info {
-    background: linear-gradient(135deg, var(--info-color) 0%, #1976D2 100%);
+    background: linear-gradient(135deg, var(--info-color) 0%, #1976d2 100%);
   }
-  
+
   .notification-icon {
     font-size: 1.5rem;
   }
-  
+
   .notification-message {
     flex: 1;
     font-weight: 500;
   }
-  
+
   .notification-close {
     background: rgba(255, 255, 255, 0.2);
     border: none;
@@ -1315,70 +1501,64 @@
     cursor: pointer;
     transition: var(--transition);
   }
-  
+
   .notification-close:hover {
     background: rgba(255, 255, 255, 0.3);
   }
-  
+
   /* Responsive */
   @media (max-width: 768px) {
     .modern-form-container {
       padding: 1rem;
     }
-    
+
     .form-header {
       padding: 1.5rem;
     }
-    
+
     .header-logo {
       flex-direction: column;
       text-align: center;
     }
-    
+
     .header-title h1 {
       font-size: 1.5rem;
     }
-    
+
     .modern-form {
       padding: 1.5rem;
     }
-    
+
     .form-grid {
       grid-template-columns: 1fr;
     }
-    
+
     .submit-button {
       min-width: auto;
       width: 100%;
     }
-    
-    .form-stats {
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-    
+
     .modern-notification {
       min-width: calc(100vw - 40px);
       max-width: calc(100vw - 40px);
     }
   }
-  
+
   @media (max-width: 480px) {
     .form-header {
       padding: 1rem;
     }
-    
+
     .modern-form {
       padding: 1rem;
     }
-    
+
     .form-section {
       padding-bottom: 1.5rem;
       margin-bottom: 1.5rem;
     }
   }
-  
+
   /* Animaciones */
   @keyframes slideIn {
     from {

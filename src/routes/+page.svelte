@@ -164,7 +164,7 @@
                 <!-- Predica 2 -->
                 <div class="col-lg-4 col-md-6 animate-up delay-1">
                     <div class="sermon-card">
-                        <img src="https://images.unsplash.com/photo-1530036861598-2f8e72b4bd61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="sermon-img" alt="Predica sobre el amor">
+                        <img src="https://media.sitioandino.com.ar/p/910138db31ea520ffdba106421cb0ddd/adjuntos/335/imagenes/000/626/0000626464/790x0/smart/pascua-resurrecion-santuario-divina-misericordia22jpg.jpg" class="sermon-img" alt="Predica sobre el amor">
                         <div class="sermon-body">
                             <h3 class="sermon-title">El Amor Ágape</h3>
                             <p class="sermon-date">8 de Julio, 2023</p>

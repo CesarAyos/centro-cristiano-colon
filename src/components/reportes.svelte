@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import * as XLSX from "xlsx";
-  import { fade } from 'svelte/transition';
+  import { fade } from "svelte/transition";
 
   // Variables reactivas
   let planilla = [];
@@ -16,8 +16,8 @@
   let totalPagesPlanilla = 1;
   let totalPagesNuevos = 1;
   let isLoading = true;
-  let activeTab = 'planilla'; // 'planilla' o 'nuevos'
-  
+  let activeTab = "planilla"; // 'planilla' o 'nuevos'
+
   // Variables para notificaciones
   let mostrarNotif = false;
   let mensajeNotif = "";
@@ -28,11 +28,11 @@
   $: hasSelectedNuevos = selectedNuevos.length > 0;
   $: paginatedPlanilla = planilla.slice(
     (currentPagePlanilla - 1) * itemsPerPagePlanilla,
-    currentPagePlanilla * itemsPerPagePlanilla
+    currentPagePlanilla * itemsPerPagePlanilla,
   );
   $: paginatedNuevos = nuevos.slice(
     (currentPageNuevos - 1) * itemsPerPageNuevos,
-    currentPageNuevos * itemsPerPageNuevos
+    currentPageNuevos * itemsPerPageNuevos,
   );
   $: totalPagesPlanilla = Math.ceil(planilla.length / itemsPerPagePlanilla);
   $: totalPagesNuevos = Math.ceil(nuevos.length / itemsPerPageNuevos);
@@ -42,7 +42,7 @@
     mensajeNotif = mensaje;
     tipoNotif = tipo;
     mostrarNotif = true;
-    
+
     setTimeout(() => {
       mostrarNotif = false;
     }, 4000);
@@ -57,7 +57,7 @@
         .from("planilla")
         .select("*")
         .order("created_at", { ascending: false });
-      
+
       if (planillaError) throw planillaError;
       planilla = planillaData || [];
 
@@ -66,7 +66,7 @@
         .from("nuevos")
         .select("*")
         .order("created_at", { ascending: false });
-      
+
       if (nuevosError) throw nuevosError;
       nuevos = nuevosData || [];
 
@@ -86,12 +86,12 @@
         .from("planilla")
         .delete()
         .eq("id", item.id);
-      
+
       if (error) throw error;
-      
-      planilla = planilla.filter(planillaItem => planillaItem.id !== item.id);
-      selectedPlanilla = selectedPlanilla.filter(id => id !== item.id);
-      
+
+      planilla = planilla.filter((planillaItem) => planillaItem.id !== item.id);
+      selectedPlanilla = selectedPlanilla.filter((id) => id !== item.id);
+
       mostrarNotificacion("✅ Reporte eliminado exitosamente", "success");
     } catch (error) {
       console.error("Error deleting item from planilla:", error);
@@ -105,12 +105,12 @@
         .from("nuevos")
         .delete()
         .eq("id", item.id);
-      
+
       if (error) throw error;
-      
-      nuevos = nuevos.filter(nuevo => nuevo.id !== item.id);
-      selectedNuevos = selectedNuevos.filter(id => id !== item.id);
-      
+
+      nuevos = nuevos.filter((nuevo) => nuevo.id !== item.id);
+      selectedNuevos = selectedNuevos.filter((id) => id !== item.id);
+
       mostrarNotificacion("✅ Amigo eliminado exitosamente", "success");
     } catch (error) {
       console.error("Error deleting item:", error);
@@ -121,16 +121,28 @@
   // Funciones para exportar a Excel
   function exportPlanilla() {
     if (selectedPlanilla.length === 0) {
-      mostrarNotificacion("❌ Selecciona al menos un reporte para exportar", "error");
+      mostrarNotificacion(
+        "❌ Selecciona al menos un reporte para exportar",
+        "error",
+      );
       return;
     }
 
-    const selectedItems = planilla.filter(item => selectedPlanilla.includes(item.id));
+    const selectedItems = planilla.filter((item) =>
+      selectedPlanilla.includes(item.id),
+    );
     try {
       const worksheet = XLSX.utils.json_to_sheet(selectedItems);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Reportes Grupos Bíblicos");
-      XLSX.writeFile(workbook, `reportes_grupos_biblicos_${new Date().toISOString().slice(0,10)}.xlsx`);
+      XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Reportes Grupos Bíblicos",
+      );
+      XLSX.writeFile(
+        workbook,
+        `reportes_grupos_biblicos_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      );
       mostrarNotificacion("✅ Reportes exportados exitosamente", "success");
     } catch (error) {
       console.error("Error exporting to Excel:", error);
@@ -140,16 +152,24 @@
 
   function exportNuevos() {
     if (selectedNuevos.length === 0) {
-      mostrarNotificacion("❌ Selecciona al menos un amigo para exportar", "error");
+      mostrarNotificacion(
+        "❌ Selecciona al menos un amigo para exportar",
+        "error",
+      );
       return;
     }
 
-    const selectedItems = nuevos.filter(item => selectedNuevos.includes(item.id));
+    const selectedItems = nuevos.filter((item) =>
+      selectedNuevos.includes(item.id),
+    );
     try {
       const worksheet = XLSX.utils.json_to_sheet(selectedItems);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Amigos Nuevos");
-      XLSX.writeFile(workbook, `amigos_nuevos_${new Date().toISOString().slice(0,10)}.xlsx`);
+      XLSX.writeFile(
+        workbook,
+        `amigos_nuevos_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      );
       mostrarNotificacion("✅ Amigos exportados exitosamente", "success");
     } catch (error) {
       console.error("Error exporting to Excel:", error);
@@ -164,7 +184,9 @@
 
   function togglePlanillaSelection(id) {
     if (selectedPlanilla.includes(id)) {
-      selectedPlanilla = selectedPlanilla.filter(selectedId => selectedId !== id);
+      selectedPlanilla = selectedPlanilla.filter(
+        (selectedId) => selectedId !== id,
+      );
     } else {
       selectedPlanilla = [...selectedPlanilla, id];
     }
@@ -176,7 +198,7 @@
 
   function toggleNuevoSelection(id) {
     if (selectedNuevos.includes(id)) {
-      selectedNuevos = selectedNuevos.filter(selectedId => selectedId !== id);
+      selectedNuevos = selectedNuevos.filter((selectedId) => selectedId !== id);
     } else {
       selectedNuevos = [...selectedNuevos, id];
     }
@@ -187,7 +209,7 @@
     if (selectedPlanilla.length === paginatedPlanilla.length) {
       selectedPlanilla = [];
     } else {
-      selectedPlanilla = paginatedPlanilla.map(item => item.id);
+      selectedPlanilla = paginatedPlanilla.map((item) => item.id);
     }
   }
 
@@ -195,7 +217,7 @@
     if (selectedNuevos.length === paginatedNuevos.length) {
       selectedNuevos = [];
     } else {
-      selectedNuevos = paginatedNuevos.map(item => item.id);
+      selectedNuevos = paginatedNuevos.map((item) => item.id);
     }
   }
 
@@ -226,12 +248,12 @@
 
   // Formatear fecha
   function formatDate(dateString) {
-    if (!dateString) return 'No disponible';
+    if (!dateString) return "No disponible";
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    return date.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   }
 
@@ -247,16 +269,19 @@
     <div class="modern-notification-container" in:fade out:fade>
       <div class="modern-notification {tipoNotif}">
         <div class="notification-icon">
-          {#if tipoNotif === 'success'}
+          {#if tipoNotif === "success"}
             <i class="fas fa-check-circle"></i>
-          {:else if tipoNotif === 'error'}
+          {:else if tipoNotif === "error"}
             <i class="fas fa-exclamation-circle"></i>
           {:else}
             <i class="fas fa-info-circle"></i>
           {/if}
         </div>
         <span class="notification-message">{mensajeNotif}</span>
-        <button class="notification-close" on:click={() => mostrarNotif = false}>
+        <button
+          class="notification-close"
+          on:click={() => (mostrarNotif = false)}
+        >
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -269,9 +294,11 @@
     <div class="dashboard-header">
       <div class="header-content">
         <h1><i class="fas fa-chart-bar"></i> Gestión de Reportes</h1>
-        <p class="header-subtitle">Administra y visualiza todos los reportes y amigos nuevos registrados</p>
+        <p class="header-subtitle">
+          Administra y visualiza todos los reportes y amigos nuevos registrados
+        </p>
       </div>
-      
+
       <div class="header-stats">
         <div class="stat-card">
           <i class="fas fa-church"></i>
@@ -293,9 +320,9 @@
     <!-- Tabs de navegación -->
     <div class="tabs-container">
       <div class="tabs">
-        <button 
-          class:active={activeTab === 'planilla'}
-          on:click={() => activeTab = 'planilla'}
+        <button
+          class:active={activeTab === "planilla"}
+          on:click={() => (activeTab = "planilla")}
           class="tab-button"
         >
           <i class="fas fa-file-alt"></i>
@@ -304,10 +331,10 @@
             <span class="tab-badge">{selectedPlanilla.length}</span>
           {/if}
         </button>
-        
-        <button 
-          class:active={activeTab === 'nuevos'}
-          on:click={() => activeTab = 'nuevos'}
+
+        <button
+          class:active={activeTab === "nuevos"}
+          on:click={() => (activeTab = "nuevos")}
           class="tab-button"
         >
           <i class="fas fa-user-plus"></i>
@@ -327,37 +354,36 @@
           <i class="fas fa-spinner fa-spin loading-icon"></i>
           <p>Cargando datos...</p>
         </div>
-      
-      {:else if activeTab === 'planilla'}
+      {:else if activeTab === "planilla"}
         <!-- Tab de Reportes -->
         <div class="tab-panel" in:fade>
           <!-- Acciones de Reportes -->
           <div class="actions-bar">
             <div class="actions-left">
-              <button 
+              <button
                 class="action-button select-all"
                 on:click={toggleAllPlanilla}
               >
-                <i class="fas {selectedPlanilla.length === paginatedPlanilla.length ? 'fa-check-square' : 'fa-square'}"></i>
+                <i
+                  class="fas {selectedPlanilla.length ===
+                  paginatedPlanilla.length
+                    ? 'fa-check-square'
+                    : 'fa-square'}"
+                ></i>
                 <span>Seleccionar Todos</span>
               </button>
-              
+
               {#if hasSelectedPlanilla}
-                <button 
-                  class="action-button export"
-                  on:click={exportPlanilla}
-                >
+                <button class="action-button export" on:click={exportPlanilla}>
                   <i class="fas fa-file-excel"></i>
-                  <span>Exportar Seleccionados ({selectedPlanilla.length})</span>
+                  <span>Exportar Seleccionados ({selectedPlanilla.length})</span
+                  >
                 </button>
               {/if}
             </div>
-            
+
             <div class="actions-right">
-              <button 
-                class="action-button refresh"
-                on:click={fetchData}
-              >
+              <button class="action-button refresh" on:click={fetchData}>
                 <i class="fas fa-sync-alt"></i>
                 <span>Actualizar</span>
               </button>
@@ -374,7 +400,10 @@
               </div>
             {:else}
               {#each paginatedPlanilla as item}
-                <div class="report-card" class:selected={isPlanillaSelected(item.id)}>
+                <div
+                  class="report-card"
+                  class:selected={isPlanillaSelected(item.id)}
+                >
                   <!-- Header de la tarjeta -->
                   <div class="card-header">
                     <div class="card-checkbox">
@@ -386,9 +415,9 @@
                       />
                       <label for={`planilla-${item.id}`}></label>
                     </div>
-                    
+
                     <div class="card-actions">
-                      <button 
+                      <button
                         class="card-action delete"
                         on:click={() => deletePlanillaItem(item)}
                         title="Eliminar reporte"
@@ -402,15 +431,15 @@
                   <div class="card-content">
                     <div class="card-title">
                       <i class="fas fa-users"></i>
-                      <h3>{item.grupobiblico || 'Sin grupo'}</h3>
+                      <h3>{item.grupobiblico || "Sin grupo"}</h3>
                     </div>
-                    
+
                     <div class="card-details">
                       <div class="detail-item">
                         <i class="fas fa-user-check"></i>
-                        <span>{item.FELIPE_LIDER || 'Sin líder'}</span>
+                        <span>{item.FELIPE_LIDER || "Sin líder"}</span>
                       </div>
-                      
+
                       <div class="detail-item">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{formatDate(item.created_at)}</span>
@@ -430,11 +459,12 @@
                     </div>
 
                     <!-- Botón para ver detalles -->
-                    <button 
+                    <button
                       class="view-details"
                       on:click={() => {
-                        // Usamos Bootstrap modal programáticamente
-                        const modal = new bootstrap.Modal(document.getElementById(`modal-planilla-${item.id}`));
+                        const modal = new bootstrap.Modal(
+                          document.getElementById(`modal-planilla-${item.id}`),
+                        );
                         modal.show();
                       }}
                     >
@@ -445,113 +475,433 @@
                 </div>
 
                 <!-- Modal para detalles del reporte -->
-                <div class="modal fade" id={`modal-planilla-${item.id}`} tabindex="-1" aria-hidden="true">
-                  <div class="modal-dialog modal-lg">
+                <div
+                  class="modal fade"
+                  id={`modal-planilla-${item.id}`}
+                  tabindex="-1"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                       <div class="modal-header">
                         <h5 class="modal-title">
-                          <i class="fas fa-file-alt"></i>
-                          Reporte Completo - {item.grupobiblico}
+                          <i class="fas fa-file-alt me-2"></i>
+                          Reporte Completo - {item.grupobiblico || "Sin nombre"}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
                       </div>
                       <div class="modal-body">
                         <div class="modal-grid">
-                          <!-- Información de Liderazgo -->
+                          <!-- Sección 1: Información General -->
                           <div class="modal-section">
-                            <h6><i class="fas fa-users"></i> Información de Liderazgo</h6>
+                            <h6>
+                              <i class="fas fa-info-circle me-2"></i>Información
+                              General
+                            </h6>
                             <div class="info-grid">
                               <div class="info-item">
-                                <span class="info-label">Pastor Supervisor:</span>
-                                <span class="info-value">{item.PASTOR_SUPERVISOR || 'No registrado'}</span>
+                                <span class="info-label">Tipo:</span>
+                                <span class="info-value"
+                                  >{item.tipo || "No especificado"}</span
+                                >
                               </div>
                               <div class="info-item">
-                                <span class="info-label">Coordinador Dpto:</span>
-                                <span class="info-value">{item.COORDINADOR_DPTO || 'No registrado'}</span>
+                                <span class="info-label">Grupo Bíblico:</span>
+                                <span class="info-value"
+                                  >{item.grupobiblico || "No registrado"}</span
+                                >
                               </div>
                               <div class="info-item">
-                                <span class="info-label">Supervisor de Red:</span>
-                                <span class="info-value">{item.SUPERVISOR_DE_RED || 'No registrado'}</span>
+                                <span class="info-label">Área:</span>
+                                <span class="info-value"
+                                  >{item.area || "No registrada"}</span
+                                >
                               </div>
                               <div class="info-item">
-                                <span class="info-label">Felipe de Red:</span>
-                                <span class="info-value">{item.FELIPE_DE_RED || 'No registrado'}</span>
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Felipe Líder:</span>
-                                <span class="info-value">{item.FELIPE_LIDER || 'No registrado'}</span>
+                                <span class="info-label">Código:</span>
+                                <span class="info-value"
+                                  >{item.codigo || "Sin código"}</span
+                                >
                               </div>
                             </div>
                           </div>
 
-                          <!-- Estadísticas -->
+                          <!-- Sección 2: Liderazgo -->
                           <div class="modal-section">
-                            <h6><i class="fas fa-chart-line"></i> Estadísticas del Grupo</h6>
+                            <h6><i class="fas fa-users me-2"></i>Liderazgo</h6>
+                            <div class="info-grid">
+                              <div class="info-item">
+                                <span class="info-label"
+                                  >Pastor Supervisor:</span
+                                >
+                                <span class="info-value"
+                                  >{item.PASTOR_SUPERVISOR ||
+                                    "No registrado"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Coordinador Dpto:</span
+                                >
+                                <span class="info-value"
+                                  >{item.COORDINADOR_DPTO ||
+                                    "No registrado"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label"
+                                  >Supervisor de Red:</span
+                                >
+                                <span class="info-value"
+                                  >{item.SUPERVISOR_DE_RED ||
+                                    "No registrado"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Líder:</span>
+                                <span class="info-value"
+                                  >{item.lider || "No registrado"}</span
+                                >
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Sección 3: Equipo de Servicio -->
+                          <div class="modal-section">
+                            <h6>
+                              <i class="fas fa-user-friends me-2"></i>Equipo de
+                              Servicio
+                            </h6>
+                            <div class="info-grid">
+                              <div class="info-item">
+                                <span class="info-label">Aprendiz:</span>
+                                <span class="info-value"
+                                  >{item.aprendiz || "No registrado"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Maestro Niños:</span>
+                                <span class="info-value"
+                                  >{item.maestrninos || "No registrado"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Anfitrión:</span>
+                                <span class="info-value"
+                                  >{item.anfitrion || "No registrado"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Líder Casa:</span>
+                                <span class="info-value"
+                                  >{item.lidercasa || "No registrado"}</span
+                                >
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Sección 4: Información de Contacto -->
+                          <div class="modal-section">
+                            <h6>
+                              <i class="fas fa-map-marker-alt me-2"
+                              ></i>Información de Contacto
+                            </h6>
+                            <div class="info-grid">
+                              <div class="info-item">
+                                <span class="info-label">Dirección:</span>
+                                <span class="info-value"
+                                  >{item.direccion || "No registrada"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Teléfono:</span>
+                                <span class="info-value"
+                                  >{item.telefono || "No registrado"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Día y Hora:</span>
+                                <span class="info-value"
+                                  >{item.diahora || "No establecido"}</span
+                                >
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Sección 5: Asistencia General -->
+                          <div class="modal-section">
+                            <h6>
+                              <i class="fas fa-calendar-check me-2"
+                              ></i>Asistencia General
+                            </h6>
                             <div class="stats-grid">
                               <div class="stat-item">
-                                <i class="fas fa-calendar-check"></i>
+                                <i class="fas fa-church"></i>
                                 <div>
                                   <span class="stat-label">Asistencia VEA</span>
-                                  <span class="stat-value">{item.Asistencia_vea || 0}</span>
+                                  <span class="stat-value"
+                                    >{item.Asistencia_vea || 0}</span
+                                  >
                                 </div>
                               </div>
                               <div class="stat-item">
                                 <i class="fas fa-users"></i>
                                 <div>
                                   <span class="stat-label">Asistentes GB</span>
-                                  <span class="stat-value">{item.asistentes || 0}</span>
+                                  <span class="stat-value"
+                                    >{item.asistentes || 0}</span
+                                  >
                                 </div>
                               </div>
                               <div class="stat-item">
-                                <i class="fas fa-user-graduate"></i>
+                                <i class="fas fa-user-plus"></i>
                                 <div>
-                                  <span class="stat-label">Felipes</span>
-                                  <span class="stat-value">{item.Felipes || 0}</span>
+                                  <span class="stat-label">Visitas</span>
+                                  <span class="stat-value"
+                                    >{item.visitas || 0}</span
+                                  >
                                 </div>
                               </div>
                               <div class="stat-item">
-                                <i class="fas fa-user-tag"></i>
+                                <i class="fas fa-hands-praying"></i>
                                 <div>
-                                  <span class="stat-label">Etiopes</span>
-                                  <span class="stat-value">{item.Etiopes || 0}</span>
+                                  <span class="stat-label">Decisiones</span>
+                                  <span class="stat-value"
+                                    >{item.Decision || 0}</span
+                                  >
                                 </div>
                               </div>
                             </div>
                           </div>
 
-                          <!-- Finanzas -->
+                          <!-- Sección 6: Asistencia por Grupos -->
                           <div class="modal-section">
-                            <h6><i class="fas fa-coins"></i> Finanzas</h6>
+                            <h6>
+                              <i class="fas fa-user-group me-2"></i>Asistencia
+                              por Grupos
+                            </h6>
+                            <div class="info-grid">
+                              <div class="info-item">
+                                <span class="info-label">Amigos:</span>
+                                <span class="info-value"
+                                  >{item.Amigos || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Niños:</span>
+                                <span class="info-value">{item.Ninos || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Decisiones Niños:</span
+                                >
+                                <span class="info-value"
+                                  >{item.Decisionninos || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Adultos:</span>
+                                <span class="info-value"
+                                  >{item.adultos || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Jóvenes:</span>
+                                <span class="info-value">{item.joven || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Niños en Casa:</span>
+                                <span class="info-value"
+                                  >{item.ninoscasa || 0}</span
+                                >
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Sección 7: Finanzas -->
+                          <div class="modal-section">
+                            <h6><i class="fas fa-coins me-2"></i>Finanzas</h6>
                             <div class="finances-grid">
                               <div class="finance-item">
                                 <span class="finance-label">Diezmos:</span>
-                                <span class="finance-value">${item.Diezmos || 0}</span>
+                                <span class="finance-value"
+                                  >${item.Diezmos || 0}</span
+                                >
                               </div>
                               <div class="finance-item">
                                 <span class="finance-label">Ofrendas:</span>
-                                <span class="finance-value">${item.Ofrendas || 0}</span>
+                                <span class="finance-value"
+                                  >${item.Ofrendas || 0}</span
+                                >
                               </div>
                               <div class="finance-item total">
                                 <span class="finance-label">Total:</span>
-                                <span class="finance-value">${item.Total_financiero || 0}</span>
+                                <span class="finance-value"
+                                  >${item.Total_financiero || 0}</span
+                                >
                               </div>
                             </div>
                           </div>
 
-                          <!-- Novedades -->
-                          {#if item.novedades}
-                            <div class="modal-section">
-                              <h6><i class="fas fa-sticky-note"></i> Novedades</h6>
-                              <div class="novedades">
-                                {item.novedades}
+                          <!-- Sección 8: Programas y Ministerios -->
+                          <div class="modal-section">
+                            <h6>
+                              <i class="fas fa-hands-helping me-2"></i>Programas
+                              y Ministerios
+                            </h6>
+                            <div class="info-grid">
+                              <div class="info-item">
+                                <span class="info-label">Misión Vida:</span>
+                                <span class="info-value"
+                                  >{item.misionvida || "No"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label"
+                                  >Participación Consolidación:</span
+                                >
+                                <span class="info-value"
+                                  >{item.Participacion_Consolidacion ||
+                                    "No"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Pasos de Vida:</span>
+                                <span class="info-value"
+                                  >{item.pasosdevida || "No"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Escuela de Vida:</span>
+                                <span class="info-value"
+                                  >{item.escueladevida || "No"}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">VEA:</span>
+                                <span class="info-value"
+                                  >{item.vea || "No"}</span
+                                >
                               </div>
                             </div>
-                          {/if}
+                          </div>
+
+                          <!-- Sección 9: Asistencia Dominical -->
+                          <div class="modal-section">
+                            <h6>
+                              <i class="fas fa-calendar-day me-2"></i>Asistencia
+                              Dominical
+                            </h6>
+                            <div class="info-grid">
+                              <div class="info-item">
+                                <span class="info-label">Hermanos:</span>
+                                <span class="info-value"
+                                  >{item.hermanosdominical || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Amigos Iglesia:</span>
+                                <span class="info-value"
+                                  >{item.amigosIglesia || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Niños Dominical:</span>
+                                <span class="info-value"
+                                  >{item.ninosdominical || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label"
+                                  >Adultos Dominical:</span
+                                >
+                                <span class="info-value"
+                                  >{item.adultosdominical || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label"
+                                  >Jóvenes Dominical:</span
+                                >
+                                <span class="info-value"
+                                  >{item.jovendominical || 0}</span
+                                >
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Sección 10: Totales -->
+                          <div class="modal-section">
+                            <h6>
+                              <i class="fas fa-calculator me-2"></i>Totales
+                            </h6>
+                            <div class="info-grid">
+                              <div class="info-item">
+                                <span class="info-label"
+                                  >Total Casa Familiar:</span
+                                >
+                                <span class="info-value"
+                                  >{item.total_casa_familiar || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Total Dominical:</span>
+                                <span class="info-value"
+                                  >{item.total_dominical || 0}</span
+                                >
+                              </div>
+                              <div class="info-item">
+                                <span class="info-label">Asistencia Niños:</span
+                                >
+                                <span class="info-value"
+                                  >{item.Asistencia_de_Ninos || 0}</span
+                                >
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Sección 11: Novedades y Observaciones -->
+                          <div class="modal-section full-width">
+                            <div class="row">
+                              {#if item.novedades}
+                                <div class="col-md-6">
+                                  <h6>
+                                    <i class="fas fa-sticky-note me-2"
+                                    ></i>Novedades
+                                  </h6>
+                                  <div class="text-content">
+                                    {item.novedades}
+                                  </div>
+                                </div>
+                              {/if}
+
+                              {#if item.observaciones}
+                                <div class="col-md-6">
+                                  <h6>
+                                    <i class="fas fa-clipboard-check me-2"
+                                    ></i>Observaciones
+                                  </h6>
+                                  <div class="text-content">
+                                    {item.observaciones}
+                                  </div>
+                                </div>
+                              {/if}
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                          <i class="fas fa-times"></i>
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal"
+                        >
+                          <i class="fas fa-times me-1"></i>
                           Cerrar
                         </button>
                       </div>
@@ -569,7 +919,7 @@
                 Mostrando {paginatedPlanilla.length} de {planilla.length} reportes
               </div>
               <div class="pagination-controls">
-                <button 
+                <button
                   class="pagination-button"
                   on:click={prevPagePlanilla}
                   disabled={currentPagePlanilla === 1}
@@ -577,12 +927,12 @@
                   <i class="fas fa-chevron-left"></i>
                   <span>Anterior</span>
                 </button>
-                
+
                 <div class="pagination-numbers">
                   Página {currentPagePlanilla} de {totalPagesPlanilla}
                 </div>
-                
-                <button 
+
+                <button
                   class="pagination-button"
                   on:click={nextPagePlanilla}
                   disabled={currentPagePlanilla === totalPagesPlanilla}
@@ -594,37 +944,34 @@
             </div>
           {/if}
         </div>
-      
-      {:else if activeTab === 'nuevos'}
+      {:else if activeTab === "nuevos"}
         <!-- Tab de Amigos Nuevos -->
         <div class="tab-panel" in:fade>
           <!-- Acciones de Amigos Nuevos -->
           <div class="actions-bar">
             <div class="actions-left">
-              <button 
+              <button
                 class="action-button select-all"
                 on:click={toggleAllNuevos}
               >
-                <i class="fas {selectedNuevos.length === paginatedNuevos.length ? 'fa-check-square' : 'fa-square'}"></i>
+                <i
+                  class="fas {selectedNuevos.length === paginatedNuevos.length
+                    ? 'fa-check-square'
+                    : 'fa-square'}"
+                ></i>
                 <span>Seleccionar Todos</span>
               </button>
-              
+
               {#if hasSelectedNuevos}
-                <button 
-                  class="action-button export"
-                  on:click={exportNuevos}
-                >
+                <button class="action-button export" on:click={exportNuevos}>
                   <i class="fas fa-file-excel"></i>
                   <span>Exportar Seleccionados ({selectedNuevos.length})</span>
                 </button>
               {/if}
             </div>
-            
+
             <div class="actions-right">
-              <button 
-                class="action-button refresh"
-                on:click={fetchData}
-              >
+              <button class="action-button refresh" on:click={fetchData}>
                 <i class="fas fa-sync-alt"></i>
                 <span>Actualizar</span>
               </button>
@@ -641,7 +988,10 @@
               </div>
             {:else}
               {#each paginatedNuevos as item}
-                <div class="friend-card" class:selected={isNuevoSelected(item.id)}>
+                <div
+                  class="friend-card"
+                  class:selected={isNuevoSelected(item.id)}
+                >
                   <!-- Header de la tarjeta -->
                   <div class="card-header">
                     <div class="card-checkbox">
@@ -653,9 +1003,9 @@
                       />
                       <label for={`nuevo-${item.id}`}></label>
                     </div>
-                    
+
                     <div class="card-actions">
-                      <button 
+                      <button
                         class="card-action delete"
                         on:click={() => deleteNuevoItem(item)}
                         title="Eliminar amigo"
@@ -670,28 +1020,29 @@
                     <div class="card-avatar">
                       <i class="fas fa-user-circle"></i>
                     </div>
-                    
+
                     <div class="card-info">
                       <h3 class="friend-name">
-                        {item.nombresnuevo} {item.apellidosnuevo}
+                        {item.nombresnuevo}
+                        {item.apellidosnuevo}
                       </h3>
-                      
+
                       <div class="friend-details">
                         <div class="detail-item">
                           <i class="fas fa-user-tie"></i>
                           <span>{item.nombrelidernuevo}</span>
                         </div>
-                        
+
                         <div class="detail-item">
                           <i class="fas fa-church"></i>
                           <span>{item.nombregruponuevo}</span>
                         </div>
-                        
+
                         <div class="detail-item">
                           <i class="fas fa-birthday-cake"></i>
                           <span>{item.edadnuevo} años</span>
                         </div>
-                        
+
                         <div class="detail-item">
                           <i class="fas fa-calendar-alt"></i>
                           <span>{formatDate(item.created_at)}</span>
@@ -700,10 +1051,12 @@
                     </div>
 
                     <!-- Botón para ver detalles -->
-                    <button 
+                    <button
                       class="view-details"
                       on:click={() => {
-                        const modal = new bootstrap.Modal(document.getElementById(`modal-nuevo-${item.id}`));
+                        const modal = new bootstrap.Modal(
+                          document.getElementById(`modal-nuevo-${item.id}`),
+                        );
                         modal.show();
                       }}
                     >
@@ -714,7 +1067,12 @@
                 </div>
 
                 <!-- Modal para detalles del amigo -->
-                <div class="modal fade" id={`modal-nuevo-${item.id}`} tabindex="-1" aria-hidden="true">
+                <div
+                  class="modal fade"
+                  id={`modal-nuevo-${item.id}`}
+                  tabindex="-1"
+                  aria-hidden="true"
+                >
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -722,61 +1080,93 @@
                           <i class="fas fa-user-circle"></i>
                           Información Completa
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
                       </div>
                       <div class="modal-body">
                         <div class="friend-info-grid">
                           <div class="info-section">
-                            <h6><i class="fas fa-user"></i> Información Personal</h6>
+                            <h6>
+                              <i class="fas fa-user"></i> Información Personal
+                            </h6>
                             <div class="info-item">
                               <span class="info-label">Nombres:</span>
-                              <span class="info-value">{item.nombresnuevo}</span>
+                              <span class="info-value">{item.nombresnuevo}</span
+                              >
                             </div>
                             <div class="info-item">
                               <span class="info-label">Apellidos:</span>
-                              <span class="info-value">{item.apellidosnuevo}</span>
+                              <span class="info-value"
+                                >{item.apellidosnuevo}</span
+                              >
                             </div>
                             <div class="info-item">
                               <span class="info-label">Edad:</span>
-                              <span class="info-value">{item.edadnuevo} años</span>
+                              <span class="info-value"
+                                >{item.edadnuevo} años</span
+                              >
                             </div>
                           </div>
-                          
+
                           <div class="info-section">
-                            <h6><i class="fas fa-church"></i> Información del Grupo</h6>
+                            <h6>
+                              <i class="fas fa-church"></i> Información del Grupo
+                            </h6>
                             <div class="info-item">
                               <span class="info-label">Líder Responsable:</span>
-                              <span class="info-value">{item.nombrelidernuevo}</span>
+                              <span class="info-value"
+                                >{item.nombrelidernuevo}</span
+                              >
                             </div>
                             <div class="info-item">
                               <span class="info-label">Grupo Bíblico:</span>
-                              <span class="info-value">{item.nombregruponuevo}</span>
+                              <span class="info-value"
+                                >{item.nombregruponuevo}</span
+                              >
                             </div>
                           </div>
-                          
+
                           <div class="info-section">
-                            <h6><i class="fas fa-address-book"></i> Contacto</h6>
+                            <h6>
+                              <i class="fas fa-address-book"></i> Contacto
+                            </h6>
                             <div class="info-item">
                               <span class="info-label">Dirección:</span>
-                              <span class="info-value">{item.direccionnuevo}</span>
+                              <span class="info-value"
+                                >{item.direccionnuevo}</span
+                              >
                             </div>
                             <div class="info-item">
                               <span class="info-label">Teléfono:</span>
-                              <span class="info-value">{item.telefononuevo}</span>
+                              <span class="info-value"
+                                >{item.telefononuevo}</span
+                              >
                             </div>
                           </div>
-                          
+
                           <div class="info-section">
-                            <h6><i class="fas fa-calendar"></i> Fecha de Registro</h6>
+                            <h6>
+                              <i class="fas fa-calendar"></i> Fecha de Registro
+                            </h6>
                             <div class="info-item">
                               <span class="info-label">Registrado el:</span>
-                              <span class="info-value">{formatDate(item.created_at)}</span>
+                              <span class="info-value"
+                                >{formatDate(item.created_at)}</span
+                              >
                             </div>
                           </div>
                         </div>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal"
+                        >
                           <i class="fas fa-times"></i>
                           Cerrar
                         </button>
@@ -795,7 +1185,7 @@
                 Mostrando {paginatedNuevos.length} de {nuevos.length} amigos
               </div>
               <div class="pagination-controls">
-                <button 
+                <button
                   class="pagination-button"
                   on:click={prevPageNuevos}
                   disabled={currentPageNuevos === 1}
@@ -803,12 +1193,12 @@
                   <i class="fas fa-chevron-left"></i>
                   <span>Anterior</span>
                 </button>
-                
+
                 <div class="pagination-numbers">
                   Página {currentPageNuevos} de {totalPagesNuevos}
                 </div>
-                
-                <button 
+
+                <button
                   class="pagination-button"
                   on:click={nextPageNuevos}
                   disabled={currentPageNuevos === totalPagesNuevos}
@@ -832,10 +1222,10 @@
     --primary-dark: #789768;
     --secondary-color: #5504f8;
     --accent-color: #36827b;
-    --success-color: #4CAF50;
+    --success-color: #4caf50;
     --error-color: #f44336;
-    --warning-color: #FF9800;
-    --info-color: #2196F3;
+    --warning-color: #ff9800;
+    --info-color: #2196f3;
     --bg-light: #f8f9fa;
     --bg-dark: #333333;
     --card-bg: #ffffff;
@@ -1020,7 +1410,8 @@
     border: 1px solid var(--border-color);
   }
 
-  .actions-left, .actions-right {
+  .actions-left,
+  .actions-right {
     display: flex;
     gap: 0.75rem;
   }
@@ -1067,7 +1458,7 @@
   }
 
   .action-button.refresh:hover {
-    background: #1976D2;
+    background: #1976d2;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
   }
@@ -1081,7 +1472,8 @@
   }
 
   /* Tarjeta de Reporte */
-  .report-card, .friend-card {
+  .report-card,
+  .friend-card {
     background: white;
     border-radius: var(--radius-md);
     box-shadow: var(--card-shadow);
@@ -1090,12 +1482,14 @@
     overflow: hidden;
   }
 
-  .report-card:hover, .friend-card:hover {
+  .report-card:hover,
+  .friend-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--card-shadow-hover);
   }
 
-  .report-card.selected, .friend-card.selected {
+  .report-card.selected,
+  .friend-card.selected {
     border-color: var(--primary-color);
     background: rgba(146, 174, 131, 0.05);
   }
@@ -1131,7 +1525,7 @@
   }
 
   .card-checkbox input:checked + label::after {
-    content: '✓';
+    content: "✓";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1189,7 +1583,8 @@
     font-size: 1.2rem;
   }
 
-  .card-details, .friend-details {
+  .card-details,
+  .friend-details {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -1213,7 +1608,11 @@
   .card-avatar {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--primary-color) 0%,
+      var(--accent-color) 100%
+    );
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1365,20 +1764,23 @@
   }
 
   /* Modales */
-  .modal-grid, .friend-info-grid {
+  .modal-grid,
+  .friend-info-grid {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
 
-  .modal-section, .info-section {
+  .modal-section,
+  .info-section {
     background: var(--bg-light);
     border-radius: var(--radius-sm);
     padding: 1.5rem;
     border: 1px solid var(--border-color);
   }
 
-  .modal-section h6, .info-section h6 {
+  .modal-section h6,
+  .info-section h6 {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -1387,11 +1789,14 @@
     font-size: 1rem;
   }
 
-  .modal-section h6 i, .info-section h6 i {
+  .modal-section h6 i,
+  .info-section h6 i {
     color: var(--primary-color);
   }
 
-  .info-grid, .stats-grid, .finances-grid {
+  .info-grid,
+  .stats-grid,
+  .finances-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
@@ -1479,46 +1884,47 @@
     .reports-dashboard {
       padding: 1rem;
     }
-    
+
     .dashboard-header {
       padding: 1.5rem;
     }
-    
+
     .header-content h1 {
       font-size: 1.8rem;
     }
-    
+
     .header-stats {
       flex-direction: column;
     }
-    
+
     .tab-content {
       padding: 1.5rem;
     }
-    
+
     .tabs-container {
       padding: 0 1rem;
     }
-    
+
     .tab-button {
       padding: 1rem;
       font-size: 0.9rem;
     }
-    
+
     .cards-grid {
       grid-template-columns: 1fr;
     }
-    
+
     .actions-bar {
       flex-direction: column;
       gap: 1rem;
     }
-    
-    .actions-left, .actions-right {
+
+    .actions-left,
+    .actions-right {
       width: 100%;
       justify-content: center;
     }
-    
+
     .pagination-container {
       flex-direction: column;
       gap: 1rem;
@@ -1530,21 +1936,21 @@
     .dashboard-header {
       padding: 1rem;
     }
-    
+
     .header-content h1 {
       font-size: 1.5rem;
     }
-    
+
     .tab-button {
       padding: 0.75rem;
       font-size: 0.85rem;
     }
-    
+
     .action-button {
       padding: 0.6rem 1rem;
       font-size: 0.85rem;
     }
-    
+
     .card-content {
       padding: 1rem;
     }

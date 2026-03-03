@@ -65,7 +65,7 @@
     { value: "belen", label: "Belén" },
     { value: "betel", label: "Betel" },
     { value: "elohim", label: "Elohim" },
-    { value: "emanuel", label: "Emanuel" },
+    { value: "nuevos comienzos", label: "nuevos comienzos" },
     { value: "juda", label: "Judá" },
     { value: "jireth", label: "Jireth" },
   ];
@@ -234,96 +234,71 @@ const insertPlanilla = async () => {
     return false;
   };
 
-  // Función para enviar a WhatsApp
+// Función para enviar a WhatsApp
 const enviarAWhatsApp = () => {
   const numero = "584247187229";
 
-  const mensajeTexto = `📄 REPORTE DE GRUPO BÍBLICO - CASA DE VIDA
+  const mensajeTexto = `P.V.A
+Tipo de reporte: ${planilla.tipo}
+Pastor Supervisor: ${planilla.PASTOR_SUPERVISOR}
+Departamento: ${planilla.COORDINADOR_DPTO}
+Lider de Red: ${planilla.SUPERVISOR_DE_RED}
+Area: ${planilla.area}
+Codigo: ${planilla.codigo}
+Nombre de casa de vida: ${planilla.grupobiblico}
 
-📋 INFORME GENERAL
-────────────────────
-🔹 Tipo de reporte: ${planilla.tipo}
-🙏 Pastor Supervisor: ${planilla.PASTOR_SUPERVISOR}
-🏠 Casa de Vida: ${planilla.grupobiblico}
-🎖️ Coordinador Departamento: ${planilla.COORDINADOR_DPTO}
-🔰 Supervisor de Red: ${planilla.SUPERVISOR_DE_RED}
-🌐 Área: ${planilla.area}
-⭐ Código: ${planilla.codigo}
+REPORTE DE LA REUNIÓN
+Hermanos: ${planilla.Asistencia_vea}
+Discipulos: ${planilla.asistentes}
+Amigos: ${planilla.Amigos}
+Niños(as): ${planilla.Ninos}
+Visitas hogares: ${planilla.visitas}
+Decisión fe adultos: ${planilla.Decision}
+Decisión fe Niños: ${planilla.Decisionninos}
 
-👥 ASISTENCIA CASA DE VIDA FAMILIAR
-──────────────────────────────────
-✅ VEA: ${planilla.Asistencia_vea}
-🙋‍♂️ Adultos (+26): ${planilla.adultos}
-🧑‍🎓 Jóvenes (13-26): ${planilla.joven}
-👶 Niños (1-12): ${planilla.ninoscasa}
-📊 TOTAL CASA: ${planilla.total_casa_familiar}
+ASISTENCIA CASA DE VIDA FAMILIAR
+Adultos (+26): ${planilla.adultos}
+Joven (13 a 26 años): ${planilla.joven}
+Niños (1 a 12 años): ${planilla.ninoscasa}
+Total asistencia: ${planilla.total_casa_familiar}
 
-📈 REPORTE DE REUNIÓN
-────────────────────
-🎯 Misión Vida: ${planilla.misionvida}
-🔗 Consolidación: ${planilla.Participacion_Consolidacion}
-📖 Pasos de vida: ${planilla.pasosdevida}
+FINANZAS
+Diezmos: ${planilla.Diezmos}
+Ofrendas: ${planilla.Ofrendas}
+Total Financiero: ${planilla.Total_financiero}
 
+PARTICIPACION EN EL CICLO
+Misión Vida: ${planilla.misionvida}
+Consolidación: ${planilla.Participacion_Consolidacion}
+Pasos de vida: ${planilla.pasosdevida}
 
-👥 ASISTENCIA DOMINICAL
-──────────────────────
-🙏 Hermanos: ${planilla.hermanosdominical}
-🤝 Amigos Iglesia: ${planilla.amigosIglesia}
-👧 Niños Iglesia: ${planilla.Asistencia_de_Ninos}
-🙋‍♂️ Adultos Dominical: ${planilla.adultosdominical}
-🧑‍🎓 Jóvenes Dominical: ${planilla.jovendominical}
-👶 Niños Dominical: ${planilla.ninosdominical}
-📊 TOTAL DOMINICAL: ${planilla.total_dominical}
+ASISTENCIA A LA REUNION DOMINICAL
+Hermanos: ${planilla.hermanosdominical}
+Amigos en la Iglesia: ${planilla.amigosIglesia}
+Niños en la Iglesia: ${planilla.Asistencia_de_Ninos}
 
-💰 FINANZAS
-──────────
-💵 Diezmos: $${planilla.Diezmos}
-💸 Ofrendas: $${planilla.Ofrendas}
-💳 TOTAL FINANCIERO: $${planilla.Total_financiero}
+Asistieron A:
+V.E.A: ${planilla.vea}
+Escuela de vida: ${planilla.escueladevida}
 
-🎯 PARTICIPACIÓN CICLO
-─────────────────────
-🎯 Misión Vida: ${planilla.misionvida}
-🔗 Consolidación: ${planilla.Participacion_Consolidacion}
-📖 Pasos de Vida: ${planilla.pasosdevida}
-📖 Hermanos Dominical: ${planilla.hermanosdominical}
+ASISTENCIA REUNION DOMINICAL
+Adultos (+26): ${planilla.adultosdominical}
+Joven (13 a 26 años): ${planilla.jovendominical}
+Niños (1 a 12 años): ${planilla.ninosdominical}
+Total asistencia: ${planilla.total_dominical}
 
-🏃 ASISTIERON A:
-────────────────
-✅ VEA: ${planilla.vea}
-🏫 Escuela de Vida: ${planilla.escueladevida}
+LIDERAZGO
+Lider casa de vida: ${planilla.lidercasa}
+Lider: ${planilla.lider}
+Aprendiz: ${planilla.aprendiz}
+Maestro niños: ${planilla.maestrninos}
+Anfitrión: ${planilla.anfitrion}
 
-👥 ESTADÍSTICAS ADICIONALES
-──────────────────────────
-🤝 Amigos: ${planilla.Amigos}
-👶 Niños GB: ${planilla.Ninos}
-🏡 Visitas Hogares: ${planilla.visitas}
-✝️ Decisión Fe Adultos: ${planilla.Decision}
-✝️ Decisión Fe Niños: ${planilla.Decisionninos}
-
-👑 LIDERAZGO
-───────────
-🏠 Líder Casa: ${planilla.lidercasa}
-👨‍💼 Líder: ${planilla.lider}
-👨‍🎓 Aprendiz: ${planilla.aprendiz}
-👩‍🏫 Maestro Niños: ${planilla.maestrninos}
-🏡 Anfitrión: ${planilla.anfitrion}
-
-📍 INFORMACIÓN DE CONTACTO
-─────────────────────────
-🏠 Dirección: ${planilla.direccion}
-📞 Teléfono: ${planilla.telefono}
-📅 Día/Hora: ${planilla.diahora}
-
-📝 OBSERVACIONES
-────────────────
-${planilla.observaciones || "Sin observaciones"}
-
-📊 RESUMEN FINAL
-────────────────
-🏠 TOTAL CASA VIDA: ${planilla.total_casa_familiar}
-⛪ TOTAL DOMINICAL: ${planilla.total_dominical}
-💰 TOTAL FINANCIERO: $${planilla.Total_financiero}`;
+NOVEDADES
+Direccion: ${planilla.direccion}
+Telefono: ${planilla.telefono}
+Dia y hora: ${planilla.diahora}
+Observaciones: ${planilla.observaciones}`;
 
   if (!forzarAperturaWhatsApp(numero, mensajeTexto)) {
     if (navigator.clipboard) {

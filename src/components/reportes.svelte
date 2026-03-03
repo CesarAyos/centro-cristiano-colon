@@ -18,6 +18,12 @@
   let isLoading = true;
   let activeTab = "planilla"; // 'planilla' o 'nuevos'
 
+  // Variables para modales nativos
+  let showReportModal = false;
+  let selectedReport = null;
+  let showFriendModal = false;
+  let selectedFriend = null;
+
   // Variables para notificaciones
   let mostrarNotif = false;
   let mensajeNotif = "";
@@ -36,6 +42,24 @@
   );
   $: totalPagesPlanilla = Math.ceil(planilla.length / itemsPerPagePlanilla);
   $: totalPagesNuevos = Math.ceil(nuevos.length / itemsPerPageNuevos);
+
+  // Funciones para modales
+  function openReportModal(item) {
+    selectedReport = item;
+    showReportModal = true;
+  }
+
+  function openFriendModal(item) {
+    selectedFriend = item;
+    showFriendModal = true;
+  }
+
+  function closeModals() {
+    showReportModal = false;
+    showFriendModal = false;
+    selectedReport = null;
+    selectedFriend = null;
+  }
 
   // Función para mostrar notificaciones
   const mostrarNotificacion = (mensaje, tipo = "success") => {
@@ -461,451 +485,11 @@
                     <!-- Botón para ver detalles -->
                     <button
                       class="view-details"
-                      on:click={() => {
-                        const modal = new bootstrap.Modal(
-                          document.getElementById(`modal-planilla-${item.id}`),
-                        );
-                        modal.show();
-                      }}
+                      on:click={() => openReportModal(item)}
                     >
                       <i class="fas fa-eye"></i>
                       <span>Ver detalles completos</span>
                     </button>
-                  </div>
-                </div>
-
-                <!-- Modal para detalles del reporte -->
-                <div
-                  class="modal fade"
-                  id={`modal-planilla-${item.id}`}
-                  tabindex="-1"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">
-                          <i class="fas fa-file-alt me-2"></i>
-                          Reporte Completo - {item.grupobiblico || "Sin nombre"}
-                        </h5>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="modal-grid">
-                          <!-- Sección 1: Información General -->
-                          <div class="modal-section">
-                            <h6>
-                              <i class="fas fa-info-circle me-2"></i>Información
-                              General
-                            </h6>
-                            <div class="info-grid">
-                              <div class="info-item">
-                                <span class="info-label">Tipo:</span>
-                                <span class="info-value"
-                                  >{item.tipo || "No especificado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Grupo Bíblico:</span>
-                                <span class="info-value"
-                                  >{item.grupobiblico || "No registrado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Área:</span>
-                                <span class="info-value"
-                                  >{item.area || "No registrada"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Código:</span>
-                                <span class="info-value"
-                                  >{item.codigo || "Sin código"}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 2: Liderazgo -->
-                          <div class="modal-section">
-                            <h6><i class="fas fa-users me-2"></i>Liderazgo</h6>
-                            <div class="info-grid">
-                              <div class="info-item">
-                                <span class="info-label"
-                                  >Pastor Supervisor:</span
-                                >
-                                <span class="info-value"
-                                  >{item.PASTOR_SUPERVISOR ||
-                                    "No registrado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Coordinador Dpto:</span
-                                >
-                                <span class="info-value"
-                                  >{item.COORDINADOR_DPTO ||
-                                    "No registrado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label"
-                                  >Supervisor de Red:</span
-                                >
-                                <span class="info-value"
-                                  >{item.SUPERVISOR_DE_RED ||
-                                    "No registrado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Líder:</span>
-                                <span class="info-value"
-                                  >{item.lider || "No registrado"}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 3: Equipo de Servicio -->
-                          <div class="modal-section">
-                            <h6>
-                              <i class="fas fa-user-friends me-2"></i>Equipo de
-                              Servicio
-                            </h6>
-                            <div class="info-grid">
-                              <div class="info-item">
-                                <span class="info-label">Aprendiz:</span>
-                                <span class="info-value"
-                                  >{item.aprendiz || "No registrado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Maestro Niños:</span>
-                                <span class="info-value"
-                                  >{item.maestrninos || "No registrado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Anfitrión:</span>
-                                <span class="info-value"
-                                  >{item.anfitrion || "No registrado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Líder Casa:</span>
-                                <span class="info-value"
-                                  >{item.lidercasa || "No registrado"}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 4: Información de Contacto -->
-                          <div class="modal-section">
-                            <h6>
-                              <i class="fas fa-map-marker-alt me-2"
-                              ></i>Información de Contacto
-                            </h6>
-                            <div class="info-grid">
-                              <div class="info-item">
-                                <span class="info-label">Dirección:</span>
-                                <span class="info-value"
-                                  >{item.direccion || "No registrada"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Teléfono:</span>
-                                <span class="info-value"
-                                  >{item.telefono || "No registrado"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Día y Hora:</span>
-                                <span class="info-value"
-                                  >{item.diahora || "No establecido"}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 5: Asistencia General -->
-                          <div class="modal-section">
-                            <h6>
-                              <i class="fas fa-calendar-check me-2"
-                              ></i>Asistencia General
-                            </h6>
-                            <div class="stats-grid">
-                              <div class="stat-item">
-                                <i class="fas fa-church"></i>
-                                <div>
-                                  <span class="stat-label">Asistencia VEA</span>
-                                  <span class="stat-value"
-                                    >{item.Asistencia_vea || 0}</span
-                                  >
-                                </div>
-                              </div>
-                              <div class="stat-item">
-                                <i class="fas fa-users"></i>
-                                <div>
-                                  <span class="stat-label">Asistentes GB</span>
-                                  <span class="stat-value"
-                                    >{item.asistentes || 0}</span
-                                  >
-                                </div>
-                              </div>
-                              <div class="stat-item">
-                                <i class="fas fa-user-plus"></i>
-                                <div>
-                                  <span class="stat-label">Visitas</span>
-                                  <span class="stat-value"
-                                    >{item.visitas || 0}</span
-                                  >
-                                </div>
-                              </div>
-                              <div class="stat-item">
-                                <i class="fas fa-hands-praying"></i>
-                                <div>
-                                  <span class="stat-label">Decisiones</span>
-                                  <span class="stat-value"
-                                    >{item.Decision || 0}</span
-                                  >
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 6: Asistencia por Grupos -->
-                          <div class="modal-section">
-                            <h6>
-                              <i class="fas fa-user-group me-2"></i>Asistencia
-                              por Grupos
-                            </h6>
-                            <div class="info-grid">
-                              <div class="info-item">
-                                <span class="info-label">Amigos:</span>
-                                <span class="info-value"
-                                  >{item.Amigos || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Niños:</span>
-                                <span class="info-value">{item.Ninos || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Decisiones Niños:</span
-                                >
-                                <span class="info-value"
-                                  >{item.Decisionninos || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Adultos:</span>
-                                <span class="info-value"
-                                  >{item.adultos || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Jóvenes:</span>
-                                <span class="info-value">{item.joven || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Niños en Casa:</span>
-                                <span class="info-value"
-                                  >{item.ninoscasa || 0}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 7: Finanzas -->
-                          <div class="modal-section">
-                            <h6><i class="fas fa-coins me-2"></i>Finanzas</h6>
-                            <div class="finances-grid">
-                              <div class="finance-item">
-                                <span class="finance-label">Diezmos:</span>
-                                <span class="finance-value"
-                                  >${item.Diezmos || 0}</span
-                                >
-                              </div>
-                              <div class="finance-item">
-                                <span class="finance-label">Ofrendas:</span>
-                                <span class="finance-value"
-                                  >${item.Ofrendas || 0}</span
-                                >
-                              </div>
-                              <div class="finance-item total">
-                                <span class="finance-label">Total:</span>
-                                <span class="finance-value"
-                                  >${item.Total_financiero || 0}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 8: Programas y Ministerios -->
-                          <div class="modal-section">
-                            <h6>
-                              <i class="fas fa-hands-helping me-2"></i>Programas
-                              y Ministerios
-                            </h6>
-                            <div class="info-grid">
-                              <div class="info-item">
-                                <span class="info-label">Misión Vida:</span>
-                                <span class="info-value"
-                                  >{item.misionvida || "No"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label"
-                                  >Participación Consolidación:</span
-                                >
-                                <span class="info-value"
-                                  >{item.Participacion_Consolidacion ||
-                                    "No"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Pasos de Vida:</span>
-                                <span class="info-value"
-                                  >{item.pasosdevida || "No"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Escuela de Vida:</span>
-                                <span class="info-value"
-                                  >{item.escueladevida || "No"}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">VEA:</span>
-                                <span class="info-value"
-                                  >{item.vea || "No"}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 9: Asistencia Dominical -->
-                          <div class="modal-section">
-                            <h6>
-                              <i class="fas fa-calendar-day me-2"></i>Asistencia
-                              Dominical
-                            </h6>
-                            <div class="info-grid">
-                              <div class="info-item">
-                                <span class="info-label">Hermanos:</span>
-                                <span class="info-value"
-                                  >{item.hermanosdominical || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Amigos Iglesia:</span>
-                                <span class="info-value"
-                                  >{item.amigosIglesia || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Niños Dominical:</span>
-                                <span class="info-value"
-                                  >{item.ninosdominical || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label"
-                                  >Adultos Dominical:</span
-                                >
-                                <span class="info-value"
-                                  >{item.adultosdominical || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label"
-                                  >Jóvenes Dominical:</span
-                                >
-                                <span class="info-value"
-                                  >{item.jovendominical || 0}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 10: Totales -->
-                          <div class="modal-section">
-                            <h6>
-                              <i class="fas fa-calculator me-2"></i>Totales
-                            </h6>
-                            <div class="info-grid">
-                              <div class="info-item">
-                                <span class="info-label"
-                                  >Total Casa Familiar:</span
-                                >
-                                <span class="info-value"
-                                  >{item.total_casa_familiar || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Total Dominical:</span>
-                                <span class="info-value"
-                                  >{item.total_dominical || 0}</span
-                                >
-                              </div>
-                              <div class="info-item">
-                                <span class="info-label">Asistencia Niños:</span
-                                >
-                                <span class="info-value"
-                                  >{item.Asistencia_de_Ninos || 0}</span
-                                >
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Sección 11: Novedades y Observaciones -->
-                          <div class="modal-section full-width">
-                            <div class="row">
-                              {#if item.novedades}
-                                <div class="col-md-6">
-                                  <h6>
-                                    <i class="fas fa-sticky-note me-2"
-                                    ></i>Novedades
-                                  </h6>
-                                  <div class="text-content">
-                                    {item.novedades}
-                                  </div>
-                                </div>
-                              {/if}
-
-                              {#if item.observaciones}
-                                <div class="col-md-6">
-                                  <h6>
-                                    <i class="fas fa-clipboard-check me-2"
-                                    ></i>Observaciones
-                                  </h6>
-                                  <div class="text-content">
-                                    {item.observaciones}
-                                  </div>
-                                </div>
-                              {/if}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-bs-dismiss="modal"
-                        >
-                          <i class="fas fa-times me-1"></i>
-                          Cerrar
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
               {/each}
@@ -1053,125 +637,11 @@
                     <!-- Botón para ver detalles -->
                     <button
                       class="view-details"
-                      on:click={() => {
-                        const modal = new bootstrap.Modal(
-                          document.getElementById(`modal-nuevo-${item.id}`),
-                        );
-                        modal.show();
-                      }}
+                      on:click={() => openFriendModal(item)}
                     >
                       <i class="fas fa-eye"></i>
                       <span>Ver información completa</span>
                     </button>
-                  </div>
-                </div>
-
-                <!-- Modal para detalles del amigo -->
-                <div
-                  class="modal fade"
-                  id={`modal-nuevo-${item.id}`}
-                  tabindex="-1"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">
-                          <i class="fas fa-user-circle"></i>
-                          Información Completa
-                        </h5>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="friend-info-grid">
-                          <div class="info-section">
-                            <h6>
-                              <i class="fas fa-user"></i> Información Personal
-                            </h6>
-                            <div class="info-item">
-                              <span class="info-label">Nombres:</span>
-                              <span class="info-value">{item.nombresnuevo}</span
-                              >
-                            </div>
-                            <div class="info-item">
-                              <span class="info-label">Apellidos:</span>
-                              <span class="info-value"
-                                >{item.apellidosnuevo}</span
-                              >
-                            </div>
-                            <div class="info-item">
-                              <span class="info-label">Edad:</span>
-                              <span class="info-value"
-                                >{item.edadnuevo} años</span
-                              >
-                            </div>
-                          </div>
-
-                          <div class="info-section">
-                            <h6>
-                              <i class="fas fa-church"></i> Información del Grupo
-                            </h6>
-                            <div class="info-item">
-                              <span class="info-label">Líder Responsable:</span>
-                              <span class="info-value"
-                                >{item.nombrelidernuevo}</span
-                              >
-                            </div>
-                            <div class="info-item">
-                              <span class="info-label">Grupo Bíblico:</span>
-                              <span class="info-value"
-                                >{item.nombregruponuevo}</span
-                              >
-                            </div>
-                          </div>
-
-                          <div class="info-section">
-                            <h6>
-                              <i class="fas fa-address-book"></i> Contacto
-                            </h6>
-                            <div class="info-item">
-                              <span class="info-label">Dirección:</span>
-                              <span class="info-value"
-                                >{item.direccionnuevo}</span
-                              >
-                            </div>
-                            <div class="info-item">
-                              <span class="info-label">Teléfono:</span>
-                              <span class="info-value"
-                                >{item.telefononuevo}</span
-                              >
-                            </div>
-                          </div>
-
-                          <div class="info-section">
-                            <h6>
-                              <i class="fas fa-calendar"></i> Fecha de Registro
-                            </h6>
-                            <div class="info-item">
-                              <span class="info-label">Registrado el:</span>
-                              <span class="info-value"
-                                >{formatDate(item.created_at)}</span
-                              >
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-bs-dismiss="modal"
-                        >
-                          <i class="fas fa-times"></i>
-                          Cerrar
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
               {/each}
@@ -1214,6 +684,373 @@
     </div>
   </div>
 </div>
+
+<!-- Modal nativo para reportes -->
+{#if showReportModal && selectedReport}
+  <div class="modal-overlay" on:click={closeModals}>
+    <div class="modal-container modal-xl" on:click|stopPropagation>
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-file-alt me-2"></i>
+          Reporte Completo - {selectedReport.grupobiblico || "Sin nombre"}
+        </h5>
+        <button class="modal-close" on:click={closeModals}>
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid">
+          <!-- Sección 1: Información General -->
+          <div class="modal-section">
+            <h6>
+              <i class="fas fa-info-circle me-2"></i>Información General
+            </h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Tipo:</span>
+                <span class="info-value">{selectedReport.tipo || "No especificado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Grupo Bíblico:</span>
+                <span class="info-value">{selectedReport.grupobiblico || "No registrado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Área:</span>
+                <span class="info-value">{selectedReport.area || "No registrada"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Código:</span>
+                <span class="info-value">{selectedReport.codigo || "Sin código"}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 2: Liderazgo -->
+          <div class="modal-section">
+            <h6><i class="fas fa-users me-2"></i>Liderazgo</h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Pastor Supervisor:</span>
+                <span class="info-value">{selectedReport.PASTOR_SUPERVISOR || "No registrado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Coordinador Dpto:</span>
+                <span class="info-value">{selectedReport.COORDINADOR_DPTO || "No registrado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Supervisor de Red:</span>
+                <span class="info-value">{selectedReport.SUPERVISOR_DE_RED || "No registrado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Líder:</span>
+                <span class="info-value">{selectedReport.lider || "No registrado"}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 3: Equipo de Servicio -->
+          <div class="modal-section">
+            <h6><i class="fas fa-user-friends me-2"></i>Equipo de Servicio</h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Aprendiz:</span>
+                <span class="info-value">{selectedReport.aprendiz || "No registrado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Maestro Niños:</span>
+                <span class="info-value">{selectedReport.maestrninos || "No registrado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Anfitrión:</span>
+                <span class="info-value">{selectedReport.anfitrion || "No registrado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Líder Casa:</span>
+                <span class="info-value">{selectedReport.lidercasa || "No registrado"}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 4: Información de Contacto -->
+          <div class="modal-section">
+            <h6><i class="fas fa-map-marker-alt me-2"></i>Información de Contacto</h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Dirección:</span>
+                <span class="info-value">{selectedReport.direccion || "No registrada"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Teléfono:</span>
+                <span class="info-value">{selectedReport.telefono || "No registrado"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Día y Hora:</span>
+                <span class="info-value">{selectedReport.diahora || "No establecido"}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 5: Asistencia General -->
+          <div class="modal-section">
+            <h6><i class="fas fa-calendar-check me-2"></i>Asistencia General</h6>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <i class="fas fa-church"></i>
+                <div>
+                  <span class="stat-label">Asistencia VEA</span>
+                  <span class="stat-value">{selectedReport.Asistencia_vea || 0}</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-users"></i>
+                <div>
+                  <span class="stat-label">Asistentes GB</span>
+                  <span class="stat-value">{selectedReport.asistentes || 0}</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-user-plus"></i>
+                <div>
+                  <span class="stat-label">Visitas</span>
+                  <span class="stat-value">{selectedReport.visitas || 0}</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-hands-praying"></i>
+                <div>
+                  <span class="stat-label">Decisiones</span>
+                  <span class="stat-value">{selectedReport.Decision || 0}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 6: Asistencia por Grupos -->
+          <div class="modal-section">
+            <h6><i class="fas fa-user-group me-2"></i>Asistencia por Grupos</h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Amigos:</span>
+                <span class="info-value">{selectedReport.Amigos || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Niños:</span>
+                <span class="info-value">{selectedReport.Ninos || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Decisiones Niños:</span>
+                <span class="info-value">{selectedReport.Decisionninos || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Adultos:</span>
+                <span class="info-value">{selectedReport.adultos || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Jóvenes:</span>
+                <span class="info-value">{selectedReport.joven || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Niños en Casa:</span>
+                <span class="info-value">{selectedReport.ninoscasa || 0}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 7: Finanzas -->
+          <div class="modal-section">
+            <h6><i class="fas fa-coins me-2"></i>Finanzas</h6>
+            <div class="finances-grid">
+              <div class="finance-item">
+                <span class="finance-label">Diezmos:</span>
+                <span class="finance-value">${selectedReport.Diezmos || 0}</span>
+              </div>
+              <div class="finance-item">
+                <span class="finance-label">Ofrendas:</span>
+                <span class="finance-value">${selectedReport.Ofrendas || 0}</span>
+              </div>
+              <div class="finance-item total">
+                <span class="finance-label">Total:</span>
+                <span class="finance-value">${selectedReport.Total_financiero || 0}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 8: Programas y Ministerios -->
+          <div class="modal-section">
+            <h6><i class="fas fa-hands-helping me-2"></i>Programas y Ministerios</h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Misión Vida:</span>
+                <span class="info-value">{selectedReport.misionvida || "No"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Participación Consolidación:</span>
+                <span class="info-value">{selectedReport.Participacion_Consolidacion || "No"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Pasos de Vida:</span>
+                <span class="info-value">{selectedReport.pasosdevida || "No"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Escuela de Vida:</span>
+                <span class="info-value">{selectedReport.escueladevida || "No"}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">VEA:</span>
+                <span class="info-value">{selectedReport.vea || "No"}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 9: Asistencia Dominical -->
+          <div class="modal-section">
+            <h6><i class="fas fa-calendar-day me-2"></i>Asistencia Dominical</h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Hermanos:</span>
+                <span class="info-value">{selectedReport.hermanosdominical || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Amigos Iglesia:</span>
+                <span class="info-value">{selectedReport.amigosIglesia || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Niños Dominical:</span>
+                <span class="info-value">{selectedReport.ninosdominical || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Adultos Dominical:</span>
+                <span class="info-value">{selectedReport.adultosdominical || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Jóvenes Dominical:</span>
+                <span class="info-value">{selectedReport.jovendominical || 0}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 10: Totales -->
+          <div class="modal-section">
+            <h6><i class="fas fa-calculator me-2"></i>Totales</h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Total Casa Familiar:</span>
+                <span class="info-value">{selectedReport.total_casa_familiar || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Total Dominical:</span>
+                <span class="info-value">{selectedReport.total_dominical || 0}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Asistencia Niños:</span>
+                <span class="info-value">{selectedReport.Asistencia_de_Ninos || 0}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección 11: Novedades y Observaciones -->
+          <div class="modal-section full-width">
+            <div class="row">
+              {#if selectedReport.novedades}
+                <div class="col-md-6">
+                  <h6><i class="fas fa-sticky-note me-2"></i>Novedades</h6>
+                  <div class="text-content">{selectedReport.novedades}</div>
+                </div>
+              {/if}
+
+              {#if selectedReport.observaciones}
+                <div class="col-md-6">
+                  <h6><i class="fas fa-clipboard-check me-2"></i>Observaciones</h6>
+                  <div class="text-content">{selectedReport.observaciones}</div>
+                </div>
+              {/if}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button" on:click={closeModals}>
+          <i class="fas fa-times me-1"></i>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Modal nativo para amigos -->
+{#if showFriendModal && selectedFriend}
+  <div class="modal-overlay" on:click={closeModals}>
+    <div class="modal-container" on:click|stopPropagation>
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-user-circle"></i>
+          Información Completa
+        </h5>
+        <button class="modal-close" on:click={closeModals}>
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="friend-info-grid">
+          <div class="info-section">
+            <h6><i class="fas fa-user"></i> Información Personal</h6>
+            <div class="info-item">
+              <span class="info-label">Nombres:</span>
+              <span class="info-value">{selectedFriend.nombresnuevo}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Apellidos:</span>
+              <span class="info-value">{selectedFriend.apellidosnuevo}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Edad:</span>
+              <span class="info-value">{selectedFriend.edadnuevo} años</span>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h6><i class="fas fa-church"></i> Información del Grupo</h6>
+            <div class="info-item">
+              <span class="info-label">Líder Responsable:</span>
+              <span class="info-value">{selectedFriend.nombrelidernuevo}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Grupo Bíblico:</span>
+              <span class="info-value">{selectedFriend.nombregruponuevo}</span>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h6><i class="fas fa-address-book"></i> Contacto</h6>
+            <div class="info-item">
+              <span class="info-label">Dirección:</span>
+              <span class="info-value">{selectedFriend.direccionnuevo}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Teléfono:</span>
+              <span class="info-value">{selectedFriend.telefononuevo}</span>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h6><i class="fas fa-calendar"></i> Fecha de Registro</h6>
+            <div class="info-item">
+              <span class="info-label">Registrado el:</span>
+              <span class="info-value">{formatDate(selectedFriend.created_at)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button" on:click={closeModals}>
+          <i class="fas fa-times"></i>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <style>
   /* Variables de diseño */
@@ -1763,7 +1600,133 @@
     color: var(--text-primary);
   }
 
-  /* Modales */
+  /* Estilos para modales nativos */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: slideIn 0.3s ease;
+  }
+
+  .modal-container.modal-xl {
+    max-width: 1200px;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #444 100%);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .modal-title i {
+    color: var(--primary-color);
+  }
+
+  .modal-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1.1rem;
+  }
+
+  .modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+  }
+
+  .modal-body {
+    padding: 2rem;
+    max-height: calc(90vh - 140px);
+    overflow-y: auto;
+  }
+
+  .modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-light);
+    display: flex;
+    justify-content: flex-end;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+  }
+
+  .modal-button {
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .modal-button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(146, 174, 131, 0.3);
+  }
+
+  /* Grid de modales */
   .modal-grid,
   .friend-info-grid {
     display: flex;
@@ -1826,6 +1789,11 @@
     gap: 0.75rem;
   }
 
+  .stat-item i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+  }
+
   .stat-label {
     font-size: 0.85rem;
     color: var(--text-muted);
@@ -1864,13 +1832,23 @@
     color: var(--primary-color);
   }
 
-  .novedades {
+  .text-content {
     background: white;
     padding: 1rem;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
     line-height: 1.6;
     color: var(--text-primary);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
   }
 
   /* Responsive */
@@ -1930,6 +1908,14 @@
       gap: 1rem;
       text-align: center;
     }
+
+    .modal-body {
+      padding: 1rem;
+    }
+
+    .row {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 480px) {
@@ -1952,6 +1938,18 @@
     }
 
     .card-content {
+      padding: 1rem;
+    }
+
+    .modal-header {
+      padding: 1rem;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+    }
+
+    .modal-footer {
       padding: 1rem;
     }
   }

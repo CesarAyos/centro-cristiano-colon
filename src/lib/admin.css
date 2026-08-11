@@ -1,0 +1,294 @@
+/* ============================================================
+   CENTRO CRISTIANO COLÓN — TEMA ADMIN
+   Armonizado con el sistema de diseño público
+   (paleta #92ae83 · #c8a97e · #14120e · #1d1a15 · #f5f1e8)
+   ============================================================ */
+
+.admin-dashboard,
+.admin-login {
+  --adm-dark: #14120e;
+  --adm-darker: #0e0d06;
+  --adm-card: #1d1a15;
+  --adm-cream: #f5f1e8;
+  --adm-muted: #b7b0a3;
+  --adm-gold: #c8a97e;
+  --adm-gold-soft: #e6d5b4;
+  --adm-green: #92ae83;
+  --adm-green-deep: #789768;
+  --adm-border: rgba(200, 169, 126, 0.2);
+  --adm-radius: 20px;
+}
+
+.admin-dashboard {
+  background: radial-gradient(ellipse at top left, #1b1813 0%, #14120e 55%, #0e0d06 100%);
+  color: var(--adm-cream);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+}
+
+.admin-dashboard h1,
+.admin-dashboard h2,
+.admin-dashboard h3,
+.admin-dashboard h4,
+.admin-dashboard h5,
+.admin-dashboard h6 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  color: var(--adm-cream);
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Formularios ---------- */
+.admin-dashboard .form-control,
+.admin-dashboard .form-select {
+  background-color: #16130e;
+  border: 1px solid var(--adm-border);
+  color: var(--adm-cream);
+  border-radius: 12px;
+  padding: 0.6rem 0.95rem;
+  font-family: 'Jost', sans-serif;
+}
+
+.admin-dashboard .form-control:focus,
+.admin-dashboard .form-select:focus {
+  background-color: #16130e;
+  border-color: var(--adm-gold);
+  box-shadow: 0 0 0 3px rgba(200, 169, 126, 0.16);
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .form-control::placeholder {
+  color: #8a8374;
+}
+
+.admin-dashboard .form-select option {
+  background-color: var(--adm-card);
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .form-label {
+  color: var(--adm-gold-soft);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.admin-dashboard .form-check-input {
+  background-color: #16130e;
+  border-color: var(--adm-border);
+}
+
+.admin-dashboard .form-check-input:checked {
+  background-color: var(--adm-green);
+  border-color: var(--adm-green);
+}
+
+/* ---------- Botones ---------- */
+.admin-dashboard .btn {
+  border-radius: 999px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.admin-dashboard .btn-dark {
+  background: var(--adm-card);
+  border-color: var(--adm-border);
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .btn-dark:hover {
+  background: #262019;
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .btn-primary {
+  background: linear-gradient(135deg, var(--adm-green) 0%, var(--adm-green-deep) 100%);
+  border: none;
+  color: #fff;
+}
+
+.admin-dashboard .btn-primary:hover {
+  filter: brightness(1.08);
+  color: #fff;
+}
+
+.admin-dashboard .btn-outline-light {
+  color: var(--adm-gold-soft);
+  border-color: var(--adm-border);
+}
+
+.admin-dashboard .btn-outline-light:hover {
+  background: rgba(200, 169, 126, 0.12);
+  color: var(--adm-cream);
+}
+
+/* ---------- Tablas ---------- */
+.admin-dashboard .table {
+  --bs-table-bg: transparent;
+  color: var(--adm-cream);
+  border-color: var(--adm-border);
+}
+
+.admin-dashboard .table thead th {
+  color: var(--adm-gold-soft);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--adm-border);
+  font-family: 'Jost', sans-serif;
+}
+
+.admin-dashboard .table tbody td {
+  border-color: var(--adm-border);
+}
+
+.admin-dashboard .table-hover tbody tr:hover {
+  --bs-table-hover-bg: rgba(146, 174, 131, 0.07);
+}
+
+.admin-dashboard .table-dark {
+  --bs-table-bg: #1d1a15;
+  --bs-table-color: var(--adm-cream);
+  --bs-table-border-color: rgba(200, 169, 126, 0.16);
+}
+
+/* ---------- Tarjetas ---------- */
+.admin-dashboard .card {
+  background: linear-gradient(160deg, #1d1a15 0%, #16130e 100%);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+}
+
+.admin-dashboard .card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--adm-border);
+  color: var(--adm-gold-soft);
+}
+
+.admin-dashboard .card-body {
+  color: var(--adm-cream);
+}
+
+/* ---------- Alertas ---------- */
+.admin-dashboard .alert {
+  border-radius: 12px;
+  border: 1px solid var(--adm-border);
+}
+
+.admin-dashboard .alert-success {
+  background: rgba(146, 174, 131, 0.12);
+  border-color: rgba(146, 174, 131, 0.3);
+  color: #cfe6c5;
+}
+
+.admin-dashboard .alert-danger {
+  background: rgba(244, 67, 54, 0.12);
+  border-color: rgba(244, 67, 54, 0.3);
+  color: #f0b3ab;
+}
+
+.admin-dashboard .alert-info {
+  background: rgba(200, 169, 126, 0.12);
+  border-color: var(--adm-border);
+  color: var(--adm-gold-soft);
+}
+
+.admin-dashboard .alert-warning {
+  background: rgba(255, 152, 0, 0.12);
+  border-color: rgba(255, 152, 0, 0.3);
+  color: #f2c98a;
+}
+
+/* ---------- Modales ---------- */
+.admin-dashboard .modal-content {
+  background: linear-gradient(160deg, #1d1a15 0%, #14120e 100%);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .modal-header {
+  border-bottom: 1px solid var(--adm-border);
+}
+
+.admin-dashboard .modal-footer {
+  border-top: 1px solid var(--adm-border);
+}
+
+.admin-dashboard .btn-close {
+  filter: invert(1) grayscale(1) brightness(0.9) sepia(0.3) hue-rotate(320deg) saturate(2);
+}
+
+/* ---------- Paginación ---------- */
+.admin-dashboard .pagination .page-link {
+  background: var(--adm-card);
+  border-color: var(--adm-border);
+  color: var(--adm-gold-soft);
+}
+
+.admin-dashboard .pagination .page-link:hover {
+  background: #262019;
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .pagination .page-item.active .page-link {
+  background: var(--adm-green);
+  border-color: var(--adm-green);
+  color: #fff;
+}
+
+/* ---------- Insignias / dropdown / acordeón ---------- */
+.admin-dashboard .badge {
+  font-weight: 500;
+}
+
+.admin-dashboard .dropdown-menu {
+  background: var(--adm-card);
+  border: 1px solid var(--adm-border);
+}
+
+.admin-dashboard .dropdown-item {
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .dropdown-item:hover,
+.admin-dashboard .dropdown-item:focus {
+  background: rgba(146, 174, 131, 0.1);
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .accordion-button {
+  background: var(--adm-card);
+  color: var(--adm-cream);
+  box-shadow: none;
+}
+
+.admin-dashboard .accordion-button:not(.collapsed) {
+  background: rgba(146, 174, 131, 0.08);
+  color: var(--adm-gold-soft);
+}
+
+.admin-dashboard .list-group-item {
+  background: var(--adm-card);
+  border-color: var(--adm-border);
+  color: var(--adm-cream);
+}
+
+.admin-dashboard .progress {
+  background: #16130e;
+}
+
+/* ---------- Utilidades de texto ---------- */
+.admin-dashboard .text-white-50 {
+  color: var(--adm-muted) !important;
+}
+
+.admin-dashboard .text-muted {
+  color: var(--adm-muted) !important;
+}
+
+.admin-dashboard .form-control:disabled,
+.admin-dashboard .form-control[readonly] {
+  background-color: #1d1a15;
+}

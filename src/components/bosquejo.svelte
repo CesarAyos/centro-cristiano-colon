@@ -43,11 +43,11 @@
     >
       <div
         class="card"
-        style="width: 30rem; box-shadow: 10px 10px 5px 0px rgba(54,130,123,0.75);background-color:#333333"
+        style="width: 30rem; box-shadow: 10px 10px 5px 0px rgba(200,169,126,0.35);background-color:#1d1a15"
       >
         <div
           class="d-flex justify-content-center m-2"
-          style="background: #333333;"
+          style="background: #1d1a15;"
         >
           <img
             src="/logo.png"
@@ -68,7 +68,7 @@
               type="file"
               id="fileUpload"
               class="form-control"
-              style="border-bottom: 2px solid #5504f8;"
+              style="border-bottom: 2px solid #c8a97e;"
               name="fileUpload"
               on:change="{(e) => file = e.target.files[0]}"
               required

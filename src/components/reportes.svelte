@@ -1057,21 +1057,21 @@
   :root {
     --primary-color: #92ae83;
     --primary-dark: #789768;
-    --secondary-color: #5504f8;
-    --accent-color: #36827b;
+    --secondary-color: #c8a97e;
+    --accent-color: #c8a97e;
     --success-color: #4caf50;
     --error-color: #f44336;
     --warning-color: #ff9800;
     --info-color: #2196f3;
-    --bg-light: #f8f9fa;
-    --bg-dark: #333333;
-    --card-bg: #ffffff;
-    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
-    --border-color: #e9ecef;
-    --text-primary: #2d3748;
-    --text-secondary: #718096;
-    --text-muted: #a0aec0;
+    --bg-light: #16130e;
+    --bg-dark: #1d1a15;
+    --card-bg: #1d1a15;
+    --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.5);
+    --border-color: #453e2f;
+    --text-primary: #f5f1e8;
+    --text-secondary: #b7b0a3;
+    --text-muted: #9a8f7e;
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -1087,7 +1087,7 @@
   .dashboard-container {
     max-width: 1400px;
     margin: 0 auto;
-    background: white;
+    background: var(--card-bg);
     border-radius: var(--radius-lg);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -1095,7 +1095,7 @@
 
   /* Header del Dashboard */
   .dashboard-header {
-    background: linear-gradient(135deg, var(--bg-dark) 0%, #444 100%);
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #0e0d06 100%);
     padding: 2rem;
     color: white;
   }
@@ -1164,7 +1164,7 @@
 
   /* Tabs de navegación */
   .tabs-container {
-    background: white;
+    background: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
     padding: 0 2rem;
   }
@@ -1179,7 +1179,7 @@
 
   .tab-button {
     flex: 1;
-    background: white;
+    background: var(--card-bg);
     border: none;
     padding: 1.2rem 2rem;
     font-size: 1rem;
@@ -1200,7 +1200,7 @@
   }
 
   .tab-button.active {
-    background: white;
+    background: var(--card-bg);
     color: var(--primary-color);
     border-bottom: 3px solid var(--primary-color);
   }
@@ -1267,7 +1267,7 @@
   }
 
   .action-button.select-all {
-    background: white;
+    background: var(--card-bg);
     color: var(--text-primary);
     border: 1px solid var(--border-color);
   }
@@ -1311,7 +1311,7 @@
   /* Tarjeta de Reporte */
   .report-card,
   .friend-card {
-    background: white;
+    background: var(--card-bg);
     border-radius: var(--radius-md);
     box-shadow: var(--card-shadow);
     border: 2px solid transparent;
@@ -1382,7 +1382,7 @@
     height: 32px;
     border-radius: 50%;
     border: none;
-    background: white;
+    background: var(--card-bg);
     color: var(--text-muted);
     cursor: pointer;
     display: flex;
@@ -1572,7 +1572,7 @@
 
   .pagination-button {
     padding: 0.75rem 1.25rem;
-    background: white;
+    background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     color: var(--text-primary);
@@ -1618,7 +1618,7 @@
   }
 
   .modal-container {
-    background: white;
+    background: var(--card-bg);
     border-radius: var(--radius-lg);
     max-width: 600px;
     width: 100%;
@@ -1649,7 +1649,7 @@
     align-items: center;
     padding: 1.5rem 2rem;
     border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(135deg, var(--bg-dark) 0%, #444 100%);
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #0e0d06 100%);
     color: white;
     position: sticky;
     top: 0;
@@ -1812,7 +1812,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem;
-    background: white;
+    background: var(--card-bg);
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
   }
@@ -1833,7 +1833,7 @@
   }
 
   .text-content {
-    background: white;
+    background: var(--card-bg);
     padding: 1rem;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);

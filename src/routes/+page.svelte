@@ -1,794 +1,1058 @@
+<script>
+  import { onMount } from 'svelte';
+  import Footer from '../components/Footer.svelte';
+  import { setupReveals } from '$lib/reveal.js';
+  import '$lib/public.css';
 
-<body>
-    <!-- Hero Section -->
-    <section class="hero-section d-flex align-items-center">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 hero-content">
-                    <h1 class="hero-title animate-up">CENTRO CRISTIANO COLÓN</h1>
-                    <p class="hero-subtitle animate-up delay-1">Un sitio ideal para un momento espiritual</p>
-                    <p class="lead mb-4 animate-up delay-2" style="color: #ccc;">Somos una comunidad de fe comprometida con el crecimiento espiritual y el servicio a nuestra comunidad. Únete a nosotros en este camino de fe.</p>
-                    <a href="https://wa.me/584169752291?&text=Me%20gustaría%20obtener%20más%20información%20sobre%20la%20iglesia." target="_blank" class="cta-button animate-up delay-3">
-                        Contáctanos <i class="fab fa-whatsapp"></i>
-                    </a>
-                </div>
-                <div class="col-lg-6 d-none d-lg-block">
-                    <!-- Logo se mostrará en el fondo en móviles -->
-                </div>
-            </div>
-        </div>
-    </section>
+  const slides = [
+    {
+      img: '/carru2.jpg',
+      fallback:
+        'https://images.unsplash.com/photo-1509099836639-18ba1795216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80',
+      caption: 'Reuniones que transforman vidas',
+      sub: 'Únete a nuestra familia de fe',
+    },
+    {
+      img: '/carru1.jpg',
+      fallback:
+        'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80',
+      caption: 'Alabanza y adoración',
+      sub: 'Un ambiente de encuentro con Dios',
+    },
+    {
+      img: '/carru3.jpg',
+      fallback:
+        'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80',
+      caption: 'Una comunidad con propósito',
+      sub: 'Ganar, edificar y enviar',
+    },
+  ];
 
-    <!-- Sección de Crecimiento -->
-   <div class="modern-carousel animate-left">
-    <div id="growthCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <!-- Imagen 1 con fallback -->
-                <img src="./carru2.jpg" 
-                     onerror="this.src='https://images.unsplash.com/photo-1509099836639-18ba1795216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
-                     class="d-block w-100" 
-                     alt="Reunión en la iglesia">
-            </div>
-            <div class="carousel-item">
-                <!-- Imagen 2 con fallback -->
-                <img src="./carru1.jpg" 
-                     onerror="this.src='https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
-                     class="d-block w-100" 
-                     alt="Alabanza y adoración">
-            </div>
-            <div class="carousel-item">
-                <!-- Imagen 3 con fallback -->
-                <img src="./carru3.jpg" 
-                     onerror="this.src='https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
-                     class="d-block w-100" 
-                     alt="Comunidad cristiana">
-            </div>
-        </div>
-        
-        <!-- Controles -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#growthCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#growthCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Siguiente</span>
-        </button>
-        
-        <!-- Indicadores -->
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#growthCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#growthCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#growthCarousel" data-bs-slide-to="2"></button>
-        </div>
+  const services = [
+    {
+      day: 'Martes',
+      title: 'Visión · Evaluación · Agenda',
+      img: '/vea.jpg',
+      times: ['5:45 PM'],
+    },
+    {
+      day: 'Miércoles',
+      title: 'Culto de Empoderamiento y Gloria',
+      img: '/miercoles.jpg',
+      times: ['5:45 PM'],
+    },
+    {
+      day: 'Sábados',
+      title: 'Ensayos y Culto de Jóvenes',
+      img: '/sabado.jpg',
+      times: ['2:00 PM', '5:00 PM', '6:00 PM'],
+    },
+    {
+      day: 'Domingos',
+      title: 'Devocional y Mañana de Bendición',
+      img: '/domingo.jpg',
+      times: ['8:45 AM', '9:00 AM', '10:30 AM'],
+    },
+  ];
+
+  const ministries = [
+    {
+      icon: 'fa-child-reaching',
+      title: 'Ministerio de Niños',
+      text: 'Un espacio seguro y lleno de alegría donde los niños aprenden de Jesús de forma creativa y divertida.',
+    },
+    {
+      icon: 'fa-fire-flame-curved',
+      title: 'Ministerio de Jóvenes',
+      text: 'Una generación apasionada por Dios, con cultos y encuentros que fortalecen la fe de nuestros jóvenes.',
+    },
+    {
+      icon: 'fa-music',
+      title: 'Ministerio de Alabanza',
+      text: 'Adoración genuina a través de la música y el canto, conduciendo a la congregación a la presencia de Dios.',
+    },
+    {
+      icon: 'fa-drum',
+      title: 'Ministerio de Danza',
+      text: 'Un ministerio de adoración en movimiento que expresa con gozo la gloria y la libertad de Dios.',
+    },
+  ];
+
+  const sermons = [    {
+      title: 'La Fe que Mueve Montañas',
+      date: '15 de Julio, 2023',
+      text: 'Explorando el poder de la fe genuina en nuestras vidas diarias y cómo puede transformar circunstancias imposibles.',
+      img: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=900&q=80',
+    },
+    {
+      title: 'El Amor Ágape',
+      date: '8 de Julio, 2023',
+      text: 'Descubriendo la profundidad del amor incondicional de Dios y cómo manifestarlo en nuestras relaciones.',
+      img: 'https://media.sitioandino.com.ar/p/910138db31ea520ffdba106421cb0ddd/adjuntos/335/imagenes/000/626/0000626464/790x0/smart/pascua-resurrecion-santuario-divina-misericordia22jpg.jpg',
+    },
+    {
+      title: 'Esperanza en Tiempos Difíciles',
+      date: '1 de Julio, 2023',
+      text: 'Encontrando esperanza y propósito en medio de las pruebas, con la seguridad del cuidado divino.',
+      img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=900&q=80',
+    },
+  ];
+
+  let active = 0;
+  let timer;
+
+  function go(n) {
+    active = (n + slides.length) % slides.length;
+  }
+
+  function next() {
+    go(active + 1);
+  }
+
+  function prev() {
+    go(active - 1);
+  }
+
+  function startTimer() {
+    timer = setInterval(() => next(), 6500);
+  }
+
+  function pause() {
+    clearInterval(timer);
+  }
+
+  function resume() {
+    clearInterval(timer);
+    startTimer();
+  }
+
+  let destroyReveals = () => {};
+
+  onMount(() => {
+    destroyReveals = setupReveals();
+    startTimer();
+    return () => {
+      clearInterval(timer);
+      destroyReveals();
+    };
+  });
+</script>
+
+<div class="public-site">
+  <!-- ===================== HERO ===================== -->
+  <section class="cc-hero">
+    <div class="cc-hero__bg">
+      <img src="/logo.png" alt="" aria-hidden="true" />
     </div>
+    <span class="cc-hero__glow cc-hero__glow--one" aria-hidden="true"></span>
+    <span class="cc-hero__glow cc-hero__glow--two" aria-hidden="true"></span>
+
+    <div class="cc-container cc-hero__content">
+      <p class="cc-hero__overline">
+        <i class="fa-solid fa-cross"></i>
+        Bienvenidos a nuestra casa de oración
+      </p>
+      <h1 class="cc-hero__title">
+        Centro Cristiano <span>Colón</span>
+      </h1>
+      <p class="cc-hero__subtitle">Un lugar para un momento espiritual</p>
+      <p class="cc-hero__text">
+        Somos una comunidad de fe comprometida con el crecimiento espiritual y
+        el servicio a nuestra comunidad. Únete a nosotros en este camino de fe.
+      </p>
+      <div class="cc-hero__actions">
+        <a
+          class="cc-btn"
+          href="https://wa.me/584247187229?&text=Me%20gustar%C3%ADa%20obtener%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20iglesia."
+          target="_blank"
+          rel="noopener"
+        >
+          <i class="fa-brands fa-whatsapp"></i>Contáctanos
+        </a>
+        <a class="cc-btn cc-btn--ghost" href="/ubicanos">
+          <i class="fa-solid fa-location-dot"></i>Ven a visitarnos
+        </a>
+      </div>
+    </div>
+
+    <a class="cc-hero__scroll" href="#carousel" aria-label="Bajar">
+      <span></span>
+    </a>
+  </section>
+
+  <!-- ===================== CARRUSEL ===================== -->
+  <section class="cc-carousel-wrap" id="carousel">
+    <div class="cc-container">
+      <div
+        class="cc-carousel"
+        on:mouseenter={pause}
+        on:mouseleave={resume}
+        role="region"
+        aria-label="Galería de la iglesia"
+      >
+        {#each slides as slide, i}
+          <div class="cc-slide" class:is-active={i === active} aria-hidden={i !== active}>
+            <img
+              src={slide.img}
+              alt={slide.caption}
+              onerror={(e) => (e.currentTarget.src = slide.fallback)}
+            />
+            <div class="cc-slide__shade"></div>
+            <div class="cc-slide__caption">
+              <p class="cc-slide__sub">{slide.sub}</p>
+              <h3 class="cc-slide__title">{slide.caption}</h3>
+            </div>
+          </div>
+        {/each}
+
+        <button class="cc-carousel__arrow cc-carousel__arrow--prev" type="button" on:click={prev} aria-label="Anterior">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <button class="cc-carousel__arrow cc-carousel__arrow--next" type="button" on:click={next} aria-label="Siguiente">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <div class="cc-carousel__dots">
+          {#each slides as _, i}
+            <button
+              class:is-active={i === active}
+              type="button"
+              on:click={() => go(i)}
+              aria-label={`Ir a la diapositiva ${i + 1}`}
+            ></button>
+          {/each}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICIOS ===================== -->
+  <section class="cc-section cc-services">
+    <div class="cc-container">
+      <div class="cc-head cc-reveal">
+        <span class="cc-overline">Ven y adora con nosotros</span>
+        <h2 class="cc-section-title">Nuestros Servicios Semanales</h2>
+        <p class="cc-section-sub">
+          Te esperamos en cualquiera de nuestras reuniones durante la semana para
+          crecer juntos en fe.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        {#each services as service, i}
+          <div class="col-lg-3 col-md-6">
+            <article class="cc-service cc-reveal cc-d{i + 1}">
+              <div class="cc-service__media">
+                <img src={service.img} alt={`Servicio de ${service.day}`} loading="lazy" />
+                <span class="cc-service__day">{service.day}</span>
+              </div>
+              <div class="cc-service__body">
+                <h3>{service.title}</h3>
+                <div class="cc-service__times">
+                  {#each service.times as t}
+                    <span>{t}</span>
+                  {/each}
+                </div>
+              </div>
+            </article>
+          </div>
+        {/each}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MINISTERIOS ===================== -->
+  <section class="cc-section cc-ministries">
+    <div class="cc-container">
+      <div class="cc-head cc-reveal">
+        <span class="cc-overline">Sírvete y sirve</span>
+        <h2 class="cc-section-title">Nuestros Ministerios</h2>
+        <p class="cc-section-sub">
+          Cada persona tiene un lugar en la iglesia. Encuentra el ministerio
+          donde Dios quiere que sirvas.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        {#each ministries as m, i}
+          <div class="col-lg-3 col-md-6">
+            <div class="cc-ministry cc-reveal cc-d{i + 1}">
+              <span class="cc-ministry__icon"><i class="fa-solid {m.icon}"></i></span>
+              <h3>{m.title}</h3>
+              <p>{m.text}</p>
+            </div>
+          </div>
+        {/each}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CITA BÍBLICA ===================== -->
+  <section class="cc-verse cc-reveal">
+    <div class="cc-container">
+      <blockquote>
+        Por tanto, id, y haced discípulos a todas las naciones... enseñándoles
+        que guarden todas las cosas que os he mandado.
+      </blockquote>
+      <cite>Mateo 28:19-20</cite>
+    </div>
+  </section>
+
+  <!-- ===================== PRÉDICAS ===================== -->
+  <section class="cc-section cc-sermons">
+    <div class="cc-container">
+      <div class="cc-head cc-reveal">
+        <span class="cc-overline">Mensajes que transforman</span>
+        <h2 class="cc-section-title">Nuestras Prédicas</h2>
+        <p class="cc-section-sub">
+          Palabra viva para cada temporada de tu vida. Escucha las enseñanzas que
+          Dios nos ha dado.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        {#each sermons as sermon, i}
+          <div class="col-lg-4 col-md-6">
+            <article class="cc-sermon cc-reveal cc-d{i + 1}">
+              <div class="cc-sermon__media">
+                <img src={sermon.img} alt={sermon.title} loading="lazy" />
+                <span class="cc-sermon__play"><i class="fa-solid fa-play"></i></span>
+              </div>
+              <div class="cc-sermon__body">
+                <span class="cc-sermon__date"><i class="fa-regular fa-calendar"></i>{sermon.date}</span>
+                <h3>{sermon.title}</h3>
+                <p>{sermon.text}</p>
+                <a class="cc-sermon__link" href="https://youtube.com" target="_blank" rel="noopener">
+                  <i class="fa-brands fa-youtube"></i>Ver en YouTube
+                </a>
+              </div>
+            </article>
+          </div>
+        {/each}
+      </div>
+
+      <div class="text-center mt-5 cc-reveal">
+        <a class="cc-btn cc-btn--gold" href="https://youtube.com" target="_blank" rel="noopener">
+          <i class="fa-brands fa-youtube"></i>Suscríbete a nuestro canal
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DONACIONES ===================== -->
+  <section class="cc-section cc-donate">
+    <div class="cc-container">
+      <div class="cc-donate__card cc-reveal">
+        <span class="cc-donate__glow" aria-hidden="true"></span>
+        <div class="cc-donate__content">
+          <span class="cc-card-icon"><i class="fa-solid fa-hand-holding-heart"></i></span>
+          <span class="cc-overline">Siembra de bendición</span>
+          <h2 class="cc-section-title">Apoya la obra del Señor</h2>
+          <p class="cc-section-sub">
+            Tu ofrenda y tu generosidad ayudan a sostener los proyectos del
+            ministerio y a llevar el evangelio hasta lo último de la tierra.
+            Toda semilla que siembras es una bendición para la iglesia.
+          </p>
+          <a
+            class="cc-btn cc-btn--gold cc-donate__btn"
+            href="https://wa.me/584247187229?&text=Hola%2C%20quiero%20realizar%20una%20donaci%C3%B3n%20a%20la%20iglesia."
+            target="_blank"
+            rel="noopener"
+          >
+            <i class="fa-brands fa-whatsapp"></i>Quiero donar
+          </a>
+          <p class="cc-donate__verse">
+            «Dad, y se os dará; medida buena, apretada, remecida y rebosando darán
+            en vuestro regazo.» <cite>Lucas 6:38</cite>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
 </div>
 
-    <!-- Servicios Semanales -->
-    <section id="servicios" class="services-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title animate-up">NUESTROS SERVICIOS SEMANALES</h2>
-                <p class="section-subtitle animate-up delay-1">Únete a nosotros en cualquiera de nuestras reuniones semanales</p>
-            </div>
-            
-            <div class="row g-4">
-                <!-- Martes -->
-                <div class="col-lg-3 col-md-6 animate-up">
-                    <div class="service-card">
-                        <img src="/vea.jpg" class="service-img" alt="Servicio de martes">
-                        <div class="service-body">
-                            <h3 class="service-title">MARTES</h3>
-                            <h4 class="service-description">VISIÓN <br> EVALUACIÓN <br> AGENDA</h4>
-                            <div class="service-times">
-                                <span class="time-btn">5:45 PM</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Miércoles -->
-                <div class="col-lg-3 col-md-6 animate-up delay-1">
-                    <div class="service-card">
-                        <img src="/miercoles.jpg" class="service-img" alt="Servicio de miércoles">
-                        <div class="service-body">
-                            <h3 class="service-title">MIÉRCOLES</h3>
-                            <h4 class="service-description">CULTO DE EMPODERAMIENTO Y GLORIA</h4>
-                            <div class="service-times">
-                                <span class="time-btn">5:45 PM</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sábados -->
-                <div class="col-lg-3 col-md-6 animate-up delay-2">
-                    <div class="service-card">
-                        <img src="/sabado.jpg" class="service-img" alt="Servicio de sábados">
-                        <div class="service-body">
-                            <h3 class="service-title">SÁBADOS</h3>
-                            <h4 class="service-description">ENSAYO DE DANZA <br> CULTO DE JÓVENES <br> ENSAYO DE ALABANZA</h4>
-                            <div class="service-times">
-                                <span class="time-btn">2:00 PM</span>
-                                <span class="time-btn">5:00 PM</span>
-                                <span class="time-btn">6:00 PM</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Domingos -->
-                <div class="col-lg-3 col-md-6 animate-up delay-3">
-                    <div class="service-card">
-                        <img src="/domingo.jpg" class="service-img" alt="Servicio de domingos">
-                        <div class="service-body">
-                            <h3 class="service-title">DOMINGOS</h3>
-                            <h4 class="service-description">DEVOCIONAL <br> RUTA ACADÉMICA <br> CULTO MAÑANA DE BENDICIÓN</h4>
-                            <div class="service-times">
-                                <span class="time-btn">8:45 AM</span>
-                                <span class="time-btn">9:00 AM</span>
-                                <span class="time-btn">10:30 AM</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<style>
+  /* ===================== HERO ===================== */
+  .cc-hero {
+    position: relative;
+    min-height: calc(100vh - 78px);
+    display: flex;
+    align-items: center;
+    padding: 90px 0 100px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 75% 20%, rgba(146, 174, 131, 0.16), transparent 55%),
+      radial-gradient(ellipse at 15% 85%, rgba(200, 169, 126, 0.12), transparent 50%),
+      linear-gradient(165deg, #0e0d06 0%, #191610 60%, #10100c 100%);
+  }
 
-    <!-- Predicas Recientes -->
-    <section class="sermons-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title animate-up">NUESTRAS PRÉDICAS</h2>
-                <p class="section-subtitle animate-up delay-1">Mensajes que transforman vidas</p>
-            </div>
-            
-            <div class="row g-4">
-                <!-- Predica 1 -->
-                <div class="col-lg-4 col-md-6 animate-up">
-                    <div class="sermon-card">
-                        <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80" class="sermon-img" alt="Predica sobre la fe">
-                        <div class="sermon-body">
-                            <h3 class="sermon-title">La Fe que Mueve Montañas</h3>
-                            <p class="sermon-date">15 de Julio, 2023</p>
-                            <p class="sermon-text">Explorando el poder de la fe genuina en nuestras vidas diarias y cómo puede transformar circunstancias imposibles.</p>
-                            <a href="https://youtube.com" target="_blank" class="youtube-btn">
-                                <i class="fab fa-youtube"></i> Ver en YouTube
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Predica 2 -->
-                <div class="col-lg-4 col-md-6 animate-up delay-1">
-                    <div class="sermon-card">
-                        <img src="https://media.sitioandino.com.ar/p/910138db31ea520ffdba106421cb0ddd/adjuntos/335/imagenes/000/626/0000626464/790x0/smart/pascua-resurrecion-santuario-divina-misericordia22jpg.jpg" class="sermon-img" alt="Predica sobre el amor">
-                        <div class="sermon-body">
-                            <h3 class="sermon-title">El Amor Ágape</h3>
-                            <p class="sermon-date">8 de Julio, 2023</p>
-                            <p class="sermon-text">Descubriendo la profundidad del amor incondicional de Dios y cómo manifestarlo en nuestras relaciones.</p>
-                            <a href="https://youtube.com" target="_blank" class="youtube-btn">
-                                <i class="fab fa-youtube"></i> Ver en YouTube
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Predica 3 -->
-                <div class="col-lg-4 col-md-6 animate-up delay-2">
-                    <div class="sermon-card">
-                        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="sermon-img" alt="Predica sobre esperanza">
-                        <div class="sermon-body">
-                            <h3 class="sermon-title">Esperanza en Tiempos Difíciles</h3>
-                            <p class="sermon-date">1 de Julio, 2023</p>
-                            <p class="sermon-text">Encontrando esperanza y propósito en medio de las pruebas, con la seguridad del cuidado divino.</p>
-                            <a href="https://youtube.com" target="_blank" class="youtube-btn">
-                                <i class="fab fa-youtube"></i> Ver en YouTube
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center mt-5 animate-up delay-3">
-                <a href="https://youtube.com" target="_blank" class="cta-button">
-                    <i class="fab fa-youtube"></i> Suscríbete a nuestro canal
-                </a>
-            </div>
-        </div>
-    </section>
+  .cc-hero__bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 6%;
+    opacity: 0.07;
+  }
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-5 mb-lg-0 animate-up">
-                    <img src="/logo.png" alt="Centro Cristiano Colón" class="footer-logo">
-                    <p class="mb-4" style="color: #bbb;">Una comunidad de fe comprometida con el crecimiento espiritual y el servicio a nuestra comunidad.</p>
-                    <div class="social-icons">
-                        <a href="https://facebook.com" target="_blank" class="social-icon">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" class="social-icon">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://youtube.com" target="_blank" class="social-icon">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                        <a href="https://wa.me/584169752291" target="_blank" class="social-icon">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4 mb-5 mb-lg-0 animate-up delay-1">
-                    <h3 class="footer-heading">Horarios de Servicios</h3>
-                    <ul class="list-unstyled">
-                        <li><a class="footer-link">Martes: 5:45 PM</a></li>
-                        <li><a class="footer-link">Miércoles: 5:45 PM</a></li>
-                        <li><a class="footer-link">Sábados: 2:00 PM - 6:00 PM</a></li>
-                        <li><a class="footer-link">Domingos: 8:45 AM - 10:30 AM</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col-lg-4 animate-up delay-2">
-                    <h3 class="footer-heading">Contacto</h3>
-                    <ul class="list-unstyled">
-                        <li><a href="https://goo.gl/maps" target="_blank" class="footer-link"><i class="fas fa-map-marker-alt me-2"></i> Dirección de la iglesia</a></li>
-                        <li><a href="tel:+584169752291" class="footer-link"><i class="fas fa-phone me-2"></i> (584) 169-752291</a></li>
-                        <li><a href="mailto:info@centrocristianocolon.com" class="footer-link"><i class="fas fa-envelope me-2"></i> info@centrocristianocolon.com</a></li>
-                        <li><a href="https://wa.me/584169752291" target="_blank" class="footer-link"><i class="fab fa-whatsapp me-2"></i> Escríbenos por WhatsApp</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright animate-up delay-3">
-                <p>&copy; 2023 Centro Cristiano Colón. Todos los derechos reservados.</p>
-                <p class="mt-2">Diseñado con <i class="fas fa-heart" style="color: #ff6b6b;"></i> para la comunidad de fe</p>
-            </div>
-        </div>
-    </footer>
+  .cc-hero__bg img {
+    width: 46vw;
+    max-width: 560px;
+    height: auto;
+    animation: heroFloat 9s ease-in-out infinite;
+  }
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Animaciones al hacer scroll
-        document.addEventListener('DOMContentLoaded', function() {
-            const animateElements = document.querySelectorAll('.animate-up, .animate-left');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                        entry.target.style.transform = 'translateX(0)';
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
-            
-            animateElements.forEach(el => {
-                el.style.opacity = 0;
-                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                observer.observe(el);
-            });
-            
-            // Inicializar carousel
-            const growthCarousel = document.getElementById('growthCarousel');
-            if (growthCarousel) {
-                const carousel = new bootstrap.Carousel(growthCarousel, {
-                    interval: 5000,
-                    wrap: true
-                });
-            }
-        });
-    </script>
-</body>
+  .cc-hero__glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.5;
+    pointer-events: none;
+  }
 
- <style>
-        :root {
-            --primary-color: #92ae83;
-            --secondary-color: #0e0d06;
-            --accent-color: #c8a97e;
-            --light-color: #f8f9fa;
-            --dark-color: #1b1b1b;
-            --gradient-primary: linear-gradient(135deg, #92ae83 0%, #789768 100%);
-            --gradient-dark: linear-gradient(135deg, #0e0d06 0%, #1b1b1b 100%);
-            --shadow-sm: 0 5px 15px rgba(0,0,0,0.08);
-            --shadow-md: 0 10px 30px rgba(0,0,0,0.15);
-            --shadow-lg: 0 20px 50px rgba(0,0,0,0.2);
-            --border-radius: 12px;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--dark-color);
-            color: var(--light-color);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-        
-        h1, h2, h3, h4, h5 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        /* Header y Hero */
-        .hero-section {
-            min-height: 100vh;
-            background: var(--gradient-dark);
-            padding-top: 80px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('/logo.png') no-repeat center right -100px;
-            background-size: contain;
-            opacity: 0.05;
-            z-index: 0;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero-title {
-            font-size: 4.5rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.5rem;
-            color: var(--accent-color);
-            margin-bottom: 2.5rem;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background: var(--gradient-primary);
-            color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-md);
-            border: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-            color: white;
-        }
-        
-        .cta-button i {
-            margin-left: 10px;
-        }
-        
-        /* Sección de Crecimiento */
-        .growth-section {
-            background: var(--gradient-dark);
-            padding: 100px 0;
-            position: relative;
-        }
-        
-        .growth-section::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background: var(--dark-color);
-            clip-path: polygon(0 100%, 100% 0, 100% 100%, 0% 100%);
-        }
-        
-        .growth-title {
-            font-size: 3.5rem;
-            margin-bottom: 2rem;
-            text-align: right;
-        }
-        
-        .growth-text {
-            font-size: 1.2rem;
-            color: #ccc;
-        }
-        
-        /* Carousel personalizado */
-        .modern-carousel {
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .carousel-item {
-            height: 500px;
-        }
-        
-        .carousel-item img {
-            object-fit: cover;
-            height: 100%;
-            width: 100%;
-        }
-        
-        .carousel-control-prev, .carousel-control-next {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(146, 174, 131, 0.8);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.8;
-            transition: all 0.3s ease;
-        }
-        
-        .carousel-control-prev:hover, .carousel-control-next:hover {
-            opacity: 1;
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        .carousel-control-prev {
-            left: 20px;
-        }
-        
-        .carousel-control-next {
-            right: 20px;
-        }
-        
-        /* Sección de Servicios */
-        .services-section {
-            padding: 100px 0;
-            background-color: var(--dark-color);
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 70px;
-        }
-        
-        .section-title {
-            font-size: 3.5rem;
-            position: relative;
-            display: inline-block;
-            padding-bottom: 20px;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: var(--gradient-primary);
-            border-radius: 2px;
-        }
-        
-        .section-subtitle {
-            color: var(--accent-color);
-            font-size: 1.2rem;
-            margin-top: 15px;
-        }
-        
-        /* Tarjetas de servicios */
-        .service-card {
-            background: rgba(30, 30, 30, 0.7);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: all 0.4s ease;
-            height: 100%;
-            border: 1px solid rgba(146, 174, 131, 0.1);
-        }
-        
-        .service-card:hover {
-            transform: translateY(-15px);
-            box-shadow: var(--shadow-lg);
-            border-color: rgba(146, 174, 131, 0.3);
-        }
-        
-        .service-img {
-            height: 250px;
-            width: 100%;
-            object-fit: cover;
-        }
-        
-        .service-body {
-            padding: 2rem;
-        }
-        
-        .service-title {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-        }
-        
-        .service-times {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 1.5rem;
-        }
-        
-        .time-btn {
-            background: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 0.5rem 1.2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .time-btn:hover {
-            background: var(--primary-color);
-            color: var(--dark-color);
-        }
-        
-        /* Sección de Predicas */
-        .sermons-section {
-            padding: 100px 0;
-            background: var(--gradient-dark);
-        }
-        
-        .sermon-card {
-            background: rgba(30, 30, 30, 0.7);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: all 0.4s ease;
-            height: 100%;
-        }
-        
-        .sermon-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .sermon-img {
-            height: 200px;
-            width: 100%;
-            object-fit: cover;
-        }
-        
-        .sermon-body {
-            padding: 1.5rem;
-        }
-        
-        .sermon-title {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .sermon-date {
-            color: var(--accent-color);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        
-        .youtube-btn {
-            display: inline-flex;
-            align-items: center;
-            background: #ff0000;
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-        
-        .youtube-btn:hover {
-            background: #cc0000;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.2);
-        }
-        
-        .youtube-btn i {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-        
-        /* Footer */
-        .footer {
-            background: var(--secondary-color);
-            padding: 60px 0 30px;
-            position: relative;
-        }
-        
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background: var(--gradient-dark);
-            clip-path: polygon(0 0, 100% 100%, 100% 100%, 0% 100%);
-        }
-        
-        .footer-logo {
-            max-width: 200px;
-            margin-bottom: 2rem;
-        }
-        
-        .footer-heading {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
-        }
-        
-        .footer-link {
-            color: #bbb;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: block;
-            margin-bottom: 0.8rem;
-        }
-        
-        .footer-link:hover {
-            color: var(--primary-color);
-            transform: translateX(5px);
-        }
-        
-        .social-icons {
-            display: flex;
-            gap: 20px;
-            margin-top: 2rem;
-        }
-        
-        .social-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 45px;
-            height: 45px;
-            background: rgba(146, 174, 131, 0.1);
-            border-radius: 50%;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-        
-        .social-icon:hover {
-            background: var(--primary-color);
-            color: var(--dark-color);
-            transform: translateY(-5px);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 3rem;
-            margin-top: 3rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #888;
-            font-size: 0.9rem;
-        }
-        
-        /* Animaciones */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .animate-up {
-            animation: fadeInUp 0.8s ease-out forwards;
-        }
-        
-        @keyframes slideInLeft {
-            from {
-                transform: translateX(-100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        .animate-left {
-            animation: slideInLeft 0.8s ease-out forwards;
-        }
-        
-        .delay-1 {
-            animation-delay: 0.2s;
-        }
-        
-        .delay-2 {
-            animation-delay: 0.4s;
-        }
-        
-        .delay-3 {
-            animation-delay: 0.6s;
-        }
-        
-        /* Responsive */
-        @media (max-width: 992px) {
-            .hero-title {
-                font-size: 3.5rem;
-            }
-            
-            .growth-title {
-                font-size: 2.8rem;
-            }
-            
-            .section-title {
-                font-size: 2.8rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.8rem;
-            }
-            
-            .hero-section::before {
-                opacity: 0.03;
-                background-position: center right -200px;
-            }
-            
-            .growth-title {
-                text-align: center;
-                margin-top: 3rem;
-            }
-            
-            .growth-text {
-                text-align: center;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .hero-title {
-                font-size: 2.2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-            
-            .section-title {
-                font-size: 2.2rem;
-            }
-            
-            .carousel-item {
-                height: 350px;
-            }
-        }
-    </style>
+  .cc-hero__glow--one {
+    width: 420px;
+    height: 420px;
+    left: -120px;
+    top: 12%;
+    background: radial-gradient(circle, rgba(146, 174, 131, 0.5), transparent 70%);
+    animation: glowMove 14s ease-in-out infinite;
+  }
+
+  .cc-hero__glow--two {
+    width: 360px;
+    height: 360px;
+    right: -100px;
+    bottom: 4%;
+    background: radial-gradient(circle, rgba(200, 169, 126, 0.4), transparent 70%);
+    animation: glowMove 18s ease-in-out infinite reverse;
+  }
+
+  .cc-hero__content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .cc-hero__overline {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--cc-accent);
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    margin-bottom: 26px;
+  }
+
+  .cc-hero__overline i {
+    color: var(--cc-primary);
+  }
+
+  .cc-hero__title {
+    font-size: clamp(3.2rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1.02;
+    margin-bottom: 20px;
+    max-width: 760px;
+  }
+
+  .cc-hero__title span {
+    background: linear-gradient(120deg, #92ae83, #c8a97e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-style: italic;
+  }
+
+  .cc-hero__subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    color: var(--cc-accent);
+    margin-bottom: 20px;
+  }
+
+  .cc-hero__text {
+    color: var(--cc-muted);
+    font-size: 1.1rem;
+    max-width: 560px;
+    margin-bottom: 40px;
+  }
+
+  .cc-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .cc-hero__scroll {
+    position: absolute;
+    bottom: 34px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 26px;
+    height: 44px;
+    border: 2px solid rgba(200, 169, 126, 0.5);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+    z-index: 2;
+  }
+
+  .cc-hero__scroll span {
+    width: 4px;
+    height: 10px;
+    border-radius: 4px;
+    background: var(--cc-accent);
+    animation: scrollDot 1.8s ease-in-out infinite;
+  }
+
+  @keyframes heroFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-22px) rotate(3deg); }
+  }
+
+  @keyframes glowMove {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(40px, -30px) scale(1.15); }
+  }
+
+  @keyframes scrollDot {
+    0% { transform: translateY(0); opacity: 1; }
+    70% { transform: translateY(14px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 0; }
+  }
+
+  /* ===================== CARRUSEL ===================== */
+  .cc-carousel-wrap {
+    padding: 100px 0;
+    background: var(--cc-dark);
+  }
+
+  .cc-carousel {
+    position: relative;
+    height: clamp(380px, 56vw, 640px);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--cc-border);
+  }
+
+  .cc-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.1s ease, visibility 1.1s;
+  }
+
+  .cc-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+  }
+
+  .cc-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.08);
+    transition: transform 7s linear;
+  }
+
+  .cc-slide.is-active img {
+    transform: scale(1);
+  }
+
+  .cc-slide__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 9, 4, 0.85) 0%, rgba(10, 9, 4, 0.1) 55%, rgba(10, 9, 4, 0.3) 100%);
+  }
+
+  .cc-slide__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 46px;
+    z-index: 2;
+    transform: translateY(24px);
+    opacity: 0;
+    transition: transform 0.9s ease 0.4s, opacity 0.9s ease 0.4s;
+  }
+
+  .cc-slide.is-active .cc-slide__caption {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .cc-slide__sub {
+    color: var(--cc-accent);
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+
+  .cc-slide__title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+  }
+
+  .cc-carousel__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1px solid var(--cc-border);
+    background: rgba(14, 13, 6, 0.55);
+    backdrop-filter: blur(8px);
+    color: var(--cc-cream);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  }
+
+  .cc-carousel__arrow:hover {
+    background: var(--cc-gradient);
+    color: #fff;
+    transform: translateY(-50%) scale(1.08);
+  }
+
+  .cc-carousel__arrow--prev { left: 22px; }
+  .cc-carousel__arrow--next { right: 22px; }
+
+  .cc-carousel__dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    gap: 10px;
+  }
+
+  .cc-carousel__dots button {
+    width: 34px;
+    height: 4px;
+    border: none;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition: background 0.3s ease, width 0.3s ease;
+    padding: 0;
+  }
+
+  .cc-carousel__dots button.is-active {
+    background: var(--cc-accent);
+    width: 54px;
+  }
+
+  /* ===================== SERVICIOS ===================== */
+  .cc-services {
+    background: linear-gradient(180deg, var(--cc-dark) 0%, #17140f 100%);
+  }
+
+  .cc-head {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .cc-service {
+    background: linear-gradient(160deg, #1d1a15 0%, #16130e 100%);
+    border: 1px solid var(--cc-border);
+    border-radius: 20px;
+    overflow: hidden;
+    height: 100%;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+
+  .cc-service:hover {
+    transform: translateY(-10px);
+    border-color: rgba(200, 169, 126, 0.4);
+    box-shadow: var(--cc-shadow);
+  }
+
+  .cc-service__media {
+    position: relative;
+    height: 230px;
+    overflow: hidden;
+  }
+
+  .cc-service__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+  }
+
+  .cc-service:hover .cc-service__media img {
+    transform: scale(1.1);
+  }
+
+  .cc-service__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(14, 13, 6, 0.65), transparent 55%);
+  }
+
+  .cc-service__day {
+    position: absolute;
+    left: 18px;
+    top: 18px;
+    z-index: 2;
+    background: rgba(14, 13, 6, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--cc-border);
+    color: var(--cc-accent);
+    font-weight: 600;
+    letter-spacing: 2px;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 999px;
+  }
+
+  .cc-service__body {
+    padding: 26px 24px 30px;
+  }
+
+  .cc-service__body h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    min-height: 56px;
+    line-height: 1.25;
+  }
+
+  .cc-service__times {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cc-service__times span {
+    border: 1px solid rgba(146, 174, 131, 0.5);
+    color: var(--cc-primary);
+    font-weight: 500;
+    font-size: 0.82rem;
+    letter-spacing: 0.5px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .cc-service:hover .cc-service__times span {
+    background: var(--cc-gradient);
+    border-color: transparent;
+    color: #fff;
+  }
+
+  /* ===================== MINISTERIOS ===================== */
+  .cc-ministries {
+    background: linear-gradient(180deg, #17140f 0%, var(--cc-dark) 100%);
+  }
+
+  .cc-ministry {
+    background: linear-gradient(160deg, #1d1a15 0%, #16130e 100%);
+    border: 1px solid var(--cc-border);
+    border-radius: 20px;
+    padding: 34px 28px;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .cc-ministry:hover {
+    transform: translateY(-8px);
+    border-color: rgba(200, 169, 126, 0.4);
+    box-shadow: var(--cc-shadow);
+  }
+
+  .cc-ministry__icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: var(--cc-gradient);
+    color: #fff;
+    font-size: 1.5rem;
+    box-shadow: 0 10px 26px rgba(95, 125, 82, 0.4);
+    transition: transform 0.4s ease;
+  }
+
+  .cc-ministry:hover .cc-ministry__icon {
+    transform: scale(1.1) rotate(-6deg);
+  }
+
+  .cc-ministry h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.45rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .cc-ministry p {
+    color: var(--cc-muted);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  /* ===================== SERMONES ===================== */
+  .cc-sermons {
+    background: var(--cc-dark);
+  }
+
+  .cc-sermon {
+    background: linear-gradient(160deg, #1d1a15 0%, #16130e 100%);
+    border: 1px solid var(--cc-border);
+    border-radius: 20px;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+
+  .cc-sermon:hover {
+    transform: translateY(-10px);
+    border-color: rgba(200, 169, 126, 0.4);
+    box-shadow: var(--cc-shadow);
+  }
+
+  .cc-sermon__media {
+    position: relative;
+    height: 210px;
+    overflow: hidden;
+  }
+
+  .cc-sermon__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+  }
+
+  .cc-sermon:hover .cc-sermon__media img {
+    transform: scale(1.08);
+  }
+
+  .cc-sermon__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(14, 13, 6, 0.5), transparent 60%);
+  }
+
+  .cc-sermon__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: rgba(14, 13, 6, 0.6);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--cc-border);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: background 0.3s ease, transform 0.3s ease;
+    z-index: 2;
+  }
+
+  .cc-sermon:hover .cc-sermon__play {
+    background: var(--cc-gradient);
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .cc-sermon__body {
+    padding: 26px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .cc-sermon__date {
+    color: var(--cc-accent);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .cc-sermon__date i {
+    margin-right: 8px;
+  }
+
+  .cc-sermon__body h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .cc-sermon__body p {
+    color: var(--cc-muted);
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+
+  .cc-sermon__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--cc-primary);
+    font-weight: 500;
+    font-size: 0.92rem;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease, gap 0.3s ease;
+  }
+
+  .cc-sermon__link:hover {
+    color: var(--cc-accent);
+    gap: 14px;
+  }
+
+  /* ===================== DONACIONES ===================== */
+  .cc-donate {
+    background: linear-gradient(180deg, var(--cc-dark) 0%, #17140f 100%);
+  }
+
+  .cc-donate__card {
+    position: relative;
+    background: linear-gradient(160deg, #1d1a15 0%, #16130e 100%);
+    border: 1px solid rgba(200, 169, 126, 0.3);
+    border-radius: 26px;
+    padding: 64px 48px;
+    text-align: center;
+    overflow: hidden;
+    box-shadow: var(--cc-shadow);
+  }
+
+  .cc-donate__card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--cc-gradient-gold);
+  }
+
+  .cc-donate__glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    background: radial-gradient(circle, rgba(200, 169, 126, 0.35), transparent 70%);
+    top: -140px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .cc-donate__content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .cc-donate__content .cc-overline {
+    justify-content: center;
+    margin-top: 18px;
+  }
+
+  .cc-donate__content .cc-section-sub {
+    margin-bottom: 34px;
+  }
+
+  .cc-donate__btn {
+    padding: 1.05rem 2.6rem;
+    font-size: 1.02rem;
+  }
+
+  .cc-donate__verse {
+    margin-top: 34px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--cc-accent-soft);
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cc-donate__verse cite {
+    display: block;
+    margin-top: 6px;
+    font-style: normal;
+    font-family: 'Jost', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--cc-primary);
+  }
+
+  @media (max-width: 576px) {
+    .cc-donate__card {
+      padding: 44px 24px;
+    }
+  }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 992px) {
+    .cc-hero {
+      padding: 70px 0 90px;
+    }
+
+    .cc-hero__bg {
+      opacity: 0.05;
+      justify-content: center;
+      padding-right: 0;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .cc-carousel-wrap {
+      padding: 64px 0;
+    }
+
+    .cc-slide__caption {
+      padding: 26px;
+    }
+
+    .cc-carousel__arrow {
+      width: 44px;
+      height: 44px;
+      font-size: 0.85rem;
+    }
+
+    .cc-carousel__arrow--prev { left: 12px; }
+    .cc-carousel__arrow--next { right: 12px; }
+  }
+</style>

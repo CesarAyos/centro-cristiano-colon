@@ -4,12 +4,14 @@
   import Planilla from "../../components/planilla.svelte";
   import Reportes from "../../components/reportes.svelte";
   import Subirvideos from "../../components/subirvideos.svelte";
+  import Subirreflexion from "../../components/subirreflexion.svelte";
   import { supabase } from "../../components/supabase.js";
   import { onMount } from "svelte";
   import Verbosquejo from "../../components/verbosquejo.svelte";
   import Vervideoadmin from "../../components/vervideoadmin.svelte";
   import Estadistica from "../../components/estadistica.svelte";
   import { fade } from 'svelte/transition';
+  import '$lib/admin.css';
 
   // Variables reactivas
   let user = null;
@@ -164,6 +166,14 @@
               <span>Subir Videos</span>
               <i class="fas fa-chevron-right nav-arrow"></i>
             </button>
+
+            <button 
+              class="nav-item {activeSection === 'subirreflexiones' ? 'active' : ''}" 
+              on:click={() => showContent('subirreflexiones')}>
+              <i class="fas fa-book-open"></i>
+              <span>Subir Reflexiones</span>
+              <i class="fas fa-chevron-right nav-arrow"></i>
+            </button>
             
             <button 
               class="nav-item {activeSection === 'estadistica' ? 'active' : ''}" 
@@ -212,6 +222,8 @@
         Subir Bosquejos
       {:else if activeSection === 'subirvideos'}
         Subir Videos
+      {:else if activeSection === 'subirreflexiones'}
+        Subir Reflexiones
       {:else if activeSection === 'estadistica'}
         Estadísticas
       {:else}
@@ -261,6 +273,10 @@
           {:else if activeSection === 'subirvideos'}
             <div class="content-section">
               <Subirvideos/>
+            </div>
+          {:else if activeSection === 'subirreflexiones'}
+            <div class="content-section">
+              <Subirreflexion/>
             </div>
           {/if}
         </div>
@@ -357,6 +373,13 @@
                   <i class="fas fa-cloud-upload-alt"></i>
                   <span>Subir Videos</span>
                 </button>
+
+                <button 
+                  class="mobile-nav-item {activeSection === 'subirreflexiones' ? 'active' : ''}" 
+                  on:click={() => showContent('subirreflexiones')}>
+                  <i class="fas fa-book-open"></i>
+                  <span>Subir Reflexiones</span>
+                </button>
                 
                 <button 
                   class="mobile-nav-item {activeSection === 'estadistica' ? 'active' : ''}" 
@@ -396,6 +419,8 @@
         Subir Bosquejos
       {:else if activeSection === 'subirvideos'}
         Subir Videos
+      {:else if activeSection === 'subirreflexiones'}
+        Subir Reflexiones
       {:else if activeSection === 'estadistica'}
         Estadísticas
       {:else}
@@ -441,6 +466,10 @@
           <div class="mobile-section">
             <Subirvideos/>
           </div>
+        {:else if activeSection === 'subirreflexiones'}
+          <div class="mobile-section">
+            <Subirreflexion/>
+          </div>
         {/if}
       </div>
     </div>
@@ -450,19 +479,19 @@
 <style>
   /* Variables de diseño */
   :root {
-    --sidebar-bg: #1a1f36;
-    --sidebar-text: #e2e8f0;
-    --sidebar-hover: #2d3748;
+    --sidebar-bg: #14120e;
+    --sidebar-text: #e6d5b4;
+    --sidebar-hover: #1d1a15;
     --sidebar-active: #92ae83;
-    --sidebar-border: #2d3748;
-    --content-bg: #f7fafc;
-    --card-bg: #ffffff;
-    --text-primary: #2d3748;
-    --text-secondary: #718096;
-    --border-color: #e2e8f0;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+    --sidebar-border: rgba(200, 169, 126, 0.16);
+    --content-bg: #0e0d06;
+    --card-bg: #1d1a15;
+    --text-primary: #f5f1e8;
+    --text-secondary: #b7b0a3;
+    --border-color: rgba(200, 169, 126, 0.16);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.45);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5);
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -482,7 +511,7 @@
   
   /* Sidebar */
   .admin-sidebar {
-    background: var(--sidebar-bg);
+    background: linear-gradient(180deg, #17130e 0%, #14120e 100%);
     color: var(--sidebar-text);
     display: flex;
     flex-direction: column;
@@ -490,22 +519,22 @@
     border-right: 1px solid var(--sidebar-border);
     box-shadow: var(--shadow-lg);
   }
-  
+
   .sidebar-header {
     padding: 1.5rem;
     border-bottom: 1px solid var(--sidebar-border);
   }
-  
+
   .user-info {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
-  
+
   .user-avatar {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #92ae83 0%, #789768 100%);
+    background: linear-gradient(135deg, #92ae83 0%, #c8a97e 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -513,15 +542,17 @@
     font-size: 1.8rem;
     color: white;
   }
-  
+
   .user-details {
     flex: 1;
   }
-  
+
   .user-name {
     font-weight: 600;
     margin-bottom: 0.25rem;
-    color: white;
+    color: #f5f1e8;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
   }
   
   .user-role {
@@ -552,11 +583,11 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #a0aec0;
+    color: #a08a6a;
     margin-bottom: 0.75rem;
     font-weight: 600;
   }
-  
+
   .nav-item {
     width: 100%;
     background: transparent;
@@ -573,14 +604,14 @@
     transition: var(--transition);
     position: relative;
   }
-  
+
   .nav-item:hover {
     background: var(--sidebar-hover);
     transform: translateX(5px);
   }
-  
+
   .nav-item.active {
-    background: var(--sidebar-active);
+    background: linear-gradient(135deg, #92ae83 0%, #789768 100%);
     color: white;
     box-shadow: 0 4px 12px rgba(146, 174, 131, 0.3);
   }
@@ -620,30 +651,30 @@
     padding: 1.5rem;
     border-top: 1px solid var(--sidebar-border);
   }
-  
+
   .app-version {
     text-align: center;
-    color: #a0aec0;
+    color: #a08a6a;
     font-size: 0.8rem;
   }
-  
+
   .app-version small {
     display: block;
     font-size: 0.7rem;
     margin-top: 0.25rem;
   }
-  
+
   /* Contenido principal */
   .admin-content {
-    background: var(--content-bg);
+    background: radial-gradient(ellipse at top left, #1b1813 0%, #14120e 55%, #0e0d06 100%);
     min-height: 100vh;
     padding: 0;
     display: flex;
     flex-direction: column;
   }
-  
+
   .content-header {
-    background: white;
+    background: linear-gradient(160deg, #1d1a15 0%, #16130e 100%);
     padding: 1.25rem 2rem;
     border-bottom: 1px solid var(--border-color);
     display: flex;
@@ -651,25 +682,26 @@
     align-items: center;
     box-shadow: var(--shadow-sm);
   }
-  
+
   .breadcrumb {
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
-  
+
   .breadcrumb-item {
     font-weight: 600;
     color: var(--text-primary);
-    font-size: 1.25rem;
+    font-size: 1.4rem;
+    font-family: 'Cormorant Garamond', serif;
   }
-  
+
   .content-actions {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
-  
+
   .date-info {
     display: flex;
     align-items: center;
@@ -677,16 +709,21 @@
     color: var(--text-secondary);
     font-size: 0.9rem;
   }
-  
+
+  .date-info i {
+    color: #c8a97e;
+  }
+
   .content-body {
     flex: 1;
     padding: 2rem;
     overflow-y: auto;
   }
-  
+
   .content-section {
-    background: white;
-    border-radius: var(--radius-md);
+    background: linear-gradient(160deg, #1d1a15 0%, #16130e 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
     padding: 2rem;
     box-shadow: var(--shadow-md);
     min-height: calc(100vh - 200px);
@@ -695,27 +732,33 @@
   /* ===== VERSIÓN MÓVIL ===== */
   .admin-mobile {
     min-height: 100vh;
-    background: var(--content-bg);
+    background: radial-gradient(ellipse at top left, #1b1813 0%, #14120e 55%, #0e0d06 100%);
   }
-  
+
   /* Navbar móvil */
   .admin-mobile-navbar {
-    background: white;
+    background: linear-gradient(160deg, #1d1a15 0%, #14120e 100%);
     padding: 1rem;
     box-shadow: var(--shadow-md);
     border-bottom: 1px solid var(--border-color);
   }
-  
+
   .mobile-user-info {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
-  
+
+  .mobile-user-info h6 {
+    color: #f5f1e8;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+  }
+
   .mobile-avatar {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #92ae83 0%, #789768 100%);
+    background: linear-gradient(135deg, #92ae83 0%, #c8a97e 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -723,51 +766,51 @@
     font-size: 1.5rem;
     color: white;
   }
-  
+
   .navbar-toggler {
     border: none;
     background: transparent;
     font-size: 1.25rem;
-    color: var(--text-primary);
+    color: #c8a97e;
   }
-  
+
   /* Offcanvas móvil */
   .offcanvas {
-    background: var(--sidebar-bg);
+    background: linear-gradient(180deg, #17130e 0%, #14120e 100%);
     color: var(--sidebar-text);
   }
-  
+
   .offcanvas-header {
     border-bottom: 1px solid var(--sidebar-border);
   }
-  
+
   .offcanvas-title {
-    color: white;
+    color: #f5f1e8;
     font-weight: 600;
   }
-  
+
   .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
   }
-  
+
   .mobile-nav-content {
     padding: 1rem 0;
   }
-  
+
   .mobile-nav-section {
     margin-bottom: 1.5rem;
   }
-  
+
   .mobile-section-title {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #a0aec0;
+    color: #a08a6a;
     margin-bottom: 0.75rem;
     font-weight: 600;
     padding: 0 1rem;
   }
-  
+
   .mobile-nav-item {
     width: 100%;
     background: transparent;
@@ -782,13 +825,13 @@
     cursor: pointer;
     transition: var(--transition);
   }
-  
+
   .mobile-nav-item:hover {
     background: var(--sidebar-hover);
   }
-  
+
   .mobile-nav-item.active {
-    background: var(--sidebar-active);
+    background: linear-gradient(135deg, #92ae83 0%, #789768 100%);
     color: white;
   }
   
@@ -821,17 +864,19 @@
   .mobile-content {
     padding: 1rem;
   }
-  
+
   .mobile-content-header {
     margin-bottom: 1.5rem;
   }
-  
+
   .mobile-title {
     color: var(--text-primary);
     font-weight: 600;
     margin-bottom: 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
   }
-  
+
   .mobile-date {
     display: flex;
     align-items: center;
@@ -839,10 +884,15 @@
     color: var(--text-secondary);
     font-size: 0.9rem;
   }
-  
+
+  .mobile-date i {
+    color: #c8a97e;
+  }
+
   .mobile-content-body {
-    background: white;
-    border-radius: var(--radius-md);
+    background: linear-gradient(160deg, #1d1a15 0%, #16130e 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
     padding: 1.5rem;
     box-shadow: var(--shadow-md);
   }

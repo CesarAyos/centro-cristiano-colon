@@ -53,11 +53,11 @@
     >
       <div
         class="card"
-        style="width: 30rem; box-shadow: 10px 10px 5px 0px rgba(54,130,123,0.75);background-color:#333333"
+        style="width: 30rem; box-shadow: 10px 10px 5px 0px rgba(200,169,126,0.35);background-color:#1d1a15"
       >
         <div
           class="d-flex justify-content-center m-2"
-          style="background: #333333;"
+          style="background: #1d1a15;"
         >
           <img
             src="/logo.png"
@@ -80,7 +80,7 @@
               id="Titulo"
               bind:value={video.Titulo}
               class="form-control"
-              style="border-bottom: 2px solid #5504f8;"
+              style="border-bottom: 2px solid #c8a97e;"
             placeholder="Titulo"
             />
             <input
@@ -88,7 +88,7 @@
               id="url"
               bind:value={video.Url}
               class="form-control"
-              style="border-bottom: 2px solid #5504f8;"
+              style="border-bottom: 2px solid #c8a97e;"
             placeholder="Url del Video"
             />
             <input
@@ -96,7 +96,7 @@
               id="descripcion"
               bind:value={video.Descripcion}
               class="form-control"
-              style="border-bottom: 2px solid #5504f8;"
+              style="border-bottom: 2px solid #c8a97e;"
             placeholder="Descripcion del video"
             />
             <input
@@ -104,7 +104,7 @@
               id="pastor"
               bind:value={video.Pastor}
               class="form-control"
-              style="border-bottom: 2px solid #5504f8;"
+              style="border-bottom: 2px solid #c8a97e;"
             placeholder="Pastor de la predicacion"
             />
             <input
@@ -112,7 +112,7 @@
               id="fecha"
               bind:value={video.Fecha}
               class="form-control"
-              style="border-bottom: 2px solid #5504f8;"
+              style="border-bottom: 2px solid #c8a97e;"
             placeholder="Fecha de la predicacion"
             />
             <button type="submit" class="btn btn-dark btn-lg m-2"

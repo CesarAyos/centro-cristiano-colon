@@ -383,20 +383,20 @@
   :root {
     --primary-color: #92ae83;
     --primary-dark: #789768;
-    --secondary-color: #5504f8;
-    --accent-color: #36827b;
+    --secondary-color: #c8a97e;
+    --accent-color: #c8a97e;
     --success-color: #4CAF50;
     --error-color: #f44336;
     --warning-color: #FF9800;
     --info-color: #2196F3;
-    --bg-light: #f8f9fa;
-    --bg-dark: #333333;
+    --bg-light: #16130e;
+    --bg-dark: #1d1a15;
     --text-light: #ffffff;
-    --text-dark: #333333;
-    --text-muted: #6c757d;
-    --border-color: #dee2e6;
-    --card-bg: #ffffff;
-    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    --text-dark: #f5f1e8;
+    --text-muted: #b7b0a3;
+    --border-color: #453e2f;
+    --card-bg: #1d1a15;
+    --card-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -425,7 +425,7 @@
   
   /* Header del formulario */
   .form-header {
-    background: linear-gradient(135deg, var(--bg-dark) 0%, #444 100%);
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #0e0d06 100%);
     padding: 2rem;
     color: var(--text-light);
     display: flex;
@@ -593,6 +593,12 @@
     font-size: 0.95rem;
     transition: var(--transition);
     background: var(--bg-light);
+    color: var(--text-dark);
+  }
+  
+  .select-with-icon select option {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
   }
   
   .input-with-icon input:focus, .select-with-icon select:focus {

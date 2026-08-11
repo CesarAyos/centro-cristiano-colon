@@ -99,11 +99,22 @@
               align: "top",
               formatter: (value) => value,
               font: { weight: "bold", size: 10 },
-              color: "#000",
+              color: "#e6d5b4",
+            },
+            legend: {
+              labels: { color: "#b7b0a3" },
             },
           },
           scales: {
-            y: { beginAtZero: true },
+            x: {
+              ticks: { color: "#b7b0a3" },
+              grid: { color: "rgba(200, 169, 126, 0.12)" },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: "#b7b0a3" },
+              grid: { color: "rgba(200, 169, 126, 0.12)" },
+            },
           },
         },
       });

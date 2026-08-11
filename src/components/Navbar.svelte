@@ -26,7 +26,7 @@
       <img src="/logo.png" alt="Logo Centro Cristiano Colón" class="cc-nav__logo" />
       <span class="cc-nav__brand-text">
         <span class="cc-nav__name">Centro Cristiano Colón</span>
-        <span class="cc-nav__tagline">Un lugar para un encuentro con Dios</span>
+        <span class="cc-nav__tagline">Un lugar para un momento espiritual</span>
       </span>
     </a>
 

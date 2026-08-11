@@ -9,7 +9,7 @@
       img: '/carru2.jpg',
       fallback:
         'https://images.unsplash.com/photo-1509099836639-18ba1795216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80',
-      caption: 'Reuniones que transforman vidas',
+      caption: 'Cultos que transforman vidas',
       sub: 'Únete a nuestra familia de fe',
     },
     {

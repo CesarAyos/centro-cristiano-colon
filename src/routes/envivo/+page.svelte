@@ -1,18 +1,13 @@
 <script>
-  import Hls from 'hls.js';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
+  import { beforeNavigate } from '$app/navigation';
   import Footer from '../../components/Footer.svelte';
   import { setupReveals } from '$lib/reveal.js';
-  import {
-    radioStore,
-    getRadioAudio,
-    toggleRadio,
-  } from '$lib/radioPlayer.js';
+  import { radioStore, getRadioAudio, toggleRadio } from '$lib/radioPlayer.js';
+  import { tvStore, attachTv, detachTv, startTv } from '$lib/tvPlayer.js';
   import '$lib/public.css';
 
-  const TV_STREAM = 'https://tv.frecuenciaf.com/live/envivo.m3u8';
-
-  let video;
+  let tvHost;
   let volume = 1;
   let destroyReveals = () => {};
 
@@ -22,28 +17,16 @@
   }
 
   onMount(() => {
-    if (video) {
-      if (Hls.isSupported()) {
-        const hls = new Hls({ liveDurationInfinity: true });
-        hls.loadSource(TV_STREAM);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.ERROR, (_evt, data) => {
-          if (data.fatal) {
-            if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-              hls.startLoad();
-            } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-              hls.recoverMediaError();
-            } else {
-              hls.destroy();
-            }
-          }
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = TV_STREAM;
-      }
-    }
+    attachTv(tvHost);
     destroyReveals = setupReveals();
-    return destroyReveals;
+  });
+
+  beforeNavigate(() => {
+    detachTv();
+  });
+
+  onDestroy(() => {
+    detachTv();
   });
 </script>
 
@@ -69,17 +52,36 @@
                 <i class="fa-solid fa-tv"></i>Canal Frecuencia F
               </span>
             </header>
-            <div class="cc-live__video">
-              <video
-                bind:this={video}
-                controls
-                playsinline
-                poster="https://www.frecuenciaf.com/img/FrecuenciaFTV.png"
-              ></video>
+            <div class="cc-live__video" bind:this={tvHost}>
+              {#if !$tvStore.playing}
+                <button
+                  class="cc-live__start"
+                  type="button"
+                  on:click={startTv}
+                  aria-label="Reproducir el canal en vivo"
+                >
+                  {#if $tvStore.loading}
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <span>Conectando...</span>
+                  {:else if $tvStore.error}
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Reintentar señal</span>
+                  {:else}
+                    <i class="fa-solid fa-play"></i>
+                    <span>Ver canal en vivo</span>
+                  {/if}
+                </button>
+              {/if}
             </div>
             <p class="cc-live__note">
               <i class="fa-solid fa-broadcast-tower"></i>
-              Transmisión del canal en vivo por internet. Si la señal no carga, intenta recargar la página.
+              {#if $tvStore.error}
+                No se pudo conectar a la señal. Verifica tu conexión e inténtalo de nuevo.
+              {:else if $tvStore.playing}
+                Transmisión en curso. La señal continúa al navegar por el sitio.
+              {:else}
+                Transmisión del canal en vivo por internet. Pulsa para comenzar.
+              {/if}
             </p>
           </div>
         </div>
@@ -239,14 +241,59 @@
   }
 
   .cc-live__video {
+    position: relative;
     background: #000;
-  }
-
-  .cc-live__video video {
-    display: block;
-    width: 100%;
     aspect-ratio: 16 / 9;
     max-height: 62vh;
+    width: 100%;
+  }
+
+  .cc-live__start {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--cc-cream);
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    transition: background 0.3s ease;
+  }
+
+  .cc-live__start:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .cc-live__start i {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #c8a97e, #92ae83);
+    color: #1d1a15;
+    font-size: 1.4rem;
+    box-shadow: 0 12px 30px rgba(200, 169, 126, 0.4);
+    transition: transform 0.3s ease;
+  }
+
+  .cc-live__start:hover i {
+    transform: scale(1.08);
+  }
+
+  .cc-live__start span {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
   }
 
   .cc-live__note {
@@ -400,7 +447,7 @@
   }
 
   @media (max-width: 992px) {
-    .cc-live__video video {
+    .cc-live__video {
       max-height: none;
     }
   }

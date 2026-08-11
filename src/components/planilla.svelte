@@ -350,7 +350,7 @@ Observaciones: ${planilla.observaciones}`;
         <div class="header-logo">
           <img
             src="/logo.png"
-            alt="Centro Cristiano Colón"
+            alt="Centro Cristiano Misión Global Colón"
             class="logo-image"
           />
           <div class="header-title">

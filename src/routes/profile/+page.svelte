@@ -197,7 +197,7 @@
         <div class="sidebar-footer">
           <div class="app-version">
             <span>v1.0.0</span>
-            <small>Centro Cristiano Colón</small>
+            <small>Centro Cristiano Misión Global Colón</small>
           </div>
         </div>
       </div>

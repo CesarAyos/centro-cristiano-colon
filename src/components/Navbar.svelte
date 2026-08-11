@@ -23,9 +23,9 @@
 <header class="cc-nav" class:is-scrolled={scrolled}>
   <div class="cc-nav__inner cc-container">
     <a class="cc-nav__brand" href="/" on:click={closeMenu} aria-label="Ir al inicio">
-      <img src="/logo.png" alt="Logo Centro Cristiano Colón" class="cc-nav__logo" />
+      <img src="/logo.png" alt="Logo Centro Cristiano Misión Global Colón" class="cc-nav__logo" />
       <span class="cc-nav__brand-text">
-        <span class="cc-nav__name">Centro Cristiano Colón</span>
+        <span class="cc-nav__name">Centro Cristiano Misión Global Colón</span>
         <span class="cc-nav__tagline">Un lugar para un momento espiritual</span>
       </span>
     </a>

@@ -6,7 +6,7 @@
   <div class="cc-container">
     <div class="cc-footer__top">
       <div class="cc-footer__col cc-footer__about">
-        <img src="/logo.png" alt="Logo Centro Cristiano Colón" class="cc-footer__logo" />
+        <img src="/logo.png" alt="Logo Centro Cristiano Misión Global Colón" class="cc-footer__logo" />
         <p>
           Una comunidad de fe comprometida con el crecimiento espiritual y el
           servicio a nuestra comunidad, con un ADN misionero de ganar, edificar
@@ -80,7 +80,7 @@
         </ul>
         <div class="cc-footer__map">
           <iframe
-            title="Mapa de Centro Cristiano Colón"
+            title="Mapa de Centro Cristiano Misión Global Colón"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3950.7156445312617!2d-72.26213622550951!3d8.028227003851917!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6661c4a2b6d037%3A0xb863abb51aac8fd6!2sCentro%20Cristiano%20Colon!5e0!3m2!1ses!2sve!4v1705430899804!5m2!1ses!2sve"
             style="border: 0"
             allowfullscreen=""
@@ -92,7 +92,7 @@
     </div>
 
     <div class="cc-footer__bottom">
-      <p>&copy; {year} Centro Cristiano Colón. Todos los derechos reservados.</p>
+      <p>&copy; {year} Centro Cristiano Misión Global Colón. Todos los derechos reservados.</p>
       <p>Diseñado con <i class="fa-solid fa-heart"></i> para la gloria de Dios</p>
     </div>
   </div>

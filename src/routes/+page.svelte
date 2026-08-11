@@ -153,7 +153,7 @@
         Bienvenidos a nuestra casa de oración
       </p>
       <h1 class="cc-hero__title">
-        Centro Cristiano <span>Colón</span>
+        Centro Cristiano Misión Global <span>Colón</span>
       </h1>
       <p class="cc-hero__subtitle">Un lugar para un momento espiritual</p>
       <p class="cc-hero__text">

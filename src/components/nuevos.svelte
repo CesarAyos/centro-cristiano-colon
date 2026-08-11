@@ -166,7 +166,7 @@
       <!-- Header del formulario -->
       <div class="form-header">
         <div class="header-logo">
-          <img src="/logo.png" alt="Centro Cristiano Colón" class="logo-image" />
+          <img src="/logo.png" alt="Centro Cristiano Misión Global Colón" class="logo-image" />
           <div class="header-title">
             <h1>REPORTE DE AMIGOS NUEVOS</h1>
             <p class="header-subtitle">Registra la información de nuevas personas que se unen a nuestro ministerio</p>

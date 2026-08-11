@@ -84,7 +84,7 @@
         <div class="col-lg-7">
           <div class="cc-map cc-reveal cc-d2">
             <iframe
-              title="Mapa de Centro Cristiano Colón"
+              title="Mapa de Centro Cristiano Misión Global Colón"
               src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1040.9298326463252!2d-72.25937907746008!3d8.028365623962548!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6661c4a2b6d037%3A0xb863abb51aac8fd6!2sCentro%20Cristiano%20Colon!5e1!3m2!1ses!2sve!4v1723598950364!5m2!1ses!2sve"
               style="border: 0"
               allowfullscreen=""

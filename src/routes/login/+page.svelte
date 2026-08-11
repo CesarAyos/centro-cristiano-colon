@@ -38,7 +38,7 @@
     <div class="text-center mb-4">
       <img src="/logo.png" alt="logo" style="height: 60px; margin-bottom: 0.5rem;" />
       <h1 class="mb-1" style="font-size: 1.7rem;">
-        Centro Cristiano Colón
+        Centro Cristiano Misión Global Colón
       </h1>
       <p style="color: var(--adm-muted); font-size: 0.95rem; margin: 0;">Acceso al panel de administración</p>
     </div>

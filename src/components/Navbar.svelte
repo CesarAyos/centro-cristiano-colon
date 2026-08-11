@@ -57,6 +57,7 @@
       </div>
 
       <a href="/predica" class="cc-nav__link" on:click={closeMenu}>Prédicas</a>
+      <a href="/envivo" class="cc-nav__link" on:click={closeMenu}>En Vivo</a>
       <a href="/reflexiones" class="cc-nav__link" on:click={closeMenu}>Reflexiones</a>
       <a href="/biblia" class="cc-nav__link" on:click={closeMenu}>Biblia</a>
       <a href="/ubicanos" class="cc-nav__link" on:click={closeMenu}>Ubícanos</a>

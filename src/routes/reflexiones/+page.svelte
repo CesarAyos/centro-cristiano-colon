@@ -42,10 +42,6 @@
     }
   }
 
-  function isExpanded(id) {
-    return expanded.includes(id);
-  }
-
   function share(r) {
     const url = `${window.location.origin}/reflexiones?id=${r.id}`;
     const texto = `${r.titulo}${r.referencia ? ' — ' + r.referencia : ''}\n${url}`;
@@ -56,10 +52,6 @@
     } else {
       window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
     }
-  }
-
-  function isLiked(id) {
-    return likedIds.includes(id);
   }
 
   async function toggleLike(r) {
@@ -99,14 +91,6 @@
       grouped[c.reflexion_id].push(c);
     }
     commentsByReflection = grouped;
-  }
-
-  function commentCount(id) {
-    return commentsByReflection[id] ? commentsByReflection[id].length : 0;
-  }
-
-  function isCommentsOpen(id) {
-    return commentsOpen.includes(id);
   }
 
   function toggleComments(id) {
@@ -230,12 +214,12 @@
                   <p class="cc-reflection__verse"><i class="fa-solid fa-cross"></i>{r.referencia}</p>
                 {/if}
 
-                <div class="cc-reflection__body" class:is-expanded={isExpanded(r.id)}>
+                <div class="cc-reflection__body" class:is-expanded={expanded.includes(r.id)}>
                   <p>{r.contenido}</p>
                 </div>
 
                 <button class="cc-reflection__toggle" type="button" on:click={() => toggle(r.id)}>
-                  {#if isExpanded(r.id)}
+                  {#if expanded.includes(r.id)}
                     <i class="fa-solid fa-chevron-up"></i>Leer menos
                   {:else}
                     <i class="fa-solid fa-chevron-down"></i>Leer más
@@ -244,13 +228,13 @@
 
                 <footer class="cc-reflection__foot">
                   <button
-                    class:cc-like--active={isLiked(r.id)}
+                    class:cc-like--active={likedIds.includes(r.id)}
                     class="cc-like"
                     type="button"
                     aria-label="Me gusta"
                     on:click={() => toggleLike(r)}
                   >
-                    {#if isLiked(r.id)}
+                    {#if likedIds.includes(r.id)}
                       <i class="fa-solid fa-heart"></i>
                     {:else}
                       <i class="fa-regular fa-heart"></i>
@@ -264,13 +248,13 @@
                     on:click={() => toggleComments(r.id)}
                   >
                     <i class="fa-regular fa-comment"></i>
-                    <span>Comentarios ({commentCount(r.id)})</span>
+                    <span>Comentarios ({(commentsByReflection[r.id] || []).length})</span>
                   </button>
                 </footer>
 
-                {#if isCommentsOpen(r.id)}
+                {#if commentsOpen.includes(r.id)}
                   <div class="cc-comments">
-                    {#if commentCount(r.id)}
+                    {#if (commentsByReflection[r.id] || []).length}
                       <ul class="cc-comments__list">
                         {#each commentsByReflection[r.id] as c}
                           <li>

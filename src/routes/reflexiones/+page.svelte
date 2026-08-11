@@ -57,14 +57,8 @@
 
   function share(r) {
     const url = `${window.location.origin}/reflexiones?id=${r.id}`;
-    const texto = `${r.titulo}${r.referencia ? ' — ' + r.referencia : ''}\n${url}`;
-    if (navigator.share) {
-      navigator
-        .share({ title: r.titulo, text: r.referencia || r.titulo, url })
-        .catch(() => {});
-    } else {
-      window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
-    }
+    const texto = `${r.titulo}${r.referencia ? ' — ' + r.referencia : ''}\n\n${r.contenido}\n\n${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
   }
 
   async function toggleLike(r) {

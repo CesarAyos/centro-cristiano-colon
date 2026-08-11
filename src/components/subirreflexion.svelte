@@ -8,6 +8,7 @@
   let statusType = "";
   let editingId = null;
   let comentariosCount = {};
+  let likesCount = {};
 
   let reflexion = {
     titulo: "",
@@ -30,6 +31,19 @@
     comentariosCount = counts;
   };
 
+  const loadLikes = async () => {
+    const { data, error } = await supabase.from("likes").select("reflexion_id");
+    if (error) {
+      console.error("Error cargando likes:", error.message);
+      return;
+    }
+    const counts = {};
+    for (const l of data || []) {
+      counts[l.reflexion_id] = (counts[l.reflexion_id] || 0) + 1;
+    }
+    likesCount = counts;
+  };
+
   const loadReflexiones = async () => {
     const { data, error } = await supabase
       .from("reflexiones")
@@ -38,6 +52,7 @@
     if (!error) reflexiones = data || [];
     loading = false;
     loadComentarios();
+    loadLikes();
   };
 
   const resetForm = () => {
@@ -252,7 +267,7 @@
                     </td>
                     <td>
                       <span class="text-white-50"
-                        ><i class="fa-solid fa-heart" style="color:#e07a5f;"></i> {r.likes || 0}</span
+                        ><i class="fa-solid fa-heart" style="color:#e07a5f;"></i> {likesCount[r.id] || 0}</span
                       >
                     </td>
                     <td>

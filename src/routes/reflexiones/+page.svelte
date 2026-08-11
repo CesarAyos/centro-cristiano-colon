@@ -10,10 +10,20 @@
   let errorMsg = '';
   let expanded = [];
   let likedIds = [];
+  let likesByReflection = {};
   let commentsByReflection = {};
   let commentsOpen = [];
   let commentDrafts = {};
   let commentErrors = {};
+
+  function getUserId() {
+    let uid = localStorage.getItem('cc-device-id');
+    if (!uid) {
+      uid = 'u-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem('cc-device-id', uid);
+    }
+    return uid;
+  }
 
   async function loadReflexiones() {
     try {
@@ -23,7 +33,10 @@
         .order('created_at', { ascending: false });
       if (error) throw error;
       reflexiones = data || [];
-      if (reflexiones.length) await loadComments(reflexiones.map((x) => x.id));
+      if (reflexiones.length) {
+        await loadComments(reflexiones.map((x) => x.id));
+        await loadLikes(reflexiones.map((x) => x.id));
+      }
     } catch (e) {
       errorMsg = 'No fue posible cargar las reflexiones. Intenta de nuevo más tarde.';
       console.error('Error cargando reflexiones:', e);
@@ -55,23 +68,58 @@
   }
 
   async function toggleLike(r) {
-    const liked = isLiked(r.id);
-    const dir = liked ? -1 : 1;
+    const uid = getUserId();
+    const liked = likedIds.includes(r.id);
+    const current = likesByReflection[r.id] || 0;
+    likesByReflection = {
+      ...likesByReflection,
+      [r.id]: liked ? Math.max(current - 1, 0) : current + 1,
+    };
     if (liked) {
       likedIds = likedIds.filter((x) => x !== r.id);
-      r.likes = Math.max((r.likes || 0) - 1, 0);
     } else {
       likedIds = [...likedIds, r.id];
-      r.likes = (r.likes || 0) + 1;
     }
     localStorage.setItem('cc-reflexiones-likes', JSON.stringify(likedIds));
-    reflexiones = reflexiones.map((x) => (x.id === r.id ? r : x));
     try {
-      const { error } = await supabase.rpc('cambiar_like', { pid: r.id, dir });
+      const { error } = liked
+        ? await supabase
+            .from('likes')
+            .delete()
+            .eq('reflexion_id', r.id)
+            .eq('user_id', uid)
+        : await supabase.from('likes').insert([{ reflexion_id: r.id, user_id: uid }]);
       if (error) throw error;
     } catch (e) {
+      likesByReflection = {
+        ...likesByReflection,
+        [r.id]: liked ? current + 1 : Math.max(current - 1, 0),
+      };
+      if (liked) {
+        likedIds = [...likedIds, r.id];
+      } else {
+        likedIds = likedIds.filter((x) => x !== r.id);
+      }
+      localStorage.setItem('cc-reflexiones-likes', JSON.stringify(likedIds));
       console.error('Error actualizando like:', e.message);
     }
+  }
+
+  async function loadLikes(ids) {
+    if (!ids || !ids.length) return;
+    const { data, error } = await supabase
+      .from('likes')
+      .select('reflexion_id')
+      .in('reflexion_id', ids);
+    if (error) {
+      console.error('Error cargando likes:', error.message);
+      return;
+    }
+    const counts = {};
+    for (const l of data || []) {
+      counts[l.reflexion_id] = (counts[l.reflexion_id] || 0) + 1;
+    }
+    likesByReflection = counts;
   }
 
   async function loadComments(ids) {
@@ -239,7 +287,7 @@
                     {:else}
                       <i class="fa-regular fa-heart"></i>
                     {/if}
-                    <span>{r.likes || 0}</span>
+                    <span>{likesByReflection[r.id] || 0}</span>
                   </button>
 
                   <button

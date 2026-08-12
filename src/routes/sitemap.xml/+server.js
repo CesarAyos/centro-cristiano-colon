@@ -1,3 +1,5 @@
+import { supabase } from '$lib/supabaseClient';
+
 export async function GET() {
   let predicas = [];
 
@@ -10,7 +12,10 @@ export async function GET() {
     console.error("Error cargando datos de Supabase:", err);
   }
 
+  // ✅ CORREGIDO: Namespace completo
   const xmlNamespace = 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"';
+  
+  // ✅ CORREGIDO: Tu dominio correcto
   const miDominio = 'https://centro-cristiano-colon.vercel.app';
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -29,7 +34,8 @@ export async function GET() {
 
   return new Response(sitemap, {
     headers: {
-      'Content-Type': 'application/xml'
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, max-age=3600' // Opcional: cache por 1 hora
     }
   });
 }

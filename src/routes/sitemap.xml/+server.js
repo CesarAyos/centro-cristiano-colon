@@ -1,21 +1,30 @@
-import { supabase } from '$lib/supabaseClient'; 
-
 export async function GET() {
-  // Trae los slugs de las prédicas desde tu tabla en Supabase
-  const { data: predicas } = await supabase.from('predicas').select('slug');
+  let predicas = [];
 
-  // 1. Namespace oficial corregido en <urlset>
-  // 2. Dominio real corregido en cada <loc>
-  // 3. Sintaxis interpolada corregida con ${p.slug}
+  try {
+    const { data, error } = await supabase.from('predicas').select('slug');
+    if (!error && data) {
+      predicas = data;
+    }
+  } catch (err) {
+    console.error("Error cargando datos de Supabase:", err);
+  }
+
+  const xmlNamespace = 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"';
+  const miDominio = 'https://centro-cristiano-colon.vercel.app';
+
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://sitemaps.org">
+<urlset ${xmlNamespace}>
   <url>
-    <loc>https://centro-cristiano-colon.vercel.app/</loc>
+    <loc>${miDominio}/</loc>
   </url>
-  ${predicas ? predicas.map(p => `
   <url>
-    <loc>https://vercel.app{p.slug}</loc>
-  </url>`).join('') : ''}
+    <loc>${miDominio}/ubicanos</loc>
+  </url>
+  ${predicas.map(p => `
+  <url>
+    <loc>${miDominio}/predicas/${p.slug}</loc>
+  </url>`).join('')}
 </urlset>`.trim();
 
   return new Response(sitemap, {

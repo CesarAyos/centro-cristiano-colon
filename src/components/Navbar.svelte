@@ -57,7 +57,9 @@
       </div>
 
       <a href="/predica" class="cc-nav__link" on:click={closeMenu}>Prédicas</a>
-      <a href="/envivo" class="cc-nav__link" on:click={closeMenu}>En Vivo</a>
+      <a href="/envivo" class="cc-nav__link cc-nav__link--live" on:click={closeMenu}>
+        <span class="cc-nav__live-dot"></span>Live
+      </a>
       <a href="/reflexiones" class="cc-nav__link" on:click={closeMenu}>Reflexiones</a>
       <a href="/biblia" class="cc-nav__link" on:click={closeMenu}>Biblia</a>
       <a href="/ubicanos" class="cc-nav__link" on:click={closeMenu}>Ubícanos</a>
@@ -235,6 +237,31 @@
   .cc-nav__link:hover::after,
   .cc-nav__link:focus-visible::after {
     transform: scaleX(1);
+  }
+
+  /* ---- Link Live ---- */
+  .cc-nav__link--live {
+    color: #e07a5f;
+  }
+
+  .cc-nav__live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e07a5f;
+    animation: cc-nav-pulse 1.6s ease-out infinite;
+  }
+
+  @keyframes cc-nav-pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(224, 122, 95, 0.55);
+    }
+    70% {
+      box-shadow: 0 0 0 9px rgba(224, 122, 95, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(224, 122, 95, 0);
+    }
   }
 
   /* ---- Dropdown ---- */

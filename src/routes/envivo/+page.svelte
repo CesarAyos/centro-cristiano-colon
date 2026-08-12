@@ -9,6 +9,7 @@
 
   let tvHost;
   let volume = 1;
+  let isFullscreen = false;
   let destroyReveals = () => {};
 
   function setVolume() {
@@ -16,9 +17,40 @@
     if (a) a.volume = volume;
   }
 
+  function toggleFullscreen() {
+    const host = tvHost;
+    if (!host) return;
+    if (!isFullscreen) {
+      if (host.requestFullscreen) host.requestFullscreen();
+      else if (host.webkitRequestFullscreen) host.webkitRequestFullscreen();
+      else if (host.msRequestFullscreen) host.msRequestFullscreen();
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+
   onMount(() => {
     attachTv(tvHost);
     destroyReveals = setupReveals();
+    const onFsChange = () => {
+      isFullscreen = Boolean(
+        document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.msFullscreenElement
+      );
+    };
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
+    document.addEventListener('msfullscreenchange', onFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFsChange);
+      document.removeEventListener('webkitfullscreenchange', onFsChange);
+      document.removeEventListener('msfullscreenchange', onFsChange);
+    };
   });
 
   beforeNavigate(() => {
@@ -70,6 +102,15 @@
                     <i class="fa-solid fa-play"></i>
                     <span>Ver canal en vivo</span>
                   {/if}
+                </button>
+              {:else}
+                <button
+                  class="cc-live__fs"
+                  type="button"
+                  on:click={toggleFullscreen}
+                  aria-label={isFullscreen ? 'Salir de pantalla completa' : 'Ver en pantalla completa'}
+                >
+                  <i class="fa-solid" class:fa-expand={!isFullscreen} class:fa-compress={isFullscreen}></i>
                 </button>
               {/if}
             </div>
@@ -246,6 +287,39 @@
     aspect-ratio: 16 / 9;
     max-height: 62vh;
     width: 100%;
+  }
+
+  .cc-live__video:fullscreen,
+  .cc-live__video:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+
+  .cc-live__fs {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 6;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    color: var(--cc-cream);
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease;
+  }
+
+  .cc-live__fs:hover {
+    background: rgba(200, 169, 126, 0.85);
+    color: #1d1a15;
+    transform: scale(1.07);
   }
 
   .cc-live__start {

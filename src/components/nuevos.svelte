@@ -62,7 +62,7 @@
   };
 
   // Función para mostrar notificación
-  const mostrarNotificacion = (mensaje = "✅ Reporte de amigo enviado exitosamente!", tipo = "success") => {
+  const mostrarNotificacion = (mensaje = "✅ Reporte de amigo enviado exitosamente a la base de datos y WhatsApp!", tipo = "success") => {
     mensajeNotif = mensaje;
     tipoNotif = tipo;
     mostrarNotif = true;
@@ -105,6 +105,9 @@
       } else {
         console.log("Datos insertados correctamente:", data);
         
+        // Enviar reporte a WhatsApp
+        enviarAWhatsApp();
+        
         // Mostrar notificación de éxito
         mostrarNotificacion();
         
@@ -131,6 +134,80 @@
     }
     
     insertNuevos();
+  };
+
+  // Función para forzar la apertura de WhatsApp
+  const forzarAperturaWhatsApp = (numero, mensaje) => {
+    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+
+    try {
+      const nuevaVentana = window.open(url, "_blank");
+      if (nuevaVentana) {
+        return true;
+      }
+    } catch (error) {
+      console.log("Método 1 falló:", error);
+    }
+
+    try {
+      window.location.href = url;
+      return true;
+    } catch (error) {
+      console.log("Método 2 falló:", error);
+    }
+
+    try {
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = url;
+      document.body.appendChild(iframe);
+
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      }, 1000);
+
+      return true;
+    } catch (error) {
+      console.log("Método 3 falló:", error);
+    }
+
+    return false;
+  };
+
+  // Función para enviar a WhatsApp
+  const enviarAWhatsApp = () => {
+    const numero = "584247187229";
+
+    const mensajeTexto = `REPORTE DE AMIGO NUEVO
+Nombre del Líder: ${nuevos.nombrelidernuevo}
+Grupo Bíblico: ${nuevos.nombregruponuevo}
+
+INFORMACIÓN PERSONAL
+Nombres: ${nuevos.nombresnuevo}
+Apellidos: ${nuevos.apellidosnuevo}
+Edad: ${nuevos.edadnuevo}
+
+INFORMACIÓN DE CONTACTO
+Dirección: ${nuevos.direccionnuevo}
+Teléfono: ${nuevos.telefononuevo}`;
+
+    if (!forzarAperturaWhatsApp(numero, mensajeTexto)) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(mensajeTexto).then(() => {
+          mostrarNotificacion(
+            `📱 Mensaje copiado al portapapeles! Número: ${numero}`,
+            "info",
+          );
+        });
+      } else {
+        mostrarNotificacion(
+          `📱 Para enviar: Número ${numero} - Mensaje copiado`,
+          "info",
+        );
+      }
+    }
   };
 
   // Inicialización
@@ -354,10 +431,10 @@
             >
               {#if isSubmitting}
                 <i class="fas fa-spinner fa-spin"></i>
-                <span>Registrando...</span>
+                <span>Enviando...</span>
               {:else}
                 <i class="fas fa-user-plus"></i>
-                <span>Registrar Amigo Nuevo</span>
+                <span>Enviar Reporte a BD y WhatsApp</span>
               {/if}
             </button>
             

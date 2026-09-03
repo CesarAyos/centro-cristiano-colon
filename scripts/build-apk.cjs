@@ -11,7 +11,7 @@ function run(cmd) {
 }
 
 // 1. Bump version
-require('./bump-version.cjs');
+const { version, versionCode } = require('./bump-version.cjs');
 
 // 2. Build SvelteKit
 run('npm run build');
@@ -24,6 +24,14 @@ if (!fs.existsSync(androidDir)) {
 
 // 4. Sync web build with Capacitor
 run('npx cap sync android');
+
+// 4.1. Update versionCode and versionName in build.gradle
+const buildGradlePath = path.join(androidDir, 'app', 'build.gradle');
+let buildGradle = fs.readFileSync(buildGradlePath, 'utf-8');
+buildGradle = buildGradle.replace(/versionCode \d+/, `versionCode ${versionCode}`);
+buildGradle = buildGradle.replace(/versionName "[^"]*"/, `versionName "${version}"`);
+fs.writeFileSync(buildGradlePath, buildGradle, 'utf-8');
+console.log(`\n  Version updated: ${version} (code: ${versionCode})\n`);
 
 // 5. Build APK (debug)
 if (!ensureAndroidSdk()) {

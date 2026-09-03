@@ -1,6 +1,6 @@
 {
     "name": "cccolon",
-    "version": "1.13",
+    "version": "1.16",
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",

@@ -21,6 +21,8 @@ pkg.version = newVersion;
 
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 4) + '\n', 'utf-8');
 
-console.log(`\n  Version bumped: ${newVersion}\n`);
+const versionCode = major * 100 + minor;
 
-module.exports = { version: newVersion };
+console.log(`\n  Version bumped: ${newVersion} (code: ${versionCode})\n`);
+
+module.exports = { version: newVersion, versionCode };

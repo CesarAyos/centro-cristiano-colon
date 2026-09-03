@@ -1,6 +1,6 @@
 {
     "name": "cccolon",
-    "version": "0.0.1",
+    "version": "1.10",
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",
@@ -8,7 +8,10 @@
         "package": "svelte-kit sync && svelte-package && publint",
         "prepublishOnly": "npm run package",
         "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
-        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch"
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+        "build:apk": "node scripts/build-apk.cjs",
+        "build:aab": "node scripts/build-aab.cjs",
+        "build:release": "node scripts/build-release.cjs"
     },
     "exports": {
         ".": {
@@ -25,7 +28,10 @@
         "svelte": "^4.0.0"
     },
     "devDependencies": {
-        "@sveltejs/adapter-auto": "^3.0.0",
+        "@capacitor/android": "^7.0.0",
+        "@capacitor/assets": "^3.0.5",
+        "@capacitor/cli": "^7.0.0",
+        "@sveltejs/adapter-static": "^3.0.0",
         "@sveltejs/kit": "^2.7.0",
         "@sveltejs/package": "^2.0.0",
         "@sveltejs/vite-plugin-svelte": "^3.0.0",
@@ -40,9 +46,15 @@
     "types": "./dist/index.d.ts",
     "type": "module",
     "dependencies": {
+        "@anuradev/capacitor-background-mode": "^7.2.1",
+        "@capacitor-firebase/messaging": "^7.5.0",
+        "@capacitor/core": "^7.0.0",
+        "@capacitor/local-notifications": "^7.0.7",
+        "@capacitor/splash-screen": "^7.0.5",
         "@supabase/supabase-js": "^2.52.0",
         "chart.js": "^4.4.8",
         "chartjs-plugin-datalabels": "^2.2.0",
+        "firebase": "^11.10.0",
         "hls.js": "^1.6.17",
         "leaflet": "^1.9.4",
         "xlsx": "^0.18.5"

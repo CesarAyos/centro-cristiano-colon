@@ -1,0 +1,4 @@
+project_id = "wrdalmrnoeslzthwqnuo"
+
+[functions.notificar-reflexion]
+verify_jwt = false

@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { enableBackgroundMode, disableBackgroundMode } from '$lib/backgroundMode';
 
 export const TV_STREAM = 'https://tv.frecuenciaf.com/live/envivo.m3u8';
 export const TV_POSTER = 'https://www.frecuenciaf.com/img/FrecuenciaFTV.png';
@@ -20,14 +21,49 @@ function setState(patch) {
   tvStore.update((s) => ({ ...s, ...patch }));
 }
 
+function setupMediaSession() {
+  if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: 'Canal Frecuencia F',
+      artist: 'Centro Cristiano',
+      album: 'En Vivo',
+      artwork: [{ src: '/logo.png', sizes: '512x512', type: 'image/png' }],
+    });
+    navigator.mediaSession.setActionHandler('play', () => videoEl && videoEl.play());
+    navigator.mediaSession.setActionHandler('pause', () => videoEl && videoEl.pause());
+    navigator.mediaSession.setActionHandler('stop', () => videoEl && videoEl.pause());
+  } catch (e) {
+    console.error('Error configurando media session:', e);
+  }
+}
+
 function wireEvents(el) {
   if (el.__tvWired) return;
   el.__tvWired = true;
-  el.addEventListener('play', () => setState({ playing: true, loading: false, error: false }));
-  el.addEventListener('pause', () => setState({ playing: false }));
+  el.addEventListener('play', () => {
+    setState({ playing: true, loading: false, error: false });
+    enableBackgroundMode({
+      title: 'Canal Frecuencia F',
+      text: 'Transmitiendo en vivo',
+      subText: 'Centro Cristiano',
+      color: '#92ae83',
+    });
+  });
+  el.addEventListener('pause', () => {
+    setState({ playing: false });
+    disableBackgroundMode();
+  });
   el.addEventListener('waiting', () => setState({ loading: true }));
   el.addEventListener('playing', () => setState({ loading: false, error: false }));
-  el.addEventListener('error', () => setState({ loading: false, error: true }));
+  el.addEventListener('ended', () => {
+    const otherStream = videoEl && !hls;
+    if (!otherStream) disableBackgroundMode();
+  });
+  el.addEventListener('error', () => {
+    setState({ loading: false, error: true });
+    disableBackgroundMode();
+  });
 }
 
 export function bindTvVideo(el) {
@@ -95,11 +131,13 @@ async function initTv() {
 export async function startTv() {
   if (!videoEl) return;
   await initTv();
+  setupMediaSession();
   setState({ playing: true, loading: true, error: false });
   try {
     await videoEl.play();
   } catch {
     setState({ playing: false, loading: false, error: true });
+    disableBackgroundMode();
   }
 }
 

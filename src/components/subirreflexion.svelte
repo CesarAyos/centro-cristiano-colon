@@ -44,6 +44,29 @@
     likesCount = counts;
   };
 
+  const notifyNewReflexion = async (titulo, contenido, id) => {
+    try {
+      const projectRef = new URL(import.meta.env.VITE_PUBLIC_SUPABASE_URL).hostname.split(".")[0];
+      const secret = import.meta.env.VITE_PUBLIC_PUBLISH_SECRET;
+      if (!projectRef || !secret) return;
+      const res = await fetch(
+        `https://${projectRef}.functions.supabase.co/notificar-reflexion`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY}`,
+            "x-publish-secret": secret,
+          },
+          body: JSON.stringify({ titulo, contenido, reflexionId: id }),
+        }
+      );
+      if (!res.ok) console.error("No se pudo enviar notificación push:", await res.text());
+    } catch (e) {
+      console.error("Error llamando a la función de notificación:", e);
+    }
+  };
+
   const loadReflexiones = async () => {
     const { data, error } = await supabase
       .from("reflexiones")
@@ -85,8 +108,13 @@
         statusMsg = "Reflexión actualizada con éxito.";
         statusType = "success";
       } else {
-        const { error } = await supabase.from("reflexiones").insert([{ ...reflexion }]);
+        const { data: inserted, error } = await supabase
+          .from("reflexiones")
+          .insert([{ ...reflexion }])
+          .select("id");
         if (error) throw error;
+        const newId = inserted && inserted[0] ? inserted[0].id : null;
+        notifyNewReflexion(reflexion.titulo, reflexion.contenido, newId);
         statusMsg = "Reflexión publicada con éxito.";
         statusType = "success";
       }

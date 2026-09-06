@@ -1,6 +1,6 @@
 {
     "name": "cccolon",
-    "version": "1.16",
+    "version": "1.18",
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",
@@ -11,7 +11,8 @@
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
         "build:apk": "node scripts/build-apk.cjs",
         "build:aab": "node scripts/build-aab.cjs",
-        "build:release": "node scripts/build-release.cjs"
+        "build:release": "node scripts/build-release.cjs",
+        "test:push": "node scripts/test-push.cjs"
     },
     "exports": {
         ".": {

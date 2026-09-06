@@ -9,6 +9,46 @@ const FCM_TOPIC = 'reflexiones';
 let pollingTimer = null;
 let lastReflexionId = null;
 let fcmToken = null;
+let statusListeners = new Set();
+
+const status = {
+  supported: false,
+  enabled: false,
+  permission: 'unknown',
+  token: false,
+  error: '',
+};
+
+function emitStatus() {
+  const snap = { ...status };
+  for (const fn of statusListeners) {
+    try {
+      fn(snap);
+    } catch (e) {
+      console.error('Error en listener de estado de notificaciones:', e);
+    }
+  }
+}
+
+function setStatus(patch) {
+  let changed = false;
+  for (const k of Object.keys(patch)) {
+    if (status[k] !== patch[k]) {
+      status[k] = patch[k];
+      changed = true;
+    }
+  }
+  if (changed) emitStatus();
+}
+
+export function onNotificationStatusChange(fn) {
+  statusListeners.add(fn);
+  return () => statusListeners.delete(fn);
+}
+
+export function getNotificationStatus() {
+  return { ...status };
+}
 
 export function isNative() {
   return Capacitor.isNativePlatform();
@@ -27,27 +67,31 @@ async function getMessaging() {
 
 export async function requestNotificationPermission() {
   if (typeof window === 'undefined') return false;
-  if (typeof localStorage !== 'undefined' && localStorage.getItem(NOTIF_PERM_KEY) === 'true') {
-    return true;
+  if (!isNative()) {
+    setStatus({ supported: false, enabled: false, permission: 'unsupported' });
+    return false;
   }
-  if (!isNative()) return false;
-
+  setStatus({ supported: true });
   try {
     const permStatus = await LocalNotifications.checkPermissions();
-    if (permStatus.display === 'granted') {
+    if (permStatus.display === 'granted' || permStatus.display === 'limited') {
       localStorage.setItem(NOTIF_PERM_KEY, 'true');
+      setStatus({ permission: 'granted', enabled: true });
       return true;
     }
     if (permStatus.display === 'prompt') {
       const req = await LocalNotifications.requestPermissions();
       if (req.display === 'granted' || req.display === 'limited') {
         localStorage.setItem(NOTIF_PERM_KEY, 'true');
+        setStatus({ permission: 'granted', enabled: true });
         return true;
       }
     }
+    setStatus({ permission: permStatus.display || 'denied', enabled: false });
     return false;
   } catch (e) {
     console.error('Error solicitando permiso de notificaciones:', e);
+    setStatus({ permission: 'denied', enabled: false, error: e.message });
     return false;
   }
 }
@@ -55,6 +99,59 @@ export async function requestNotificationPermission() {
 export function notificationsEnabled() {
   if (typeof localStorage === 'undefined') return false;
   return localStorage.getItem(NOTIF_PERM_KEY) === 'true';
+}
+
+export async function setNotificationsEnabled(enabled) {
+  if (!isNative()) {
+    setStatus({ enabled: false, error: 'Esta función solo está disponible en la aplicación móvil.' });
+    return false;
+  }
+
+  if (!enabled) {
+    localStorage.removeItem(NOTIF_PERM_KEY);
+    const FirebaseMessaging = await getMessaging();
+    if (FirebaseMessaging && fcmToken) {
+      try {
+        await FirebaseMessaging.unsubscribeFromTopic({ topic: FCM_TOPIC });
+      } catch (e) {
+        console.error('Error al desuscribir del tema FCM:', e);
+      }
+    }
+    setStatus({ enabled: false });
+    return true;
+  }
+
+  const granted = await requestNotificationPermission();
+  if (!granted) {
+    setStatus({
+      enabled: false,
+      error: 'Debes permitir las notificaciones en los ajustes del dispositivo.',
+    });
+    return false;
+  }
+
+  try {
+    const FirebaseMessaging = await getMessaging();
+    if (!FirebaseMessaging) {
+      setStatus({ enabled: false, error: 'FCM no disponible en este dispositivo.' });
+      return false;
+    }
+    await ensureFcmToken(FirebaseMessaging);
+    if (!fcmToken) {
+      setStatus({
+        enabled: false,
+        error: 'No se pudo obtener el token de notificaciones. Revisa la config de Firebase.',
+      });
+      return false;
+    }
+    await FirebaseMessaging.subscribeToTopic({ topic: FCM_TOPIC });
+    setStatus({ enabled: true, token: true, error: '' });
+    return true;
+  } catch (e) {
+    console.error('Error activando notificaciones:', e);
+    setStatus({ enabled: false, error: e.message });
+    return false;
+  }
 }
 
 async function ensureChannel(FirebaseMessaging) {
@@ -91,13 +188,24 @@ async function ensureFcmToken(FirebaseMessaging) {
   if (!FirebaseMessaging) return;
   try {
     await ensureChannel(FirebaseMessaging);
-    await FirebaseMessaging.requestPermissions();
+    const perm = await FirebaseMessaging.checkPermissions();
+    if (perm.receive === 'prompt' || perm.receive === 'denied') {
+      try {
+        await FirebaseMessaging.requestPermissions();
+      } catch (e) {
+        /* el usuario puede haber denegado el diálogo nativo */
+      }
+    }
     const { token } = await FirebaseMessaging.getToken();
     if (token) {
       fcmToken = token;
+      setStatus({ token: true });
+    } else {
+      setStatus({ token: false });
     }
   } catch (e) {
     console.error('Error obteniendo token FCM:', e);
+    setStatus({ token: false, error: e.message });
   }
 }
 
@@ -187,19 +295,31 @@ export function watchNewReflexiones() {
     }
   };
 
-  if (!isNative()) return cleanupPoll;
+  if (!isNative()) {
+    setStatus({ supported: false });
+    return cleanupPoll;
+  }
+
+  setStatus({
+    supported: true,
+    enabled: notificationsEnabled(),
+    permission: 'unknown',
+  });
 
   requestNotificationPermission().then(async (granted) => {
     if (!granted) return;
 
     const FirebaseMessaging = await getMessaging();
-
     if (FirebaseMessaging) {
       await ensureFcmToken(FirebaseMessaging);
       if (fcmToken) {
-        FirebaseMessaging.subscribeToTopic({ topic: FCM_TOPIC }).catch((e) =>
-          console.error('Error suscribiendo a FCM:', e)
-        );
+        try {
+          await FirebaseMessaging.subscribeToTopic({ topic: FCM_TOPIC });
+          setStatus({ enabled: true, token: true });
+        } catch (e) {
+          console.error('Error suscribiendo a FCM:', e);
+          setStatus({ enabled: false, error: e.message });
+        }
       }
 
       FirebaseMessaging.addListener('notificationReceived', (notification) => {

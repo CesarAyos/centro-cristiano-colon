@@ -311,6 +311,111 @@
 .cc-d3 { transition-delay: 0.36s; }
 .cc-d4 { transition-delay: 0.48s; }
 
+/* ---------- Barra de notificaciones ---------- */
+.cc-notif-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: linear-gradient(160deg, #121009 0%, #18150f 100%);
+  border: 1px solid rgba(146, 174, 131, 0.25);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 34px;
+}
+
+.cc-notif-bar__info {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.cc-notif-bar__icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: rgba(200, 169, 126, 0.14);
+  border: 1px solid rgba(200, 169, 126, 0.3);
+  color: var(--cc-accent);
+  font-size: 1rem;
+}
+
+.cc-notif-bar__info strong {
+  display: block;
+  font-size: 1.02rem;
+  margin-bottom: 2px;
+}
+
+.cc-notif-bar__info p {
+  margin: 0;
+  color: var(--cc-muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.cc-notif-bar__toggle {
+  flex: 0 0 auto;
+  width: 54px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+  padding: 0;
+}
+
+.cc-notif-bar__toggle--on {
+  background: var(--cc-gradient);
+  border-color: transparent;
+}
+
+.cc-notif-bar__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.cc-notif-bar__toggle--on .cc-notif-bar__knob {
+  transform: translateX(24px);
+}
+
+.cc-notif-bar__toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cc-notif-bar__msg {
+  margin: -18px 0 34px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: rgba(200, 169, 126, 0.1);
+  border: 1px solid rgba(200, 169, 126, 0.3);
+  color: var(--cc-accent-soft);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .cc-notif-bar__info p {
+    font-size: 0.82rem;
+  }
+
+  .cc-notif-bar {
+    padding: 13px 14px;
+  }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   .cc-section {

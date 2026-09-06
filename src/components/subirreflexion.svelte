@@ -44,7 +44,7 @@
     likesCount = counts;
   };
 
-  const notifyNewReflexion = async (titulo, contenido, id) => {
+  const notifyNewReflexion = async (titulo, referencia, contenido, id) => {
     try {
       const projectRef = new URL(import.meta.env.VITE_PUBLIC_SUPABASE_URL).hostname.split(".")[0];
       const secret = import.meta.env.VITE_PUBLIC_PUBLISH_SECRET;
@@ -58,7 +58,12 @@
             "Authorization": `Bearer ${import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY}`,
             "x-publish-secret": secret,
           },
-          body: JSON.stringify({ titulo, contenido, reflexionId: id }),
+          body: JSON.stringify({
+            titulo,
+            referencia: referencia || reflexion.referencia || "",
+            contenido,
+            reflexionId: id,
+          }),
         }
       );
       if (!res.ok) console.error("No se pudo enviar notificación push:", await res.text());
@@ -114,7 +119,7 @@
           .select("id");
         if (error) throw error;
         const newId = inserted && inserted[0] ? inserted[0].id : null;
-        notifyNewReflexion(reflexion.titulo, reflexion.contenido, newId);
+        notifyNewReflexion(reflexion.titulo, reflexion.referencia, reflexion.contenido, newId);
         statusMsg = "Reflexión publicada con éxito.";
         statusType = "success";
       }

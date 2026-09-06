@@ -3,6 +3,7 @@
   import Footer from '../../components/Footer.svelte';
   import { supabase } from '$lib/supabaseClient';
   import { setupReveals } from '$lib/reveal.js';
+  import NotificationToggle from '../../components/NotificationToggle.svelte';
   import '$lib/public.css';
 
   let reflexiones = [];
@@ -218,6 +219,7 @@
 
   <section class="cc-section">
     <div class="cc-container">
+      <NotificationToggle />
       {#if loading}
         <div class="cc-state">
           <i class="fa-solid fa-circle-notch fa-spin"></i>

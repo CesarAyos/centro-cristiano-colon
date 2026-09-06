@@ -112,11 +112,17 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const { titulo, contenido, reflexionId } = await req.json();
-    const title = titulo || "Nueva Reflexión";
-    const bodyText = contenido
-      ? contenido.replace(/\s+/g, " ").trim().slice(0, 180)
-      : "Nueva reflexión publicada";
+    const { titulo, referencia, contenido, reflexionId } = await req.json();
+    const title = (titulo && String(titulo).trim()) || "Nueva Reflexión";
+    const refText = referencia ? String(referencia).trim() : "";
+    let bodyText = "";
+    if (refText) {
+      bodyText = refText.length > 180 ? refText.slice(0, 180) : refText;
+    } else if (contenido) {
+      bodyText = contenido.replace(/\s+/g, " ").trim().slice(0, 180);
+    } else {
+      bodyText = "Nueva reflexión publicada";
+    }
 
     const accessToken = await getAccessToken(serviceAccountJson);
 
@@ -139,6 +145,9 @@ Deno.serve(async (req: Request) => {
         },
         data: {
           reflexionId: reflexionId ? String(reflexionId) : "",
+          titulo: title,
+          referencia: refText,
+          click_action: "OPEN_REFLEXION",
         },
       },
     };

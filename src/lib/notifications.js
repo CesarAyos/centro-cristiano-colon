@@ -279,7 +279,7 @@ export async function checkNewReflexiones() {
   try {
     const { data, error } = await supabase
       .from('reflexiones')
-      .select('id, titulo, contenido')
+      .select('id, titulo, referencia, contenido')
       .order('created_at', { ascending: false })
       .limit(10);
     if (error) throw error;
@@ -291,10 +291,12 @@ export async function checkNewReflexiones() {
     const newestId = currentIds[0];
     if (lastReflexionId !== null && lastReflexionId !== newestId && !remembered.includes(newestId)) {
       const newest = data[0];
-      const body = newest.contenido
-        ? newest.contenido.replace(/\s+/g, ' ').trim().slice(0, 180)
-        : 'Nueva reflexión publicada';
-      await scheduleReflexionNotification('Nueva Reflexión', body, newest.id);
+      const title = (newest.titulo && String(newest.titulo).trim()) || 'Nueva Reflexión';
+      const body =
+        (newest.referencia && String(newest.referencia).trim()) ||
+        newest.titulo ||
+        'Nueva reflexión publicada';
+      await scheduleReflexionNotification(title, body, newest.id);
       rememberReflexionIds(currentIds);
     }
 
@@ -434,11 +436,12 @@ export function watchNewReflexiones() {
         { event: 'INSERT', schema: 'public', table: 'reflexiones' },
         async (payload) => {
           const r = payload.new;
-          await displayRemoteNotification(
-            'Nueva Reflexión',
-            r.titulo || 'Nueva reflexión publicada',
-            r.id
-          );
+          const title = (r.titulo && String(r.titulo).trim()) || 'Nueva Reflexión';
+          const body =
+            (r.referencia && String(r.referencia).trim()) ||
+            r.titulo ||
+            'Nueva reflexión publicada';
+          await displayRemoteNotification(title, body, r.id);
           const remembered = getRememberedIds();
           if (r.id && !remembered.includes(r.id)) {
             rememberReflexionIds([r.id, ...remembered].slice(0, 50));

@@ -4,6 +4,7 @@
   import { supabase } from '$lib/supabaseClient';
   import { setupReveals } from '$lib/reveal.js';
   import NotificationToggle from '../../components/NotificationToggle.svelte';
+  import { getSiteUrl } from '$lib/siteUrl';
   import '$lib/public.css';
 
   let reflexiones = [];
@@ -57,7 +58,7 @@
   }
 
   function share(r) {
-    const url = `${window.location.origin}/reflexiones?id=${r.id}`;
+    const url = `${getSiteUrl()}/reflexiones?id=${r.id}`;
     const texto = `${r.titulo}${r.referencia ? ' — ' + r.referencia : ''}\n\n${r.contenido}\n\n${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
   }

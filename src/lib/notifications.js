@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { supabase } from '$lib/supabaseClient';
+import { getSiteUrl } from '$lib/siteUrl';
 
 const NOTIF_PERM_KEY = 'cc-notifications-enabled';
 const SEEN_REFLECTIONS_KEY = 'cc-seen-reflexiones';
@@ -48,6 +49,18 @@ export function onNotificationStatusChange(fn) {
 
 export function getNotificationStatus() {
   return { ...status };
+}
+
+export async function getFcmToken() {
+  const FirebaseMessaging = await getMessaging();
+  if (!FirebaseMessaging) return null;
+  try {
+    const { token } = await FirebaseMessaging.getToken();
+    return token || null;
+  } catch (e) {
+    console.error('Error obteniendo token FCM:', e);
+    return null;
+  }
 }
 
 export function isNative() {
@@ -335,7 +348,7 @@ export function watchNewReflexiones() {
           notification.notification.data &&
           notification.notification.data.reflexionId;
         if (reflexionId && typeof window !== 'undefined') {
-          window.location.href = `${window.location.origin}/reflexiones?id=${reflexionId}`;
+          window.location.href = `${getSiteUrl()}/reflexiones?id=${reflexionId}`;
         }
       });
     }

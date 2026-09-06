@@ -202,14 +202,31 @@ async function main() {
 
   if (res.ok) {
     logOk('FCM aceptó el mensaje.');
+    let parsed;
+    try { parsed = JSON.parse(bodyText); } catch { parsed = null; }
+    if (parsed && parsed.response) {
+      let fcmResp;
+      try { fcmResp = JSON.parse(parsed.response); } catch { fcmResp = null; }
+      if (fcmResp && fcmResp.name) {
+        logOk(`FCM message_id: ${fcmResp.name}`);
+      }
+    }
     if (!payload.token) {
       console.log('');
       console.log('  Si abres el push en el celular, debe abrir:');
       console.log('    /reflexiones?id=' + (payload.reflexionId || '<id>'));
       console.log('');
-      console.log('  NOTA: el celular SOLO lo recibe si tiene la app, permiso concedido');
-      console.log('        y el toggle activado en /reflexiones. Para enviar a UN celular');
-      console.log('        exacto (sin depender del topic) usa: npm run test:push -- -k <token>');
+      console.log('  NOTA: el celular SOLO lo recibe si:');
+      console.log('    1. Tiene la app instalada (APK firmado con la misma key)');
+      console.log('    2. Tiene Google Play Services actualizado');
+      console.log('    3. Abrió la app y activó el toggle de notificaciones');
+      console.log('    4. El token FCM fue registrado (revisar adb logcat | grep -i "fcm\\|token")');
+      console.log('');
+      console.log('  Para enviar a UN celular exacto usa:');
+      console.log('    npm run test:push -- -k <fcm-token>');
+      console.log('');
+      console.log('  Para ver el token del celular:');
+      console.log('    adb logcat | grep -i "fcm\\|FirebaseMessaging\\|token"');
     } else {
       console.log('');
       logOk('Si el token era válido, el celular debe mostrar la notificación ya.');

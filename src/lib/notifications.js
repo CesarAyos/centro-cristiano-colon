@@ -1,15 +1,20 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { version as appVersion } from '$app/environment';
 import { supabase } from '$lib/supabaseClient';
 import { getSiteUrl } from '$lib/siteUrl';
 
 const NOTIF_PERM_KEY = 'cc-notifications-enabled';
 const SEEN_REFLECTIONS_KEY = 'cc-seen-reflexiones';
+const APP_VERSION_KEY = 'cc-app-version';
 const FCM_TOPIC = 'reflexiones';
 
 let pollingTimer = null;
+let realtimeChannel = null;
 let lastReflexionId = null;
 let fcmToken = null;
+let handlersRegistered = false;
+let subscribedToTopic = false;
 let statusListeners = new Set();
 
 const status = {
@@ -55,11 +60,18 @@ export async function getFcmToken() {
   const FirebaseMessaging = await getMessaging();
   if (!FirebaseMessaging) return null;
   try {
-    const { token } = await FirebaseMessaging.getToken();
-    return token || null;
+    const result = await Promise.race([
+      FirebaseMessaging.getToken(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('TIMEOUT: Firebase no respondió al obtener el token. Generalmente significa que FirebaseApp no se inicializó en el APK (revisar google-services.json / plugin google-services) o Google Play Services está desactualizado.')), 8000)
+      ),
+    ]);
+    const token = result && result.token ? result.token : null;
+    if (token) console.log('[FCM] token obtenido:', token.slice(0, 24) + '...');
+    return token;
   } catch (e) {
     console.error('Error obteniendo token FCM:', e);
-    return null;
+    throw e;
   }
 }
 
@@ -86,17 +98,16 @@ export async function requestNotificationPermission() {
   }
   setStatus({ supported: true });
   try {
+    const stored = notificationsEnabled();
     const permStatus = await LocalNotifications.checkPermissions();
     if (permStatus.display === 'granted' || permStatus.display === 'limited') {
-      localStorage.setItem(NOTIF_PERM_KEY, 'true');
-      setStatus({ permission: 'granted', enabled: true });
+      setStatus({ permission: 'granted', enabled: stored });
       return true;
     }
     if (permStatus.display === 'prompt') {
       const req = await LocalNotifications.requestPermissions();
       if (req.display === 'granted' || req.display === 'limited') {
-        localStorage.setItem(NOTIF_PERM_KEY, 'true');
-        setStatus({ permission: 'granted', enabled: true });
+        setStatus({ permission: 'granted', enabled: stored });
         return true;
       }
     }
@@ -122,6 +133,7 @@ export async function setNotificationsEnabled(enabled) {
 
   if (!enabled) {
     localStorage.removeItem(NOTIF_PERM_KEY);
+    subscribedToTopic = false;
     const FirebaseMessaging = await getMessaging();
     if (FirebaseMessaging && fcmToken) {
       try {
@@ -143,27 +155,20 @@ export async function setNotificationsEnabled(enabled) {
     return false;
   }
 
+  localStorage.setItem(NOTIF_PERM_KEY, 'true');
+
   try {
     const FirebaseMessaging = await getMessaging();
-    if (!FirebaseMessaging) {
-      setStatus({ enabled: false, error: 'FCM no disponible en este dispositivo.' });
-      return false;
+    if (FirebaseMessaging) {
+      registerFcmHandlers(FirebaseMessaging);
+      await subscribeToFcmTopic(FirebaseMessaging);
     }
-    await ensureFcmToken(FirebaseMessaging);
-    if (!fcmToken) {
-      setStatus({
-        enabled: false,
-        error: 'No se pudo obtener el token de notificaciones. Revisa la config de Firebase.',
-      });
-      return false;
-    }
-    await FirebaseMessaging.subscribeToTopic({ topic: FCM_TOPIC });
-    setStatus({ enabled: true, token: true, error: '' });
+    setStatus({ enabled: true, token: !!fcmToken, error: '' });
     return true;
   } catch (e) {
     console.error('Error activando notificaciones:', e);
-    setStatus({ enabled: false, error: e.message });
-    return false;
+    setStatus({ enabled: true, token: false, error: '' });
+    return true;
   }
 }
 
@@ -209,12 +214,12 @@ async function ensureFcmToken(FirebaseMessaging) {
         /* el usuario puede haber denegado el diálogo nativo */
       }
     }
-    const { token } = await FirebaseMessaging.getToken();
+    const token = await getFcmToken().catch(() => null);
     if (token) {
       fcmToken = token;
       setStatus({ token: true });
     } else {
-      setStatus({ token: false });
+      setStatus({ token: false, error: 'No se pudo obtener el token FCM nativo.' });
     }
   } catch (e) {
     console.error('Error obteniendo token FCM:', e);
@@ -222,8 +227,7 @@ async function ensureFcmToken(FirebaseMessaging) {
   }
 }
 
-export async function scheduleReflexionNotification(title, body, reflexionId) {
-  if (!notificationsEnabled()) return;
+export async function displayRemoteNotification(title, body, reflexionId) {
   if (!isNative()) return;
   try {
     await ensureChannel(null);
@@ -246,6 +250,11 @@ export async function scheduleReflexionNotification(title, body, reflexionId) {
   } catch (e) {
     console.error('Error programando notificación:', e);
   }
+}
+
+export async function scheduleReflexionNotification(title, body, reflexionId) {
+  if (!notificationsEnabled()) return;
+  await displayRemoteNotification(title, body, reflexionId);
 }
 
 function rememberReflexionIds(ids) {
@@ -299,72 +308,133 @@ export async function checkNewReflexiones() {
   }
 }
 
+async function subscribeToFcmTopic(FirebaseMessaging) {
+  try {
+    const lastVersion = localStorage.getItem(APP_VERSION_KEY);
+    if (lastVersion !== appVersion) {
+      try {
+        await FirebaseMessaging.deleteToken();
+        console.log('[FCM] Token anterior eliminado (cambio de versión de la app)');
+      } catch (e) {
+        console.log('[FCM] deleteToken:', e.message || e);
+      }
+      localStorage.setItem(APP_VERSION_KEY, appVersion);
+    }
+    const result = await FirebaseMessaging.getToken();
+    const token = result && result.token ? result.token : null;
+    if (token) {
+      fcmToken = token;
+      setStatus({ token: true });
+      console.log('[FCM] token:', token.slice(0, 24) + '...');
+    } else {
+      setStatus({ token: false, error: 'No se pudo obtener el token FCM nativo.' });
+    }
+    await FirebaseMessaging.subscribeToTopic({ topic: FCM_TOPIC });
+    subscribedToTopic = true;
+    setStatus({ enabled: notificationsEnabled(), token: !!token });
+    console.log('[FCM] Suscrito al topic', FCM_TOPIC);
+    return true;
+  } catch (e) {
+    console.error('[FCM] Error en suscripción al topic:', e);
+    setStatus({ token: false, error: e.message });
+    return false;
+  }
+}
+
+function registerFcmHandlers(FirebaseMessaging) {
+  if (handlersRegistered) return;
+  handlersRegistered = true;
+
+  try {
+    FirebaseMessaging.addListener('tokenReceived', async ({ token }) => {
+      if (token) {
+        fcmToken = token;
+        setStatus({ token: true });
+        if (!subscribedToTopic) {
+          await subscribeToFcmTopic(FirebaseMessaging);
+        }
+        console.log('[FCM] Token renovado:', token.slice(0, 24) + '...');
+      }
+    });
+  } catch (e) {
+    console.error('[FCM] Error en listener de token:', e);
+  }
+
+  FirebaseMessaging.addListener('notificationReceived', (notification) => {
+    console.log('[FCM] notificationReceived recibido:', JSON.stringify(notification).slice(0, 200));
+    const title = notification.title || 'Nueva Reflexión';
+    const body = notification.body || '';
+    const reflexionId = notification.data && notification.data.reflexionId;
+    displayRemoteNotification(title, body, reflexionId);
+  });
+
+  FirebaseMessaging.addListener('notificationActionPerformed', (notification) => {
+    const reflexionId =
+      notification.notification &&
+      notification.notification.data &&
+      notification.notification.data.reflexionId;
+    if (reflexionId && typeof window !== 'undefined') {
+      window.location.href = `${getSiteUrl()}/reflexiones?id=${reflexionId}`;
+    }
+  });
+}
+
 export function watchNewReflexiones() {
   if (typeof window === 'undefined') return () => {};
-  const cleanupPoll = () => {
+  const cleanupAll = () => {
     if (pollingTimer) {
       clearInterval(pollingTimer);
       pollingTimer = null;
+    }
+    if (realtimeChannel) {
+      supabase.removeChannel(realtimeChannel);
+      realtimeChannel = null;
     }
   };
 
   if (!isNative()) {
     setStatus({ supported: false });
-    return cleanupPoll;
+    return cleanupAll;
   }
 
+  const userEnabled = notificationsEnabled();
   setStatus({
     supported: true,
-    enabled: notificationsEnabled(),
+    enabled: userEnabled,
     permission: 'unknown',
   });
 
-  requestNotificationPermission().then(async (granted) => {
-    if (!granted) return;
-
-    const FirebaseMessaging = await getMessaging();
-    if (FirebaseMessaging) {
-      await ensureFcmToken(FirebaseMessaging);
-      if (fcmToken) {
-        try {
-          await FirebaseMessaging.subscribeToTopic({ topic: FCM_TOPIC });
-          setStatus({ enabled: true, token: true });
-        } catch (e) {
-          console.error('Error suscribiendo a FCM:', e);
-          setStatus({ enabled: false, error: e.message });
-        }
-      }
-
-      FirebaseMessaging.addListener('notificationReceived', (notification) => {
-        const title = notification.title || 'Nueva Reflexión';
-        const body = notification.body || '';
-        const reflexionId = notification.data && notification.data.reflexionId;
-        scheduleReflexionNotification(title, body, reflexionId);
-      });
-
-      FirebaseMessaging.addListener('notificationActionPerformed', (notification) => {
-        const reflexionId =
-          notification.notification &&
-          notification.notification.data &&
-          notification.notification.data.reflexionId;
-        if (reflexionId && typeof window !== 'undefined') {
-          window.location.href = `${getSiteUrl()}/reflexiones?id=${reflexionId}`;
-        }
-      });
+  getMessaging().then((FirebaseMessaging) => {
+    if (!FirebaseMessaging) return;
+    registerFcmHandlers(FirebaseMessaging);
+    if (userEnabled) {
+      ensureChannel(FirebaseMessaging).then(() => subscribeToFcmTopic(FirebaseMessaging));
+    } else {
+      console.log('[FCM] Toggle apagado: sin suscripción al topic');
     }
+  });
+
+  requestNotificationPermission().then((granted) => {
+    if (!granted) {
+      setStatus({ permission: 'denied' });
+      return;
+    }
+    setStatus({ permission: 'granted', enabled: userEnabled });
+
+    if (!userEnabled) return;
 
     checkNewReflexiones();
 
     pollingTimer = setInterval(checkNewReflexiones, 2 * 60 * 1000);
 
-    supabase
+    realtimeChannel = supabase
       .channel('realtime-reflexiones')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'reflexiones' },
         async (payload) => {
           const r = payload.new;
-          await scheduleReflexionNotification(
+          await displayRemoteNotification(
             'Nueva Reflexión',
             r.titulo || 'Nueva reflexión publicada',
             r.id
@@ -378,5 +448,5 @@ export function watchNewReflexiones() {
       .subscribe();
   });
 
-  return cleanupPoll;
+  return cleanupAll;
 }

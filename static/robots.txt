@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://centro-cristiano-colon.vercel.app/sitemap.xml

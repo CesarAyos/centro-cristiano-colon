@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 const envPath = path.join(__dirname, '..', '.env');
 const env = {};
@@ -12,35 +13,117 @@ const supabaseUrl = env.VITE_PUBLIC_SUPABASE_URL;
 const anonKey = env.VITE_PUBLIC_SUPABASE_ANON_KEY;
 const secret = env.VITE_PUBLIC_PUBLISH_SECRET;
 
-function logPass(msg) {
-  console.log('  \x1b[32m\x1b[1m[OK]\x1b[0m ' + msg);
+const C_OK = '\x1b[32m\x1b[1m[OK]\x1b[0m';
+const C_FAIL = '\x1b[31m\x1b[1m[FALLO]\x1b[0m';
+const C_INFO = '\x1b[36m[i]\x1b[0m';
+const C_SEP = '  ' + '-'.repeat(60);
+
+function logOk(msg) { console.log('  ' + C_OK + ' ' + msg); }
+function logFail(msg) { console.log('  ' + C_FAIL + ' ' + msg); }
+function logInfo(msg) { console.log('  ' + C_INFO + ' ' + msg); }
+function logSep() { console.log(C_SEP); }
+
+function parseArgs(argv) {
+  const args = { title: '', ref: '', body: '', id: '', token: '', interactive: false };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    const next = () => argv[++i];
+    switch (a) {
+      case '--title': case '-t': args.title = next(); break;
+      case '--ref': case '-r': args.ref = next(); break;
+      case '--body': case '-b': args.body = next(); break;
+      case '--id': args.id = next(); break;
+      case '--token': case '-k': args.token = next(); break;
+      case '--interactive': args.interactive = true; break;
+      case '--help': case '-h':
+        printHelp();
+        process.exit(0);
+    }
+  }
+  return args;
 }
-function logFail(msg) {
-  console.log('  \x1b[31m\x1b[1m[FALLO]\x1b[0m ' + msg);
+
+function printHelp() {
+  console.log('');
+  console.log('  Uso: npm run test:push -- [opciones]');
+  console.log('');
+  console.log('  Sin opciones  : envía a TODOS los dispositivos suscritos (topic reflexiones)');
+  console.log('                  usando la última reflexión publicada.');
+  console.log('');
+  console.log('  Opciones:');
+  console.log('    -t, --title   "Título"        Título del push');
+  console.log('    -r, --ref     "Juan 3:16"      Referencia (cuerpo del push)');
+  console.log('    -b, --body    "Texto"          Cuerpo alterno si no hay referencia');
+  console.log('    --id          <reflexionId>    Para que al tocar el push abra esa reflexión');
+  console.log('    -k, --token   <fcm token>      Envía solo a UN dispositivo específico');
+  console.log('    --interactive                Pregunta los datos paso a paso');
+  console.log('    -h, --help                     Muestra esta ayuda');
+  console.log('');
+  console.log('  Ejemplos:');
+  console.log('    npm run test:push');
+  console.log('    npm run test:push -- -t "Hola" -r "Juan 3:16"');
+  console.log('    npm run test:push -- -k "fcm-token-del-celular" -t "Prueba" -r "Salmo 23"');
+  console.log('');
 }
-function logInfo(msg) {
-  console.log('  \x1b[36m[i]\x1b[0m ' + msg);
-}
-function logSep() {
-  console.log('  ' + '-'.repeat(60));
+
+function prompt(rl, question) {
+  return new Promise((resolve) => rl.question('  ' + question + ': ', resolve));
 }
 
 async function getLatestReflexion() {
   const url = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/reflexiones?select=id,titulo,referencia,contenido&order=created_at.desc&limit=1`;
   const res = await fetch(url, {
-    headers: {
-      apikey: anonKey,
-      Authorization: `Bearer ${anonKey}`,
-    },
+    headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
   });
   if (!res.ok) throw new Error(`GET reflexiones falló (${res.status})`);
   const rows = await res.json();
   return rows && rows[0] ? rows[0] : null;
 }
 
+function makePayload(args, latest) {
+  if (args.interactive) {
+    return { useLatest: true, payload: null };
+  }
+  const hasCustom = args.title || args.ref || args.body;
+  if (hasCustom || args.id || args.token) {
+    return {
+      useLatest: false,
+      payload: {
+        titulo: args.title,
+        referencia: args.ref,
+        contenido: args.body,
+        reflexionId: args.id || null,
+        token: args.token || null,
+      },
+    };
+  }
+  return { useLatest: true, payload: null };
+}
+
+async function collectInteractive(rl) {
+  logInfo('Modo interactivo (deja vacío para usar la última reflexión)');
+  const titulo = (await prompt(rl, 'Título del push [vacío = última reflexión]')).trim();
+  if (titulo) {
+    const referencia = (await prompt(rl, 'Referencia (cuerpo)')).trim();
+    const contenido = (await prompt(rl, 'Cuerpo alternativo (si no hay referencia)')).trim();
+    const refId = (await prompt(rl, 'reflexionId (vacio = sin destino)')).trim();
+    const token = (await prompt(rl, 'FCM token (vacío = topic a todos)')).trim();
+    return {
+      titulo,
+      referencia,
+      contenido,
+      reflexionId: refId || null,
+      token: token || null,
+    };
+  }
+  return null;
+}
+
 async function main() {
+  const args = parseArgs(process.argv.slice(2));
   console.log('');
-  console.log('  === TEST DE PUSH NOTIFICACIONES ===\n');
+  console.log('  === TEST DE PUSH NOTIFICACIONES ===');
+  console.log('');
 
   if (!supabaseUrl || !anonKey || !secret) {
     logFail('Faltan variables en .env (VITE_PUBLIC_SUPABASE_URL / ANON_KEY / PUBLISH_SECRET).');
@@ -49,36 +132,55 @@ async function main() {
 
   const projectRef = new URL(supabaseUrl).hostname.split('.')[0];
   const fnUrl = `https://${projectRef}.functions.supabase.co/notificar-reflexion`;
-  logPass(`Proyecto Supabase: ${projectRef}`);
-  logPass(`Función detectada: ${fnUrl}`);
+  logOk(`Proyecto Supabase: ${projectRef}`);
 
-  logSep();
-  logInfo('Paso 1: Buscando una reflexión real para simular la publicación...');
-
-  const ref = await getLatestReflexion().catch((e) => {
-    logFail(`No se pudo consultar reflexiones: ${e.message}`);
-    return null;
-  });
-
-  let titulo, referencia, contenido, reflexionId;
-  if (ref) {
-    titulo = ref.titulo;
-    referencia = ref.referencia || '';
-    contenido = ref.contenido || '';
-    reflexionId = ref.id;
-    logPass(`Última reflexión: "${titulo}"${referencia ? ` (${referencia})` : ''} [${reflexionId}]`);
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  let payload;
+  if (args.interactive) {
+    payload = await collectInteractive(rl);
   } else {
-    logInfo('No hay reflexiones. Se usará un mensaje de prueba genérico.');
-    titulo = 'PRUEBA: Push Notificaciones';
-    referencia = 'Prueba de envío';
-    contenido = 'Mensaje de prueba para verificar las notificaciones push.';
-    reflexionId = null;
+    const { useLatest } = makePayload(args, null);
+    if (useLatest) payload = null;
+    else payload = makePayload(args, null).payload;
+  }
+  rl.close();
+
+  if (!payload) {
+    logSep();
+    logInfo('Buscando la última reflexión para simular la publicación...');
+    const latest = await getLatestReflexion().catch((e) => {
+      logFail(`No se pudo consultar reflexiones: ${e.message}`);
+      return null;
+    });
+    if (latest) {
+      payload = {
+        titulo: latest.titulo,
+        referencia: latest.referencia || '',
+        contenido: latest.contenido || '',
+        reflexionId: latest.id,
+        token: null,
+      };
+      logOk(`Última reflexión: "${latest.titulo}"`);
+    } else {
+      logInfo('No hay reflexiones. Usando mensaje de prueba genérico.');
+      payload = {
+        titulo: 'PRUEBA: Push Notificaciones',
+        referencia: 'Prueba de envío',
+        contenido: '',
+        reflexionId: null,
+        token: null,
+      };
+    }
   }
 
+  const destino = payload.token ? 'dispositivo específico (fcm token)' : 'topic "reflexiones" (todos los suscritos)';
   logSep();
-  logInfo('Paso 2: Enviando mensaje al topic FCM "reflexiones"...');
+  logInfo(`Enviando push al ${destino}...`);
+  console.log(`    Título  : ${payload.titulo || '(vacío)'}`);
+  console.log(`    Refer.  : ${payload.referencia || '(vacío)'}`);
+  if (payload.token) console.log(`    Token   : ${String(payload.token).slice(0, 24)}...`);
+  logSep();
 
-  const payload = { titulo, referencia, contenido, reflexionId };
   let res;
   try {
     res = await fetch(fnUrl, {
@@ -99,21 +201,23 @@ async function main() {
   const bodyText = await res.text();
 
   if (res.ok) {
-    logPass('La función de Supabase aceptó el mensaje y FCM lo recibió.');
-    logSep();
-    console.log('  Resultado:');
-    console.log(`    Título : ${titulo}`);
-    console.log(`    Refer. : ${referencia || '(vacía)'}`);
-    console.log(`    Body   : ${contenido ? contenido.replace(/\s+/g, ' ').trim().slice(0, 60) : ''}`);
-    console.log(`    Id     : ${reflexionId || '(ninguno)'}`);
-    logSep();
+    logOk('FCM aceptó el mensaje.');
+    if (!payload.token) {
+      console.log('');
+      console.log('  Si abres el push en el celular, debe abrir:');
+      console.log('    /reflexiones?id=' + (payload.reflexionId || '<id>'));
+      console.log('');
+      console.log('  NOTA: el celular SOLO lo recibe si tiene la app, permiso concedido');
+      console.log('        y el toggle activado en /reflexiones. Para enviar a UN celular');
+      console.log('        exacto (sin depender del topic) usa: npm run test:push -- -k <token>');
+    } else {
+      console.log('');
+      logOk('Si el token era válido, el celular debe mostrar la notificación ya.');
+      logFail('Si no aparece: token inválido/caducado o permiso de notificaciones denegado.');
+    }
     console.log('');
-    console.log('  Si abres el push en el celular, debe abrir:');
-    console.log('    /reflexiones?id=' + (reflexionId || '<id>'));
-    console.log('');
-    console.log('  NOTA: El celular SOLO lo recibe si tiene la app, permiso concedido');
-    console.log('        y el toggle de notificaciones activado en /reflexiones.');
-    console.log('');
+    // Obtener el token de un dispositivo: se loguea en la app o via adb logcat:
+    //   adb logcat | grep -i "fcm\|token"
   } else {
     logFail(`La función respondió HTTP ${res.status}.`);
     console.log('');
@@ -122,17 +226,17 @@ async function main() {
       if (j.error) logFail('Error: ' + j.error);
       if (j.details) {
         console.log('  Detalle del servidor:');
-        console.log('  ' + String(j.details).slice(0, 600));
+        console.log('  ' + String(j.details).slice(0, 700));
         console.log('');
       }
-      if (String(bodyText).toLowerCase().includes('FIREBASE_SERVICE_ACCOUNT')) {
-        logFail('Configura FIREBASE_SERVICE_ACCOUNT (JSON de service account) en las secrets de la función.');
+      if (String(bodyText).includes('FIREBASE_SERVICE_ACCOUNT')) {
+        logFail('Configura FIREBASE_SERVICE_ACCOUNT (JSON service account) en las secrets de la función.');
       }
-      if (String(bodyText).toLowerCase().includes('Secreto de publicación')) {
+      if (String(bodyText).includes('Secreto de publicación')) {
         logFail('PUBLISH_SECRET de Supabase no coincide con VITE_PUBLIC_PUBLISH_SECRET del .env.');
       }
     } catch {
-      console.log('  Respuesta: ' + bodyText.slice(0, 600));
+      console.log('  Respuesta: ' + bodyText.slice(0, 700));
     }
     process.exit(1);
   }

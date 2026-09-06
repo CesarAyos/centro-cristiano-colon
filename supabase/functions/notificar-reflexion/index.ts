@@ -112,7 +112,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const { titulo, referencia, contenido, reflexionId } = await req.json();
+    const { titulo, referencia, contenido, reflexionId, token } = await req.json();
     const title = (titulo && String(titulo).trim()) || "Nueva Reflexión";
     const refText = referencia ? String(referencia).trim() : "";
     let bodyText = "";
@@ -126,9 +126,13 @@ Deno.serve(async (req: Request) => {
 
     const accessToken = await getAccessToken(serviceAccountJson);
 
+    const target = token
+      ? { token }
+      : { topic: "reflexiones" };
+
     const fcmPayload = {
       message: {
-        topic: "reflexiones",
+        ...target,
         android: {
           priority: "high",
           notification: {

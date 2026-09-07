@@ -36,6 +36,9 @@
     gap: 12px;
     padding: 10px 16px;
     border-radius: 999px;
+    max-width: calc(100vw - 24px);
+    flex-wrap: wrap;
+    justify-content: center;
     background: rgba(14, 13, 6, 0.92);
     border: 1px solid rgba(200, 169, 126, 0.35);
     box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);

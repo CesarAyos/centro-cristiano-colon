@@ -111,6 +111,7 @@
     left: 0;
     right: 0;
     z-index: 1050;
+    overflow: hidden;
     background: linear-gradient(180deg, rgba(14, 13, 6, 0.95) 0%, rgba(14, 13, 6, 0.75) 100%);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -195,6 +196,7 @@
     align-items: center;
     gap: 6px;
     margin-left: auto;
+    max-width: 100%;
   }
 
   .cc-nav__link {
@@ -285,6 +287,7 @@
     left: 50%;
     transform: translateX(-50%) translateY(8px);
     min-width: 250px;
+    max-width: 90vw;
     background: #18150f;
     border: 1px solid var(--nav-border);
     border-radius: 16px;

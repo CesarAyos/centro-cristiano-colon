@@ -556,5 +556,14 @@
     .cc-bible__foot {
       flex-direction: column;
     }
+
+    .cc-bible__reader {
+      padding: 24px 18px;
+      border-radius: 16px;
+    }
+
+    .cc-bible__head h2 {
+      font-size: 1.8rem;
+    }
   }
 </style>

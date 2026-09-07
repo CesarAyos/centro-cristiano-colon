@@ -95,6 +95,8 @@
 <style>
   .cc-founder {
     padding: 3rem;
+    max-width: 100%;
+    overflow-wrap: break-word;
   }
 
   .cc-founder__quote {

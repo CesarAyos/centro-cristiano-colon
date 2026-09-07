@@ -59,7 +59,7 @@
     bottom: 18px;
     right: 18px;
     z-index: 2000;
-    width: 320px;
+    width: min(320px, calc(100vw - 36px));
     border-radius: 16px;
     overflow: hidden;
     background: rgba(14, 13, 6, 0.95);

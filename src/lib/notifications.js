@@ -2,7 +2,6 @@ import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { version as appVersion } from '$app/environment';
 import { supabase } from '$lib/supabaseClient';
-import { getSiteUrl } from '$lib/siteUrl';
 
 const NOTIF_PERM_KEY = 'cc-notifications-enabled';
 const SEEN_REFLECTIONS_KEY = 'cc-seen-reflexiones';
@@ -372,8 +371,9 @@ function registerFcmHandlers(FirebaseMessaging) {
       notification.notification &&
       notification.notification.data &&
       notification.notification.data.reflexionId;
-    if (reflexionId && typeof window !== 'undefined') {
-      window.location.href = `${getSiteUrl()}/reflexiones?id=${reflexionId}`;
+    if (typeof window !== 'undefined') {
+      const url = reflexionId ? `/reflexiones?id=${reflexionId}` : '/reflexiones';
+      window.location.href = url;
     }
   });
 }

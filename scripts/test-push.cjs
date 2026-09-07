@@ -164,9 +164,9 @@ async function main() {
     } else {
       logInfo('No hay reflexiones. Usando mensaje de prueba genérico.');
       payload = {
-        titulo: 'PRUEBA: Push Notificaciones',
-        referencia: 'Prueba de envío',
-        contenido: '',
+        titulo: 'Centro Cristiano Mision Global Colon',
+        referencia: '',
+        contenido: 'Nueva reflexión para ti',
         reflexionId: null,
         token: null,
       };

@@ -1,6 +1,6 @@
 {
     "name": "cccolon",
-    "version": "1.31",
+    "version": "1.34",
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",
@@ -12,7 +12,8 @@
         "build:apk": "node scripts/build-apk.cjs",
         "build:aab": "node scripts/build-aab.cjs",
         "build:release": "node scripts/build-release.cjs",
-        "test:push": "node scripts/test-push.cjs"
+        "test:push": "node scripts/test-push.cjs",
+        "test:push:quick": "node scripts/test-push.cjs -t \"Centro Cristiano Mision Global Colon\" -b \"Nueva reflexión para ti\""
     },
     "exports": {
         ".": {

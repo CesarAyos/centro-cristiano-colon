@@ -101,8 +101,8 @@
         notifications: [
           {
             id: Date.now() % 2147483647,
-            title: 'Prueba local',
-            body: 'Si ves esto, las notificaciones locales funcionan',
+            title: 'Centro Cristiano Mision Global Colon',
+            body: 'Nueva reflexión para ti',
             channelId: 'reflexiones',
             smallIcon: 'ic_stat_icon_config_sample',
             iconColor: '#c8a97e',
@@ -162,9 +162,9 @@
             'x-publish-secret': import.meta.env.VITE_PUBLIC_PUBLISH_SECRET,
           },
           body: JSON.stringify({
-            titulo: 'Prueba directa',
-            referencia: 'FCM push',
-            contenido: 'Si ves esto, todo funciona',
+            titulo: 'Centro Cristiano Mision Global Colon',
+            referencia: '',
+            contenido: 'Nueva reflexión para ti',
             reflexionId: null,
             token,
           }),
@@ -229,9 +229,9 @@
             'x-publish-secret': import.meta.env.VITE_PUBLIC_PUBLISH_SECRET,
           },
           body: JSON.stringify({
-            titulo: 'Envío a todos',
-            referencia: 'FCM topic',
-            contenido: 'Esta notificación va al topic reflexiones',
+            titulo: 'Centro Cristiano Mision Global Colon',
+            referencia: '',
+            contenido: 'Nueva reflexión para ti',
             reflexionId: null,
           }),
         }

@@ -113,16 +113,9 @@ Deno.serve(async (req: Request) => {
     }
 
     const { titulo, referencia, contenido, reflexionId, token } = await req.json();
-    const title = (titulo && String(titulo).trim()) || "Nueva Reflexión";
+    const title = "Centro Cristiano Mision Global Colon";
     const refText = referencia ? String(referencia).trim() : "";
-    let bodyText = "";
-    if (refText) {
-      bodyText = refText.length > 180 ? refText.slice(0, 180) : refText;
-    } else if (contenido) {
-      bodyText = contenido.replace(/\s+/g, " ").trim().slice(0, 180);
-    } else {
-      bodyText = "Nueva reflexión publicada";
-    }
+    let bodyText = "Nueva reflexión para ti";
 
     const accessToken = await getAccessToken(serviceAccountJson);
 

@@ -235,8 +235,8 @@ export async function displayRemoteNotification(title, body, reflexionId) {
       notifications: [
         {
           id: Date.now() % 2147483647,
-          title: title || 'Nueva Reflexión',
-          body: body,
+          title: title || 'Centro Cristiano Mision Global Colon',
+          body: body || 'Nueva reflexión para ti',
           channelId: 'reflexiones',
           smallIcon: 'ic_stat_icon_config_sample',
           iconColor: '#c8a97e',
@@ -291,11 +291,8 @@ export async function checkNewReflexiones() {
     const newestId = currentIds[0];
     if (lastReflexionId !== null && lastReflexionId !== newestId && !remembered.includes(newestId)) {
       const newest = data[0];
-      const title = (newest.titulo && String(newest.titulo).trim()) || 'Nueva Reflexión';
-      const body =
-        (newest.referencia && String(newest.referencia).trim()) ||
-        newest.titulo ||
-        'Nueva reflexión publicada';
+      const title = 'Centro Cristiano Mision Global Colon';
+      const body = 'Nueva reflexión para ti';
       await scheduleReflexionNotification(title, body, newest.id);
       rememberReflexionIds(currentIds);
     }
@@ -364,8 +361,8 @@ function registerFcmHandlers(FirebaseMessaging) {
 
   FirebaseMessaging.addListener('notificationReceived', (notification) => {
     console.log('[FCM] notificationReceived recibido:', JSON.stringify(notification).slice(0, 200));
-    const title = notification.title || 'Nueva Reflexión';
-    const body = notification.body || '';
+    const title = notification.title || 'Centro Cristiano Mision Global Colon';
+    const body = notification.body || 'Nueva reflexión para ti';
     const reflexionId = notification.data && notification.data.reflexionId;
     displayRemoteNotification(title, body, reflexionId);
   });
@@ -436,11 +433,8 @@ export function watchNewReflexiones() {
         { event: 'INSERT', schema: 'public', table: 'reflexiones' },
         async (payload) => {
           const r = payload.new;
-          const title = (r.titulo && String(r.titulo).trim()) || 'Nueva Reflexión';
-          const body =
-            (r.referencia && String(r.referencia).trim()) ||
-            r.titulo ||
-            'Nueva reflexión publicada';
+          const title = 'Centro Cristiano Mision Global Colon';
+          const body = 'Nueva reflexión para ti';
           await displayRemoteNotification(title, body, r.id);
           const remembered = getRememberedIds();
           if (r.id && !remembered.includes(r.id)) {

@@ -18,6 +18,10 @@
     mobileOpen = false;
     churchOpen = false;
   }
+
+  $: if (typeof document !== 'undefined') {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+  }
 </script>
 
 <header class="cc-nav" class:is-scrolled={scrolled}>
@@ -111,7 +115,6 @@
     left: 0;
     right: 0;
     z-index: 1050;
-    overflow: hidden;
     background: linear-gradient(180deg, rgba(14, 13, 6, 0.95) 0%, rgba(14, 13, 6, 0.75) 100%);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -150,6 +153,8 @@
     align-items: center;
     gap: 14px;
     text-decoration: none;
+    min-width: 0;
+    flex-shrink: 1;
   }
 
   .cc-nav__logo {
@@ -171,6 +176,7 @@
     display: flex;
     flex-direction: column;
     line-height: 1.15;
+    min-width: 0;
   }
 
   .cc-nav__name {
@@ -437,16 +443,21 @@
     .cc-nav__menu {
       position: absolute;
       top: 100%;
-      left: 16px;
-      right: 16px;
+      left: 0;
+      right: 0;
       flex-direction: column;
       align-items: stretch;
+      justify-content: flex-start;
       gap: 4px;
-      background: rgba(14, 13, 6, 0.98);
-      border: 1px solid var(--nav-border);
-      border-radius: 18px;
-      padding: 14px;
+      background: rgba(14, 13, 6, 0.99);
+      border: none;
+      border-top: 1px solid var(--nav-border);
+      border-radius: 0;
+      padding: 18px 24px 28px;
       box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+      overflow-y: auto;
+      max-height: calc(100vh - 78px);
+      z-index: 1049;
       opacity: 0;
       visibility: hidden;
       transform: translateY(-8px);
@@ -476,6 +487,7 @@
       visibility: visible;
       pointer-events: auto;
       min-width: 0;
+      max-width: none;
       box-shadow: none;
       background: rgba(0, 0, 0, 0.25);
       border: none;
@@ -505,6 +517,11 @@
 
     .cc-nav__name {
       font-size: 1.08rem;
+    }
+
+    .cc-nav__inner {
+      gap: 10px;
+      padding: 0 16px;
     }
   }
 </style>

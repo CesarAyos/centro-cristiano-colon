@@ -430,3 +430,13 @@
     padding: 1.6rem;
   }
 }
+
+@media (max-width: 480px) {
+  .cc-container {
+    padding: 0 16px;
+  }
+
+  .cc-overline {
+    font-size: 0.74rem;
+  }
+}

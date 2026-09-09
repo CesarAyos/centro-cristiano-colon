@@ -49,7 +49,14 @@
     try {
       const projectRef = new URL(import.meta.env.VITE_PUBLIC_SUPABASE_URL).hostname.split(".")[0];
       const secret = import.meta.env.VITE_PUBLIC_PUBLISH_SECRET;
-      if (!projectRef || !secret) return;
+      if (!projectRef) {
+        console.error("[PUSH] VITE_PUBLIC_SUPABASE_URL no está definida");
+        return;
+      }
+      if (!secret) {
+        console.error("[PUSH] VITE_PUBLIC_PUBLISH_SECRET no está definida. Configúrala en Vercel.");
+        return;
+      }
       const res = await fetch(
         `https://${projectRef}.functions.supabase.co/notificar-reflexion`,
         {
@@ -67,7 +74,12 @@
           }),
         }
       );
-      if (!res.ok) console.error("No se pudo enviar notificación push:", await res.text());
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("No se pudo enviar notificación push:", text);
+      } else {
+        console.log("[PUSH] Notificación enviada exitosamente");
+      }
     } catch (e) {
       console.error("Error llamando a la función de notificación:", e);
     }

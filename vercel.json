@@ -1,4 +1,4 @@
 {
-  "outputDirectory": "build",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "framework": "sveltekit",
+  "regions": ["iad1"]
 }

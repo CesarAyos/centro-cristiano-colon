@@ -1,6 +1,6 @@
 {
     "name": "cccolon",
-    "version": "1.44",
+    "version": "1.45",
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",
@@ -35,7 +35,7 @@
         "@capacitor/android": "^7.0.0",
         "@capacitor/assets": "^3.0.5",
         "@capacitor/cli": "^7.0.0",
-        "@sveltejs/adapter-static": "^3.0.0",
+        "@sveltejs/adapter-vercel": "^5.10.3",
         "@sveltejs/kit": "^2.7.0",
         "@sveltejs/package": "^2.0.0",
         "@sveltejs/vite-plugin-svelte": "^3.0.0",

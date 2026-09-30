@@ -45,6 +45,7 @@ export async function GET() {
     { loc: '/envivo', changefreq: 'weekly', priority: '0.7' },
     { loc: '/fundadores', changefreq: 'monthly', priority: '0.6' },
     { loc: '/misiones', changefreq: 'monthly', priority: '0.7' },
+    { loc: '/politica-de-privacidad', changefreq: 'yearly', priority: '0.3' },
     { loc: '/predica', changefreq: 'weekly', priority: '0.8' },
     { loc: '/reflexiones', changefreq: 'daily', priority: '0.9' },
     { loc: '/ubicanos', changefreq: 'monthly', priority: '0.6' },

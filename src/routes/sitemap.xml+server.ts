@@ -5,6 +5,7 @@ const pages = [
   { url: '/envivo', changefreq: 'weekly', priority: 0.7 },
   { url: '/fundadores', changefreq: 'monthly', priority: 0.6 },
   { url: '/misiones', changefreq: 'monthly', priority: 0.7 },
+  { url: '/politica-de-privacidad', changefreq: 'yearly', priority: 0.3 },
   { url: '/predica', changefreq: 'weekly', priority: 0.8 },
   { url: '/reflexiones', changefreq: 'daily', priority: 0.9 },
   { url: '/ubicanos', changefreq: 'monthly', priority: 0.6 }

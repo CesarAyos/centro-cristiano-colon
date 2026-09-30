@@ -78,26 +78,6 @@
     },
   ];
 
-  const sermons = [    {
-      title: 'La Fe que Mueve Montañas',
-      date: '15 de Julio, 2023',
-      text: 'Explorando el poder de la fe genuina en nuestras vidas diarias y cómo puede transformar circunstancias imposibles.',
-      img: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=900&q=80',
-    },
-    {
-      title: 'El Amor Ágape',
-      date: '8 de Julio, 2023',
-      text: 'Descubriendo la profundidad del amor incondicional de Dios y cómo manifestarlo en nuestras relaciones.',
-      img: 'https://media.sitioandino.com.ar/p/910138db31ea520ffdba106421cb0ddd/adjuntos/335/imagenes/000/626/0000626464/790x0/smart/pascua-resurrecion-santuario-divina-misericordia22jpg.jpg',
-    },
-    {
-      title: 'Esperanza en Tiempos Difíciles',
-      date: '1 de Julio, 2023',
-      text: 'Encontrando esperanza y propósito en medio de las pruebas, con la seguridad del cuidado divino.',
-      img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=900&q=80',
-    },
-  ];
-
   let active = 0;
   let timer;
 
@@ -298,44 +278,18 @@
     </div>
   </section>
 
-  <!-- ===================== PRÉDICAS ===================== -->
   <section class="cc-section cc-sermons">
-    <div class="cc-container">
+    <div class="cc-container text-center">
       <div class="cc-head cc-reveal">
-        <span class="cc-overline">Mensajes que transforman</span>
-        <h2 class="cc-section-title">Nuestras Prédicas</h2>
+        <span class="cc-overline">La Palabra de Dios</span>
+        <h2 class="cc-section-title">Prédicas</h2>
         <p class="cc-section-sub">
-          Palabra viva para cada temporada de tu vida. Escucha las enseñanzas que
-          Dios nos ha dado.
+          Consulta los mensajes disponibles en nuestra sección de prédicas.
         </p>
       </div>
-
-      <div class="row g-4">
-        {#each sermons as sermon, i}
-          <div class="col-lg-4 col-md-6">
-            <article class="cc-sermon cc-reveal cc-d{i + 1}">
-              <div class="cc-sermon__media">
-                <img src={sermon.img} alt={sermon.title} loading="lazy" />
-                <span class="cc-sermon__play"><i class="fa-solid fa-play"></i></span>
-              </div>
-              <div class="cc-sermon__body">
-                <span class="cc-sermon__date"><i class="fa-regular fa-calendar"></i>{sermon.date}</span>
-                <h3>{sermon.title}</h3>
-                <p>{sermon.text}</p>
-                <a class="cc-sermon__link" href="https://youtube.com" target="_blank" rel="noopener">
-                  <i class="fa-brands fa-youtube"></i>Ver en YouTube
-                </a>
-              </div>
-            </article>
-          </div>
-        {/each}
-      </div>
-
-      <div class="text-center mt-5 cc-reveal">
-        <a class="cc-btn cc-btn--gold" href="https://youtube.com" target="_blank" rel="noopener">
-          <i class="fa-brands fa-youtube"></i>Suscríbete a nuestro canal
-        </a>
-      </div>
+      <a class="cc-btn cc-btn--gold cc-reveal" href="/predica">
+        <i class="fa-solid fa-play"></i>Explorar prédicas
+      </a>
     </div>
   </section>
 

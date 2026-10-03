@@ -7,6 +7,10 @@
   import '$lib/public.css';
 
   let reflexiones = [];
+  let currentPage = 1;
+  const pageSize = 8;
+  $: totalPages = Math.ceil(reflexiones.length / pageSize);
+  $: visibleReflexiones = reflexiones.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   let loading = true;
   let errorMsg = '';
   let expanded = [];
@@ -16,6 +20,7 @@
   let commentsOpen = [];
   let commentDrafts = {};
   let commentErrors = {};
+  let destroyReveals = () => {};
 
   function getUserId() {
     let uid = localStorage.getItem('cc-device-id');
@@ -44,7 +49,8 @@
     } finally {
       loading = false;
       await tick();
-      setupReveals();
+      destroyReveals();
+      destroyReveals = setupReveals();
     }
   }
 
@@ -54,6 +60,13 @@
     } else {
       expanded = [...expanded, id];
     }
+  }
+
+  async function changePage(page) {
+    destroyReveals();
+    currentPage = Math.min(Math.max(page, 1), totalPages);
+    await tick();
+    destroyReveals = setupReveals();
   }
 
   function share(r) {
@@ -192,6 +205,8 @@
     const params = new URLSearchParams(window.location.search);
     const target = params.get('id');
     if (target) {
+      const targetIndex = reflexiones.findIndex((r) => String(r.id) === target);
+      if (targetIndex >= 0) await changePage(Math.floor(targetIndex / pageSize) + 1);
       setTimeout(() => {
         const el = document.getElementById(`r-${target}`);
         if (el) {
@@ -231,7 +246,7 @@
         </div>
       {:else if reflexiones.length}
         <div class="row g-4">
-          {#each reflexiones as r, i (r.id)}
+          {#each visibleReflexiones as r, i (r.id)}
             <div class="col-lg-6">
               <article class="cc-reflection cc-reveal cc-d{(i % 2) + 1}" id="r-{r.id}">
                 <header class="cc-reflection__head">
@@ -339,6 +354,17 @@
             </div>
           {/each}
         </div>
+        {#if totalPages > 1}
+          <nav class="cc-pagination" aria-label="Paginación de reflexiones">
+            <button type="button" on:click={() => changePage(currentPage - 1)} disabled={currentPage === 1}>
+              <i class="fa-solid fa-chevron-left"></i> Anterior
+            </button>
+            <span>Página {currentPage} de {totalPages}</span>
+            <button type="button" on:click={() => changePage(currentPage + 1)} disabled={currentPage === totalPages}>
+              Siguiente <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </nav>
+        {/if}
       {:else}
         <div class="cc-state">
           <i class="fa-solid fa-book"></i>
@@ -356,6 +382,32 @@
     text-align: center;
     padding: 90px 20px;
     color: var(--cc-muted);
+  }
+
+  .cc-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 36px;
+    color: var(--cc-muted);
+  }
+
+  .cc-pagination button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--cc-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--cc-text);
+    cursor: pointer;
+  }
+
+  .cc-pagination button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 
   .cc-state i {

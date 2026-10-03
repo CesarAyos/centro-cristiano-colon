@@ -4,7 +4,7 @@
   import { setupReveals } from '$lib/reveal.js';
   import '$lib/public.css';
 
-  const BIBLE_URL = 'https://cdn.jsdelivr.net/gh/thiagobodruk/bible@master/json/es_rvr.json';
+  const BIBLE_DATA_URL = '/bible/reina-valera-1909.json';
   const STORAGE_KEY = 'ccolon-biblia-pos';
 
   const LIBROS_ES = [
@@ -55,7 +55,7 @@
   async function loadBible() {
     try {
       if (!bibleCache) {
-        const res = await fetch(BIBLE_URL);
+        const res = await fetch(BIBLE_DATA_URL);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         bibleCache = await res.json();
       }
@@ -80,7 +80,7 @@
       openChapter();
     } catch (e) {
       console.error('Error cargando la Biblia:', e);
-      loadError = 'No fue posible cargar el texto bíblico. Revisa tu conexión a internet e inténtalo de nuevo.';
+      loadError = 'No fue posible leer el texto bíblico incluido en la aplicación.';
     } finally {
       loading = false;
       await tick();
@@ -214,7 +214,7 @@
     <div class="cc-container">
       <span class="cc-overline">La palabra de Dios</span>
       <h1>Lee la Biblia</h1>
-      <p>Reina Valera · Busca un pasaje y lee la Palabra en cualquier momento.</p>
+      <p>Reina-Valera 1909 · Dominio público · Disponible sin conexión.</p>
     </div>
   </section>
 

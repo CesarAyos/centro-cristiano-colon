@@ -1,3 +1,5 @@
+export const ssr = import.meta.env.VITE_CAPACITOR_BUILD !== 'true';
+
 export const load = async () => {
   return {
     siteName: 'Centro Cristiano Misión Global Colón',

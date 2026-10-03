@@ -2,6 +2,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const { ensureAndroidSdk } = require('./ensure-android-sdk.cjs');
+const { ensureJava } = require('./ensure-java.cjs');
 
 const root = path.join(__dirname, '..');
 
@@ -10,10 +11,14 @@ function run(cmd) {
   execSync(cmd, { cwd: root, stdio: 'inherit' });
 }
 
+if (!ensureJava('build-aab')) process.exit(1);
+
 // 1. Bump version
 const { version, versionCode } = require('./bump-version.cjs');
 
 // 2. Build SvelteKit
+process.env.CAPACITOR_BUILD = 'true';
+process.env.VITE_CAPACITOR_BUILD = 'true';
 run('npm run build');
 
 // 3. Check if Android project exists, if not add it

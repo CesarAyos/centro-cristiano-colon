@@ -2,6 +2,7 @@
   import { onMount, tick } from 'svelte';
   import Footer from '../../components/Footer.svelte';
   import { supabase } from '$lib/supabaseClient';
+  import { cacheReflexiones, getCachedReflexiones } from '$lib/reflexionesCache';
   import { setupReveals } from '$lib/reveal.js';
   import { getSiteUrl } from '$lib/siteUrl';
   import '$lib/public.css';
@@ -20,6 +21,8 @@
   let commentsOpen = [];
   let commentDrafts = {};
   let commentErrors = {};
+  let isOffline = false;
+  let refreshInProgress = false;
   let destroyReveals = () => {};
 
   function getUserId() {
@@ -32,6 +35,28 @@
   }
 
   async function loadReflexiones() {
+    isOffline = !navigator.onLine;
+    if (refreshInProgress) return;
+
+    const cached = await getCachedReflexiones();
+    if (cached !== null) {
+      reflexiones = cached;
+      loading = false;
+      errorMsg = '';
+    }
+
+    if (!navigator.onLine) {
+      if (cached === null) {
+        errorMsg = 'No hay reflexiones guardadas en este dispositivo. Conéctate a internet para descargarlas.';
+      }
+      loading = false;
+      await tick();
+      destroyReveals();
+      destroyReveals = setupReveals();
+      return;
+    }
+
+    refreshInProgress = true;
     try {
       const { data, error } = await supabase
         .from('reflexiones')
@@ -39,14 +64,21 @@
         .order('created_at', { ascending: false });
       if (error) throw error;
       reflexiones = data || [];
+      errorMsg = '';
+      await cacheReflexiones(reflexiones);
       if (reflexiones.length) {
-        await loadComments(reflexiones.map((x) => x.id));
-        await loadLikes(reflexiones.map((x) => x.id));
+        await Promise.all([
+          loadComments(reflexiones.map((x) => x.id)),
+          loadLikes(reflexiones.map((x) => x.id)),
+        ]);
       }
     } catch (e) {
-      errorMsg = 'No fue posible cargar las reflexiones. Intenta de nuevo más tarde.';
+      if (cached === null) {
+        errorMsg = 'No fue posible cargar las reflexiones. Intenta de nuevo más tarde.';
+      }
       console.error('Error cargando reflexiones:', e);
     } finally {
+      refreshInProgress = false;
       loading = false;
       await tick();
       destroyReveals();
@@ -195,31 +227,49 @@
     }
   }
 
-  onMount(async () => {
+  onMount(() => {
     try {
       likedIds = JSON.parse(localStorage.getItem('cc-reflexiones-likes') || '[]');
     } catch {
       likedIds = [];
     }
-    await loadReflexiones();
-    const params = new URLSearchParams(window.location.search);
-    const target = params.get('id');
-    if (target) {
-      const targetIndex = reflexiones.findIndex((r) => String(r.id) === target);
-      if (targetIndex >= 0) await changePage(Math.floor(targetIndex / pageSize) + 1);
-      setTimeout(() => {
-        const el = document.getElementById(`r-${target}`);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          el.style.borderColor = 'rgba(200, 169, 126, 0.65)';
-          el.style.boxShadow = '0 0 0 3px rgba(200, 169, 126, 0.35)';
-          setTimeout(() => {
-            el.style.borderColor = '';
-            el.style.boxShadow = '';
-          }, 3500);
-        }
-      }, 300);
-    }
+
+    const handleOnline = () => {
+      isOffline = false;
+      void loadReflexiones();
+    };
+    const handleOffline = () => {
+      isOffline = true;
+    };
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    void (async () => {
+      await loadReflexiones();
+      const params = new URLSearchParams(window.location.search);
+      const target = params.get('id');
+      if (target) {
+        const targetIndex = reflexiones.findIndex((r) => String(r.id) === target);
+        if (targetIndex >= 0) await changePage(Math.floor(targetIndex / pageSize) + 1);
+        setTimeout(() => {
+          const el = document.getElementById(`r-${target}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.style.borderColor = 'rgba(200, 169, 126, 0.65)';
+            el.style.boxShadow = '0 0 0 3px rgba(200, 169, 126, 0.35)';
+            setTimeout(() => {
+              el.style.borderColor = '';
+              el.style.boxShadow = '';
+            }, 3500);
+          }
+        }, 300);
+      }
+    })();
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   });
 </script>
 
@@ -244,7 +294,11 @@
           <i class="fa-solid fa-triangle-exclamation"></i>
           <p>{errorMsg}</p>
         </div>
-      {:else if reflexiones.length}
+      {:else}
+        {#if isOffline && reflexiones.length}
+          <p class="cc-offline-notice" role="status">Sin conexión. Mostrando las reflexiones guardadas; se actualizarán al recuperar internet.</p>
+        {/if}
+        {#if reflexiones.length}
         <div class="row g-4">
           {#each visibleReflexiones as r, i (r.id)}
             <div class="col-lg-6">
@@ -365,11 +419,12 @@
             </button>
           </nav>
         {/if}
-      {:else}
+        {:else}
         <div class="cc-state">
           <i class="fa-solid fa-book"></i>
           <p>Próximamente compartiremos nuevas reflexiones.</p>
         </div>
+        {/if}
       {/if}
     </div>
   </section>
@@ -391,6 +446,15 @@
     gap: 20px;
     margin-top: 36px;
     color: var(--cc-muted);
+  }
+
+  .cc-offline-notice {
+    margin: 0 0 20px;
+    padding: 12px 16px;
+    border: 1px solid var(--cc-border);
+    border-radius: 8px;
+    color: var(--cc-muted);
+    font-size: 0.9rem;
   }
 
   .cc-pagination button {

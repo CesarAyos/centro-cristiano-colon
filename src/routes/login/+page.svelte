@@ -1,31 +1,42 @@
 <script>
   import { supabase } from "../../components/supabase.js";
   import { onMount } from "svelte";
+  import { obtenerUsuario, recordarSesion, iniciarVigilanciaSesion } from '$lib/auth.js';
   import '$lib/admin.css';
 
   let email = "";
   let password = "";
   let errorMessage = "";
+  let enviando = false;
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
+    if (enviando) return;
+    enviando = true;
+    errorMessage = "";
+
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
       errorMessage = "Error al iniciar sesión: " + error.message;
-    } else {
-      // Redirigir al perfil después de iniciar sesión
-      window.location.href = "/profile";
+      enviando = false;
+      return;
     }
+
+    // La sesión queda guardada en este dispositivo hasta que el usuario cierre sesión.
+    if (data?.user) recordarSesion(data.user.id);
+    window.location.href = "/profile";
   };
 
   onMount(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.user) {
+    const pararVigilancia = iniciarVigilanciaSesion();
+    const usuario = await obtenerUsuario();
+    if (usuario) {
       window.location.href = "/profile";
     }
+    return pararVigilancia;
   });
 </script>
 
@@ -67,13 +78,20 @@
           required
         />
       </div>
-      <button type="submit" class="btn btn-primary w-100" style="padding: 0.7rem;">
-        <i class="fa-solid fa-right-to-bracket me-2"></i>Iniciar sesión
+      <button type="submit" class="btn btn-primary w-100" style="padding: 0.7rem;" disabled={enviando}>
+        {#if enviando}
+          <i class="fa-solid fa-circle-notch fa-spin me-2"></i>Verificando...
+        {:else}
+          <i class="fa-solid fa-right-to-bracket me-2"></i>Iniciar sesión
+        {/if}
       </button>
     </form>
     {#if errorMessage}
       <div class="mt-3 alert alert-danger py-2">{errorMessage}</div>
     {/if}
+    <p class="text-center mt-3 mb-0" style="color: var(--adm-muted); font-size: 0.82rem;">
+      La sesión se mantiene iniciada en este dispositivo hasta que pulses "Cerrar sesión".
+    </p>
     <div class="d-flex justify-content-center mt-4">
       <a href="/" aria-label="Inicio" style="color: #c8a97e;"><i class="fa-solid fa-house fs-4"></i></a>
     </div>

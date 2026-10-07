@@ -47,8 +47,14 @@
         <h4 class="cc-footer__subhead">Recursos</h4>
         <ul>
           <li><a href="/predica">Prédicas</a></li>
+          <li><a href="/bosquejos">Bosquejos</a></li>
           <li><a href="/reflexiones">Reflexiones</a></li>
           <li><a href="/biblia">Lee la Biblia</a></li>
+        </ul>
+        <h4 class="cc-footer__subhead">Comunidad</h4>
+        <ul>
+          <li><a href="/peticiones">Petición de Oración</a></li>
+          <li><a href="/testimonios">Testimonios</a></li>
         </ul>
       </div>
 

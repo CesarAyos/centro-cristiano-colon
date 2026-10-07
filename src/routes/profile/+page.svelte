@@ -1,16 +1,24 @@
 <script>
   import Bosquejo from "../../components/bosquejo.svelte";
   import Nuevos from "../../components/nuevos.svelte";
+  import Peticionesadmin from "../../components/peticionesadmin.svelte";
   import Planilla from "../../components/planilla.svelte";
   import Reportes from "../../components/reportes.svelte";
   import Subirvideos from "../../components/subirvideos.svelte";
   import Subirreflexion from "../../components/subirreflexion.svelte";
-  import { supabase } from "../../components/supabase.js";
+  import Testimoniosadmin from "../../components/testimoniosadmin.svelte";
   import { onMount } from "svelte";
   import Verbosquejo from "../../components/verbosquejo.svelte";
   import Vervideoadmin from "../../components/vervideoadmin.svelte";
   import Estadistica from "../../components/estadistica.svelte";
   import { fade } from 'svelte/transition';
+  import {
+    cerrarSesion as cerrarSesionAuth,
+    iniciarVigilanciaSesion,
+    obtenerUsuario,
+    recordarSesion,
+  } from '$lib/auth.js';
+  import { iniciarSincronizacion } from '$lib/pendientes.js';
   import '$lib/admin.css';
 
   // Variables reactivas
@@ -20,16 +28,23 @@
   let isMobile = false;
 
   onMount(async () => {
-    // 1. Verificar sesión del usuario
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session || !session.user) {
+    // La sesión se mantiene hasta que el usuario pulse "Cerrar sesión".
+    const pararVigilancia = iniciarVigilanciaSesion();
+    const pararSync = iniciarSincronizacion();
+
+    const usuarioActual = await obtenerUsuario();
+
+    if (!usuarioActual) {
       window.location.href = "/login";
-      return;
+      return () => {
+        pararVigilancia();
+        pararSync();
+      };
     }
-    
-    user = session.user;
-    userName = user.user_metadata.full_name || user.email;
+
+    user = usuarioActual;
+    userName = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+    recordarSesion(user.id);
 
     // 2. Detectar si es móvil
     const checkMobile = () => {
@@ -39,11 +54,15 @@
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      pararVigilancia();
+      pararSync();
+    };
   });
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await cerrarSesionAuth();
     window.location.href = "/login";
   };
 
@@ -75,6 +94,8 @@
       'reportes': 'reportes',
       'verbosquejoadmin': 'verbosquejoadmin',
       'vervideoadmin': 'vervideoadmin',
+      'peticionesadmin': 'peticionesadmin',
+      'testimoniosadmin': 'testimoniosadmin',
       'bosquejos': 'bosquejos',
       'subirvideos': 'subirvideos',
       'estadistica': 'estadistica'
@@ -145,6 +166,22 @@
               on:click={() => showContent('vervideoadmin')}>
               <i class="fas fa-video"></i>
               <span>Ver Videos</span>
+              <i class="fas fa-chevron-right nav-arrow"></i>
+            </button>
+
+            <button 
+              class="nav-item {activeSection === 'peticionesadmin' ? 'active' : ''}" 
+              on:click={() => showContent('peticionesadmin')}>
+              <i class="fas fa-hands-praying"></i>
+              <span>Peticiones de Oración</span>
+              <i class="fas fa-chevron-right nav-arrow"></i>
+            </button>
+
+            <button 
+              class="nav-item {activeSection === 'testimoniosadmin' ? 'active' : ''}" 
+              on:click={() => showContent('testimoniosadmin')}>
+              <i class="fas fa-note-sticky"></i>
+              <span>Testimonios</span>
               <i class="fas fa-chevron-right nav-arrow"></i>
             </button>
           </div>
@@ -218,6 +255,10 @@
         Ver Bosquejos
       {:else if activeSection === 'vervideoadmin'}
         Ver Videos
+      {:else if activeSection === 'peticionesadmin'}
+        Peticiones de Oración
+      {:else if activeSection === 'testimoniosadmin'}
+        Testimonios
       {:else if activeSection === 'bosquejos'}
         Subir Bosquejos
       {:else if activeSection === 'subirvideos'}
@@ -265,6 +306,14 @@
           {:else if activeSection === 'vervideoadmin'}
             <div class="content-section">
               <Vervideoadmin/>
+            </div>
+          {:else if activeSection === 'peticionesadmin'}
+            <div class="content-section">
+              <Peticionesadmin/>
+            </div>
+          {:else if activeSection === 'testimoniosadmin'}
+            <div class="content-section">
+              <Testimoniosadmin/>
             </div>
           {:else if activeSection === 'bosquejos'}
             <div class="content-section">
@@ -356,6 +405,20 @@
                   <i class="fas fa-video"></i>
                   <span>Ver Videos</span>
                 </button>
+                
+                <button 
+                  class="mobile-nav-item {activeSection === 'peticionesadmin' ? 'active' : ''}" 
+                  on:click={() => showContent('peticionesadmin')}>
+                  <i class="fas fa-hands-praying"></i>
+                  <span>Peticiones de Oración</span>
+                </button>
+                
+                <button 
+                  class="mobile-nav-item {activeSection === 'testimoniosadmin' ? 'active' : ''}" 
+                  on:click={() => showContent('testimoniosadmin')}>
+                  <i class="fas fa-note-sticky"></i>
+                  <span>Testimonios</span>
+                </button>
               </div>
               
               <div class="mobile-nav-section">
@@ -415,6 +478,10 @@
         Ver Bosquejos
       {:else if activeSection === 'vervideoadmin'}
         Ver Videos
+      {:else if activeSection === 'peticionesadmin'}
+        Peticiones de Oración
+      {:else if activeSection === 'testimoniosadmin'}
+        Testimonios
       {:else if activeSection === 'bosquejos'}
         Subir Bosquejos
       {:else if activeSection === 'subirvideos'}
@@ -457,6 +524,14 @@
         {:else if activeSection === 'vervideoadmin'}
           <div class="mobile-section">
             <Vervideoadmin/>
+          </div>
+        {:else if activeSection === 'peticionesadmin'}
+          <div class="mobile-section">
+            <Peticionesadmin/>
+          </div>
+        {:else if activeSection === 'testimoniosadmin'}
+          <div class="mobile-section">
+            <Testimoniosadmin/>
           </div>
         {:else if activeSection === 'bosquejos'}
           <div class="mobile-section">

@@ -1,9 +1,42 @@
 <script>
   import { onMount } from 'svelte';
+  import { page } from '$app/stores';
+
+  const GRUPOS = [
+    {
+      id: 'iglesia',
+      etiqueta: 'Nuestra Iglesia',
+      items: [
+        { href: '/adn', etiqueta: 'Nuestro ADN', icono: 'fa-solid fa-dna' },
+        { href: '/fundadores', etiqueta: 'Nuestros Fundadores', icono: 'fa-solid fa-people-group' },
+        { href: '/misiones', etiqueta: 'Misiones', icono: 'fa-solid fa-earth-americas' },
+        { href: '/ubicanos', etiqueta: 'Ubícanos', icono: 'fa-solid fa-location-dot' },
+      ],
+    },
+    {
+      id: 'palabra',
+      etiqueta: 'La Palabra',
+      items: [
+        { href: '/predica', etiqueta: 'Prédicas', icono: 'fa-solid fa-video' },
+        { href: '/bosquejos', etiqueta: 'Bosquejos', icono: 'fa-solid fa-file-alt' },
+        { href: '/biblia', etiqueta: 'Lee la Biblia', icono: 'fa-solid fa-book-open' },
+        { href: '/reflexiones', etiqueta: 'Reflexiones', icono: 'fa-solid fa-book' },
+      ],
+    },
+    {
+      id: 'comunidad',
+      etiqueta: 'Comunidad',
+      items: [
+        { href: '/peticiones', etiqueta: 'Peticiones', icono: 'fa-solid fa-hands-praying' },
+        { href: '/testimonios', etiqueta: 'Testimonios', icono: 'fa-solid fa-note-sticky' },
+      ],
+    },
+  ];
 
   let scrolled = false;
   let mobileOpen = false;
-  let churchOpen = false;
+  let abierto = null;
+  let raiz;
 
   function onScroll() {
     scrolled = window.scrollY > 40;
@@ -11,62 +44,90 @@
 
   onMount(() => {
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+
+    const alHacerClicFuera = (e) => {
+      if (raiz && !raiz.contains(e.target)) abierto = null;
+    };
+    const alPulsarEscape = (e) => {
+      if (e.key === 'Escape') {
+        abierto = null;
+        mobileOpen = false;
+      }
+    };
+
+    document.addEventListener('click', alHacerClicFuera);
+    document.addEventListener('keydown', alPulsarEscape);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('click', alHacerClicFuera);
+      document.removeEventListener('keydown', alPulsarEscape);
+    };
   });
 
   function closeMenu() {
     mobileOpen = false;
-    churchOpen = false;
+    abierto = null;
   }
+
+  function alternar(id) {
+    abierto = abierto === id ? null : id;
+  }
+
+  function esActual(href) {
+    return $page.url.pathname === href;
+  }
+
+  $: grupoActual = GRUPOS.find((g) => g.items.some((i) => esActual(i.href)))?.id ?? null;
 
   $: if (typeof document !== 'undefined') {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
   }
 </script>
 
-<header class="cc-nav" class:is-scrolled={scrolled}>
+<header class="cc-nav" class:is-scrolled={scrolled} bind:this={raiz}>
   <div class="cc-nav__inner cc-container">
     <a class="cc-nav__brand" href="/" on:click={closeMenu} aria-label="Ir al inicio">
       <img src="/logo.png" alt="Logo Centro Cristiano Misión Global Colón" class="cc-nav__logo" />
-      <span class="cc-nav__brand-text">
+      <!-- <span class="cc-nav__brand-text">
         <span class="cc-nav__name">Centro Cristiano Misión Global Colón</span>
         <span class="cc-nav__tagline">Un lugar para un momento espiritual</span>
-      </span>
+      </span> -->
     </a>
 
     <nav class="cc-nav__menu" class:is-open={mobileOpen} aria-label="Navegación principal">
-      <a href="/" class="cc-nav__link" on:click={closeMenu}>Inicio</a>
+      <a href="/" class="cc-nav__link" class:is-actual={esActual('/')} on:click={closeMenu}>Inicio</a>
 
-      <div class="cc-nav__dropdown" class:is-open={churchOpen}>
-        <button
-          class="cc-nav__link cc-nav__toggle"
-          type="button"
-          aria-expanded={churchOpen}
-          on:click={() => (churchOpen = !churchOpen)}
-        >
-          <span>Nuestra Iglesia</span>
-          <i class="fa-solid fa-chevron-down cc-nav__caret"></i>
-        </button>
-        <div class="cc-nav__submenu">
-          <a href="/adn" class="cc-nav__subitem" on:click={closeMenu}>
-            <i class="fa-solid fa-dna"></i>Nuestro ADN
-          </a>
-          <a href="/fundadores" class="cc-nav__subitem" on:click={closeMenu}>
-            <i class="fa-solid fa-people-group"></i>Nuestros Fundadores
-          </a>
-          <a href="/misiones" class="cc-nav__subitem" on:click={closeMenu}>
-            <i class="fa-solid fa-earth-americas"></i>Misiones
-          </a>
+      {#each GRUPOS as grupo}
+        <div class="cc-nav__dropdown" class:is-open={abierto === grupo.id}>
+          <button
+            class="cc-nav__link cc-nav__toggle"
+            class:is-actual={grupoActual === grupo.id}
+            type="button"
+            aria-expanded={abierto === grupo.id}
+            on:click={() => alternar(grupo.id)}
+          >
+            <span>{grupo.etiqueta}</span>
+            <i class="fa-solid fa-chevron-down cc-nav__caret"></i>
+          </button>
+          <div class="cc-nav__submenu">
+            {#each grupo.items as item}
+              <a
+                href={item.href}
+                class="cc-nav__subitem"
+                class:is-actual={esActual(item.href)}
+                on:click={closeMenu}
+              >
+                <i class={item.icono}></i>{item.etiqueta}
+              </a>
+            {/each}
+          </div>
         </div>
-      </div>
+      {/each}
 
-      <a href="/predica" class="cc-nav__link" on:click={closeMenu}>Prédicas</a>
       <a href="/envivo" class="cc-nav__link cc-nav__link--live" on:click={closeMenu}>
-        <span class="cc-nav__live-dot"></span>Live
+        <span class="cc-nav__live-dot"></span>En Vivo
       </a>
-      <a href="/reflexiones" class="cc-nav__link" on:click={closeMenu}>Reflexiones</a>
-      <a href="/biblia" class="cc-nav__link" on:click={closeMenu}>Biblia</a>
-      <a href="/ubicanos" class="cc-nav__link" on:click={closeMenu}>Ubícanos</a>
     </nav>
 
     <div class="cc-nav__actions">
@@ -247,6 +308,14 @@
     transform: scaleX(1);
   }
 
+  .cc-nav__link.is-actual {
+    color: var(--nav-primary);
+  }
+
+  .cc-nav__link.is-actual::after {
+    transform: scaleX(1);
+  }
+
   /* ---- Link Live ---- */
   .cc-nav__link--live {
     color: #e07a5f;
@@ -292,7 +361,7 @@
     top: calc(100% + 14px);
     left: 50%;
     transform: translateX(-50%) translateY(8px);
-    min-width: 250px;
+    min-width: 244px;
     max-width: 90vw;
     background: #18150f;
     border: 1px solid var(--nav-border);
@@ -334,6 +403,15 @@
 
   .cc-nav__subitem:hover {
     background: rgba(146, 174, 131, 0.12);
+    color: var(--nav-accent);
+  }
+
+  .cc-nav__subitem.is-actual {
+    background: rgba(146, 174, 131, 0.16);
+    color: var(--nav-accent-soft, var(--nav-accent));
+  }
+
+  .cc-nav__subitem.is-actual i {
     color: var(--nav-accent);
   }
 
@@ -499,7 +577,7 @@
     }
 
     .cc-nav__dropdown.is-open .cc-nav__submenu {
-      max-height: 260px;
+      max-height: 320px;
       padding: 8px;
       transform: none;
     }

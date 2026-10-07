@@ -42,12 +42,15 @@ export async function GET() {
     { loc: '/', changefreq: 'weekly', priority: '1.0' },
     { loc: '/adn', changefreq: 'monthly', priority: '0.8' },
     { loc: '/biblia', changefreq: 'weekly', priority: '0.8' },
+    { loc: '/bosquejos', changefreq: 'weekly', priority: '0.7' },
     { loc: '/envivo', changefreq: 'weekly', priority: '0.7' },
     { loc: '/fundadores', changefreq: 'monthly', priority: '0.6' },
     { loc: '/misiones', changefreq: 'monthly', priority: '0.7' },
+    { loc: '/peticiones', changefreq: 'daily', priority: '0.9' },
     { loc: '/politica-de-privacidad', changefreq: 'yearly', priority: '0.3' },
     { loc: '/predica', changefreq: 'weekly', priority: '0.8' },
     { loc: '/reflexiones', changefreq: 'daily', priority: '0.9' },
+    { loc: '/testimonios', changefreq: 'weekly', priority: '0.8' },
     { loc: '/ubicanos', changefreq: 'monthly', priority: '0.6' },
   ];
 

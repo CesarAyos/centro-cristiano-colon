@@ -1,6 +1,9 @@
 {
     "name": "cccolon",
     "version": "1.62",
+    "engines": {
+        "node": "24.x"
+    },
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",

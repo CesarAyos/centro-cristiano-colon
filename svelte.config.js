@@ -7,7 +7,9 @@ const isCapacitorBuild = process.env.CAPACITOR_BUILD === 'true';
 
 export default {
   kit: {
-    adapter: isCapacitorBuild ? adapterStatic({ fallback: 'index.html' }) : adapter(),
+    adapter: isCapacitorBuild
+      ? adapterStatic({ fallback: 'index.html' })
+      : adapter({ runtime: 'nodejs24.x' }),
     prerender: {
       handleMissingId: 'warn',
     },

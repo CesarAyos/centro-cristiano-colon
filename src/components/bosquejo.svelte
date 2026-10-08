@@ -215,6 +215,7 @@
           name="fileUpload"
           accept="image/*"
           multiple
+          bind:this={entrada}
           on:change={alElegirArchivos}
         />
 

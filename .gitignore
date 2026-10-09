@@ -30,3 +30,4 @@ keystore/
 *.jks
 *.keystore
 signing.properties
+upload_certificate.pem

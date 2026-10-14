@@ -31,3 +31,6 @@ keystore/
 *.keystore
 signing.properties
 upload_certificate.pem
+
+# Firebase (contiene claves - NUNCA commitear)
+google-services.json

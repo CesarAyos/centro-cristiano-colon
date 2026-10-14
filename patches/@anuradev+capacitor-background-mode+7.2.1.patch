@@ -1,0 +1,16 @@
+diff --git a/node_modules/@anuradev/capacitor-background-mode/android/src/main/java/ar/com/anura/plugins/backgroundmode/BackgroundModePlugin.java b/node_modules/@anuradev/capacitor-background-mode/android/src/main/java/ar/com/anura/plugins/backgroundmode/BackgroundModePlugin.java
+index 1ac73de..e8ea881 100644
+--- a/node_modules/@anuradev/capacitor-background-mode/android/src/main/java/ar/com/anura/plugins/backgroundmode/BackgroundModePlugin.java
++++ b/node_modules/@anuradev/capacitor-background-mode/android/src/main/java/ar/com/anura/plugins/backgroundmode/BackgroundModePlugin.java
+@@ -41,7 +41,10 @@ public class BackgroundModePlugin extends Plugin {
+         switch (event) {
+             case BackgroundMode.EVENT_APP_IN_BACKGROUND:
+             case BackgroundMode.EVENT_APP_IN_FOREGROUND:
+-                bridge.triggerWindowJSEvent(event);
++                bridge.eval(
++                    "if (window.Capacitor && window.Capacitor.triggerEvent) { window.Capacitor.triggerEvent('" + event + "', 'window'); }",
++                    null
++                );
+                 notifyListeners(event, jsObject);
+                 break;
+         }

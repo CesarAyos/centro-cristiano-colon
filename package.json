@@ -1,6 +1,6 @@
 {
     "name": "cccolon",
-    "version": "1.64",
+    "version": "2.0",
     "engines": {
         "node": "24.x"
     },
@@ -18,7 +18,8 @@
         "test:push": "node scripts/test-push.cjs",
         "test:push:check": "node scripts/test-push.cjs --check",
         "test:push:logs": "node scripts/test-push.cjs --logs",
-        "test:push:quick": "node scripts/test-push.cjs -t \"Centro Cristiano Mision Global Colon\" -b \"Nueva reflexión para ti\""
+        "test:push:quick": "node scripts/test-push.cjs -t \"Centro Cristiano Mision Global Colon\" -b \"Nueva reflexión para ti\"",
+        "postinstall": "patch-package"
     },
     "exports": {
         ".": {
@@ -43,6 +44,7 @@
         "@sveltejs/kit": "^2.7.0",
         "@sveltejs/package": "^2.0.0",
         "@sveltejs/vite-plugin-svelte": "^3.0.0",
+        "patch-package": "^8.0.0",
         "publint": "^0.1.9",
         "svelte": "^4.2.7",
         "svelte-check": "^3.6.0",

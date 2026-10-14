@@ -30,6 +30,16 @@ if (!fs.existsSync(androidDir)) {
 // 4. Sync web build with Capacitor
 run('npx cap sync android');
 
+// 4.1. Copy google-services.json (Firebase) to android/app so push notifications work
+const gsSrc = path.join(root, 'google-services.json');
+const gsDst = path.join(androidDir, 'app', 'google-services.json');
+if (fs.existsSync(gsSrc)) {
+  fs.copyFileSync(gsSrc, gsDst);
+  console.log('\n  google-services.json copiado a android/app.\n');
+} else {
+  console.warn('\n  Aviso: no se encontró google-services.json en la raíz. Las notificaciones push no funcionarán.\n');
+}
+
 // 5. Verify signing configuration exists
 const signingProps = path.join(root, 'android', 'keystore', 'signing.properties');
 const keystoreFile = path.join(root, 'android', 'keystore', 'colon-release.jks');

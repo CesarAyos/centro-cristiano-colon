@@ -30,7 +30,17 @@ if (!fs.existsSync(androidDir)) {
 // 4. Sync web build with Capacitor
 run('npx cap sync android');
 
-// 4.1. Update versionCode and versionName in build.gradle
+// 4.1. Copy google-services.json (Firebase) to android/app so push notifications work
+const gsSrc = path.join(root, 'google-services.json');
+const gsDst = path.join(androidDir, 'app', 'google-services.json');
+if (fs.existsSync(gsSrc)) {
+  fs.copyFileSync(gsSrc, gsDst);
+  console.log('\n  google-services.json copiado a android/app.\n');
+} else {
+  console.warn('\n  Aviso: no se encontró google-services.json en la raíz. Las notificaciones push no funcionarán.\n');
+}
+
+// 4.2. Update versionCode and versionName in build.gradle
 const buildGradlePath = path.join(androidDir, 'app', 'build.gradle');
 let buildGradle = fs.readFileSync(buildGradlePath, 'utf-8');
 buildGradle = buildGradle.replace(/versionCode \d+/, `versionCode ${versionCode}`);
